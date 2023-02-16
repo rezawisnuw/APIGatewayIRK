@@ -55,7 +55,7 @@ Route::group(['middleware' => 'cors'], function () {
 Route::group(['middleware' => ['cors']], function () {
 
     //CeritaKita Endpoint Dev
-	Route::group(['prefix' => 'dev/ceritakita'], function () {
+	Route::group(['prefix' => 'CeritaKita/Dev'], function () {
 
 		Route::post('login', 'Dev\IRKCeritaKitaGateway@login');
 
@@ -66,47 +66,26 @@ Route::group(['middleware' => ['cors']], function () {
 	
 	});
 
-	Route::group(['prefix' => 'stag/ceritakita'], function () {
+	//CeritaKita Endpoint Stag
+	Route::group(['prefix' => 'CeritaKita/Stag'], function () {
 
-		Route::group(['middleware' => ['verify_token.hris_stage']], function () {
-			Route::post('auth', 'PKOnlineGatewayStaging@auth');
-			Route::post('master/departments', 'PKOnlineGatewayStaging@department');
-			Route::post('master/positions', 'PKOnlineGatewayStaging@position');
-			Route::post('master/approvers', 'PKOnlineGatewayStaging@approver');
-			Route::post('master/lead-times', 'PKOnlineGatewayStaging@leadTime');
-			Route::post('master/users', 'PKOnlineGatewayStaging@user');
-			Route::post('hrms', 'PKOnlineGatewayStaging@hrms');
-			Route::post('budgets', 'PKOnlineGatewayStaging@budget');
-			Route::post('pks', 'PKOnlineGatewayStaging@pk');
-			Route::post('approval-statuses', 'PKOnlineGatewayStaging@approvalStatus');
-			Route::post('pk-edits', 'PKOnlineGatewayStaging@pkEdit');
-			Route::post('approver-substitutions', 'PKOnlineGatewayStaging@approverSubstitution');
-			Route::post('warrants', 'PKOnlineGatewayStaging@warrant');
-			Route::post('reports', 'PKOnlineGatewayStaging@report');
+		Route::post('login', 'Stag\IRKCeritaKitaGateway@login');
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('auth', 'Stag\IRKCeritaKitaGateway@auth');
+
 		});
 
-		Route::post('recruitments', 'PKOnlineGatewayStaging@recruitment');
 	});
 
+	//CeritaKita Endpoint Live
 	Route::group(['prefix' => 'ceritakita'], function () {
 
-		Route::group(['middleware' => ['verify_token.hris']], function () {
-			Route::post('auth', 'PKOnlineGateway@auth');
-			Route::post('master/departments', 'PKOnlineGateway@department');
-			Route::post('master/positions', 'PKOnlineGateway@position');
-			Route::post('master/approvers', 'PKOnlineGateway@approver');
-			Route::post('master/lead-times', 'PKOnlineGateway@leadTime');
-			Route::post('master/users', 'PKOnlineGateway@user');
-			Route::post('hrms', 'PKOnlineGateway@hrms');
-			Route::post('budgets', 'PKOnlineGateway@budget');
-			Route::post('pks', 'PKOnlineGateway@pk');
-			Route::post('approval-statuses', 'PKOnlineGateway@approvalStatus');
-			Route::post('pk-edits', 'PKOnlineGateway@pkEdit');
-			Route::post('approver-substitutions', 'PKOnlineGateway@approverSubstitution');
-			Route::post('warrants', 'PKOnlineGateway@warrant');
-			Route::post('reports', 'PKOnlineGateway@report');
-		});
+		Route::post('login', 'Live\IRKCeritaKitaGateway@login');
 
-		Route::post('recruitments', 'PKOnlineGateway@recruitment');
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('auth', 'Live\IRKCeritaKitaGateway@auth');
+
+		});
 	});
 });

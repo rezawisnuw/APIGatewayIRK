@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dev;
+namespace App\Http\Controllers\Live;
 
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\ClientException;
@@ -63,7 +63,7 @@ class IRKCeritaKitaGateway extends Controller
     public function login(Request $request)
     {
         try {
-            $response = (new self)->client('login')->request('POST', 'loginverif/Dev', [
+            $response = (new self)->client('login')->request('POST', 'loginverif', [
                 'json' => $request->all()
             ]);
 

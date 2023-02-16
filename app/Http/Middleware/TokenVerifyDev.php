@@ -20,7 +20,7 @@ class TokenVerifyDev
 		try{
 
 			//$token = str_contains($request->header('Authorization'), 'Bearer') ? substr($request->header('Authorization'),6) : $request->header('Authorization');
-            $token = str_contains($request->cookie('Authorization-dev'), 'Bearer') ? substr($request->cookie('Authorization-dev'),6) : $request->cookie('Authorization-dev');
+            $token = str_contains($request->cookie('Authorization'), 'Bearer') ? substr($request->cookie('Authorization'),6) : $request->cookie('Authorization');
             
             if (empty($token)) {
                 return response()->json([
