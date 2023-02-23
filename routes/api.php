@@ -18,6 +18,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
 //Util EndPoint
 Route::group(['middleware' => 'cors'], function () {
 
@@ -57,10 +58,11 @@ Route::group(['middleware' => ['cors']], function () {
     //CeritaKita Endpoint Dev
 	Route::group(['prefix' => 'CeritaKita/Dev'], function () {
 
-		Route::post('login', 'Dev\IRKCeritaKitaGateway@login');
+		Route::post('signin', 'Dev\IRKCeritaKitaGateway@signin');
 
 		Route::group(['middleware' => ['tokenverifydev']], function () {
 			Route::post('auth', 'Dev\IRKCeritaKitaGateway@auth');
+			Route::post('signout', 'Dev\IRKCeritaKitaGateway@signout');
 
 		});
 	
@@ -69,10 +71,11 @@ Route::group(['middleware' => ['cors']], function () {
 	//CeritaKita Endpoint Stag
 	Route::group(['prefix' => 'CeritaKita/Stag'], function () {
 
-		Route::post('login', 'Stag\IRKCeritaKitaGateway@login');
+		Route::post('signin', 'Stag\IRKCeritaKitaGateway@signin');
 
 		Route::group(['middleware' => ['tokenverifystag']], function () {
 			Route::post('auth', 'Stag\IRKCeritaKitaGateway@auth');
+			Route::post('signout', 'Stag\IRKCeritaKitaGateway@signout');
 
 		});
 
@@ -81,10 +84,11 @@ Route::group(['middleware' => ['cors']], function () {
 	//CeritaKita Endpoint Live
 	Route::group(['prefix' => 'ceritakita'], function () {
 
-		Route::post('login', 'Live\IRKCeritaKitaGateway@login');
+		Route::post('signin', 'Live\IRKCeritaKitaGateway@signin');
 
 		Route::group(['middleware' => ['tokenverify']], function () {
 			Route::post('auth', 'Live\IRKCeritaKitaGateway@auth');
+			Route::post('signout', 'Live\IRKCeritaKitaGateway@signout');
 
 		});
 	});
