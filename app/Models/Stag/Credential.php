@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Model\Stag\Credential;
+namespace App\Models\Stag;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
