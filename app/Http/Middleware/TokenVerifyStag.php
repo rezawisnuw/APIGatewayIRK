@@ -18,8 +18,8 @@ class TokenVerifyStag
     {
 		
 		try{
-			//$token = str_contains($request->header('Authorization'), 'Bearer') ? substr($request->header('Authorization'),6) : $request->header('Authorization');
-            $token = str_contains($request->cookie('Authorization'), 'Bearer') ? substr($request->cookie('Authorization'),6) : $request->cookie('Authorization');
+			//$token = str_contains($request->header('Authorization-stag'), 'Bearer') ? substr($request->header('Authorization-stag'),6) : $request->header('Authorization-stag');
+            $token = str_contains($request->cookie('Authorization-stag'), 'Bearer') ? substr($request->cookie('Authorization-stag'),6) : $request->cookie('Authorization-stag');
 
             if (empty($token)) {
                 return response()->json([

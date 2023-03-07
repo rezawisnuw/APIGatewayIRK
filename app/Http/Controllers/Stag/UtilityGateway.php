@@ -12,7 +12,7 @@ use GuzzleHttp\Psr7;
 use PDF;
 use Storage;
 use SoapClient;
-use App\Http\Model\Credential\Stag\Credential;
+use App\Http\Models\Stag\Credential;
 
 use DB;
 use Validator;
