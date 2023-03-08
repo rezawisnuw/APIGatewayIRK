@@ -20,7 +20,7 @@ use Validator;
 class UtilityGateway extends Controller
 {
     public function LoginESS(Request $request){
-        $request = '';
+        $result = '';
 
         try {
 			if (count($request->json()->all())) {
@@ -39,7 +39,7 @@ class UtilityGateway extends Controller
     }
 
 	public function LogoutESS(Request $request){
-        $request = '';
+        $result = '';
 
         try {
 			if (count($request->json()->all())) {
