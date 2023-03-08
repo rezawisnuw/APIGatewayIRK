@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Http\Model\Credential\Dev\Credential;
+use App\Http\Models\Credential\Dev\Credential;
 
 class TokenVerifyDev
 {
