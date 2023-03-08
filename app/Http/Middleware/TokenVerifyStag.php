@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Http\Model\Credential\Stag\Credential;
+use App\Http\Models\Credential\Stag\Credential;
 
 class TokenVerifyStag
 {
