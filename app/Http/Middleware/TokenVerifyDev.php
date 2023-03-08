@@ -24,14 +24,14 @@ class TokenVerifyDev
             
             if (empty($token)) {
                 return response()->json([
-					'Message' => 'Token Required !!!!',
+					'Message' => 'Token Required !',
 					'Code' => 400
 				]);
             }else{
                 $verify = Credential::ValidateTokenAuth($token);
                 if($verify->DecodeResult != 'Cocok'){
                     return response()->json([
-                        'Message' => 'Token & Signature Invalid !!!!',
+                        'Message' => 'Token & Signature Invalid !',
                         'Code' => 400
                     ]);
                 }
@@ -44,7 +44,7 @@ class TokenVerifyDev
             }
 			
 		} catch (\Throwable $th){
-			return response()->json(['Message' => 'Process Not Found !!!!' , 'Code' => 400]);
+			return response()->json(['Message' => 'Process Not Found !' , 'Code' => 400]);
 		}
         
         return $next($request);

@@ -35,8 +35,8 @@ class Credential extends Model
         $client = new Client();
         
 		$response = $client->post(
-                //'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/LoginESSV2',
-                'http://'.config('app.URL_INFRA_LB').':8043/RESTSecurity.svc/LoginESSV2',
+                'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/LoginESSV2',
+                //'http://'.config('app.URL_INFRA_LB').':8043/RESTSecurity.svc/LoginESSV2',
                 [
                     RequestOptions::JSON => 
                     ['user'=>$postbody]

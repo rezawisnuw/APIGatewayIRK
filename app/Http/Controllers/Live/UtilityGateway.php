@@ -30,11 +30,11 @@ class UtilityGateway extends Controller
 				if($result['wcf']['Status'] == '1') return response()->json($result['wcf'])->withCookie(cookie('Authorization', 'Bearer'.$result['token'], '120'));
 				else return response()->json($result['wcf']);
 			} else {
-				return response()->json(['Result' => 'Process Not Found !!!!','Message' => 'Gagal Login', 'Status' => '0']);
+				return response()->json(['Result' => 'Process Not Found !!','Message' => 'Gagal Login', 'Status' => '0']);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['Result' => '','Message' => 'Process Not Found !!!!', 'Status' => '0', 'Code' => 400]);
+            return response()->json(['Result' => '','Message' => 'Process Not Found !!!', 'Status' => '0', 'Code' => 400]);
         }
     }
 
@@ -175,11 +175,11 @@ class UtilityGateway extends Controller
 				$result = json_decode($temp->FirebaseResult);
 				return response()->json($result);
 			} else {
-				return response()->json(['Result' => 'Process Not Found !!!!','Message' => 'Gagal Mengambil Data', 'Status' => '0']);
+				return response()->json(['Result' => 'Process Not Found !!','Message' => 'Gagal Mengambil Data', 'Status' => '0']);
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['Result' => '','Message' => 'Process Not Found !!!!', 'Status' => '0', 'Code' => 400]);
+            return response()->json(['Result' => '','Message' => 'Process Not Found !!!', 'Status' => '0', 'Code' => 400]);
         }
     }
 }
