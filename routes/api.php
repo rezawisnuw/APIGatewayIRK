@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Dev;
+use App\Http\Controllers\Stag;
+use App\Http\Controllers\Live;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,28 +27,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'cors'], function () {
 
 	#DEV
-	Route::post('Login/Dev', 'Dev\UtilityGateway@LoginESS');
-	Route::post('Logout/Dev', 'Dev\UtilityGateway@LogoutESS');
-	Route::post('UploadFisik/Dev', 'Dev\UtilityGateway@UploadFisik');
-	Route::post('UploadBlob/Dev', 'Dev\UtilityGateway@UploadBlob');
-	Route::post('DownloadFisik/Dev', 'Dev\UtilityGateway@DownloadFile93');
-	Route::post('Firebase/Dev', 'Dev\UtilityGateway@Firebase');
+	Route::post('Login/Dev', [Dev\UtilityGateway::class, 'LoginESS']);
+	Route::post('Logout/Dev', [Dev\UtilityGateway::class, 'LogoutESS']);
+	Route::post('UploadFisik/Dev', [Dev\UtilityGateway::class, 'UploadFisik']);
+	Route::post('UploadBlob/Dev', [Dev\UtilityGateway::class, 'UploadBlob']);
+	Route::post('DownloadFisik/Dev', [Dev\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('Firebase/Dev', [Dev\UtilityGateway::class, 'Firebase']);
 
     #STAG
-	Route::post('Login/Stag', 'Stag\UtilityGateway@LoginESS');
-	Route::post('Logout/Stag', 'Stag\UtilityGateway@LogoutESS');
-	Route::post('UploadFisik/Stag', 'Stag\UtilityGateway@UploadFisik');
-	Route::post('UploadBlob/Stag', 'Stag\UtilityGateway@UploadBlob');
-	Route::post('DownloadFisik/Stag', 'Stag\UtilityGateway@DownloadFile93');
-	Route::post('Firebase/Stag', 'Stag\UtilityGateway@Firebase');
+	Route::post('Login/Stag', [Stag\UtilityGateway::class, 'LoginESS']);
+	Route::post('Logout/Stag', [Stag\UtilityGateway::class, 'LogoutESS']);
+	Route::post('UploadFisik/Stag', [Stag\UtilityGateway::class, 'UploadFisik']);
+	Route::post('UploadBlob/Stag', [Stag\UtilityGateway::class, 'UploadBlob']);
+	Route::post('DownloadFisik/Stag', [Stag\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('Firebase/Stag', [Stag\UtilityGateway::class, 'Firebase']);
 
     #LIVE
-	Route::post('Login', 'Live\UtilityGateway@LoginESS');
-	Route::post('Logout', 'Live\UtilityGateway@LogoutESS');
-	Route::post('UploadFisik', 'Live\UtilityGateway@UploadFisik');
-	Route::post('UploadBlob', 'Live\UtilityGateway@UploadBlob');
-	Route::post('DownloadFisik', 'Live\UtilityGateway@DownloadFile93');
-	Route::post('Firebase', 'Live\UtilityGateway@Firebase');
+	Route::post('Login', [Live\UtilityGateway::class, 'LoginESS']);
+	Route::post('Logout', [Live\UtilityGateway::class, 'LogoutESS']);
+	Route::post('UploadFisik', [Live\UtilityGateway::class, 'UploadFisik']);
+	Route::post('UploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
+	Route::post('DownloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('Firebase', [Live\UtilityGateway::class, 'Firebase']);
 
 });
 
@@ -55,25 +59,25 @@ Route::group(['middleware' => ['cors']], function () {
 	Route::group(['prefix' => 'CeritaKita'], function () {
 
 		//DEV
-		Route::post('signin/Dev', 'Dev\IRKCeritaKitaGateway@signin');
+		Route::post('signin/Dev', [Dev\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifydev']], function () {
-			Route::post('auth/Dev', 'Dev\IRKCeritaKitaGateway@auth');
-			Route::post('signout/Dev', 'Dev\IRKCeritaKitaGateway@signout');
+			Route::post('auth/Dev', [Dev\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout/Dev', [Dev\IRKCeritaKitaGateway::class, 'signout']);
 		});
 
 		//STAG
-		Route::post('signin/Stag', 'Stag\IRKCeritaKitaGateway@signin');
+		Route::post('signin/Stag', [Stag\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifystag']], function () {
-			Route::post('auth/Stag', 'Stag\IRKCeritaKitaGateway@auth');
-			Route::post('signout/Stag', 'Stag\IRKCeritaKitaGateway@signout');
+			Route::post('auth/Stag', [Stag\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout/Stag', [Stag\IRKCeritaKitaGateway::class, 'signout']);
 
 		});
 
 		//LIVE
-		Route::post('signin', 'Live\IRKCeritaKitaGateway@signin');
+		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('auth', 'Live\IRKCeritaKitaGateway@auth');
-			Route::post('signout', 'Live\IRKCeritaKitaGateway@signout');
+			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
 
 		});
 	
