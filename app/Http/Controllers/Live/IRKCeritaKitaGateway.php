@@ -31,7 +31,7 @@ class IRKCeritaKitaGateway extends Controller
         ], $statusCode);
     }
 
-    public function userChk($data)
+    public function userValid($data)
     {
         if(isset($data->nik)){
             $raw_token = str_contains($data->cookie('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($data->cookie('Authorization'),6) : 'Authorization=Bearer'.$data->cookie('Authorization');
@@ -49,10 +49,10 @@ class IRKCeritaKitaGateway extends Controller
         }
     }
 
-    public function client()
+    public function client($param)
     {
-        //LOGIN ONLY
-        if (isset($param)) {
+        
+        if ($param == 'infra') {
             return new Client(
                 [
                     'base_uri' => config('app.URL_12_LARAVEL'),
@@ -62,10 +62,31 @@ class IRKCeritaKitaGateway extends Controller
                     ]
                 ]
             );
-        }else {
+        }else if ($param == 'gcp') {
+            return new Client(
+                [
+                    'base_uri' => config('app.URL_GCP_LARAVEL'),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json'
+                    ]
+                ]
+            );
+        }else if ($param == 'toverify_infra') {
             return new Client(
                 [
                     'base_uri' => config('app.URL_12_LARAVEL'),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json',
+                        'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                    ]
+                ]
+            );
+        }else if ($param == 'toverify_gcp') {
+            return new Client(
+                [
+                    'base_uri' => config('app.URL_GCP_LARAVEL'),
                     'headers' => [
                         'Accept' => 'application/json',
                         'Content-type' => 'application/json',
@@ -79,7 +100,7 @@ class IRKCeritaKitaGateway extends Controller
     public function signin(Request $request)
     {
         try {
-            $response = (new self)->client('param')->request('POST', 'auth', [
+            $response = (new self)->client('infra')->request('POST', 'auth', [
                 'json' => $request->all()
             ]);
 
@@ -101,8 +122,8 @@ class IRKCeritaKitaGateway extends Controller
     public function signout(Request $request)
     {
         try {
-            if($this->userChk($request)->message == 'Match'){
-                $response = (new self)->client()->request('POST', 'auth', [
+            if($this->userValid($request)->message == 'Match'){
+                $response = (new self)->client('toverify_infra')->request('POST', 'auth', [
                     'json' => $request->all()
                 ]);
     
@@ -110,7 +131,7 @@ class IRKCeritaKitaGateway extends Controller
     
                 return $this->successRes('Token has removed in Cookie', $result->message, $response->getStatusCode());
             }else{
-                return $this->userChk($request);
+                return $this->userValid($request);
             }
             
         } catch (ClientException | ServerException $e) {
@@ -126,8 +147,8 @@ class IRKCeritaKitaGateway extends Controller
     public function auth(Request $request)
     {
         try {
-            if($this->userChk($request)->message == 'Match'){
-                $response = (new self)->client()->request('POST', 'auth', [
+            if($this->userValid($request)->message == 'Match'){
+                $response = (new self)->client('toverify_infra')->request('POST', 'auth', [
                     'json' => $request->all()
                 ]);
     
@@ -135,7 +156,7 @@ class IRKCeritaKitaGateway extends Controller
     
                 return $this->successRes($result->data, $result->message, $response->getStatusCode());
             }else{
-                return $this->userChk($request);
+                return $this->userValid($request);
             }
             
         } catch (ClientException | ServerException $e) {

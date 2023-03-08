@@ -31,10 +31,10 @@ class IRKCeritaKitaGateway extends Controller
         ], $statusCode);
     }
 
-    public function userChk($data)
+    public function userValid($data)
     {
         if(isset($data->nik)){
-            $raw_token = str_contains($data->cookie('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($data->cookie('Authorization'),6) : 'Authorization=Bearer'.$data->cookie('Authorization');
+            $raw_token = str_contains($data->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->cookie('Authorization-stag');
             $split_token = explode('.', $raw_token);
             $decrypt_token = base64_decode($split_token[1]);
             $escapestring_token = json_decode($decrypt_token);
@@ -49,10 +49,10 @@ class IRKCeritaKitaGateway extends Controller
         }
     }
 
-    public function client()
+    public function client($param)
     {
-        //LOGIN ONLY
-        if (isset($param)) {
+        
+        if ($param == 'infra') {
             return new Client(
                 [
                     'base_uri' => config('app.URL_12_LARAVEL'),
@@ -62,14 +62,35 @@ class IRKCeritaKitaGateway extends Controller
                     ]
                 ]
             );
-        } else {
+        }else if ($param == 'gcp') {
+            return new Client(
+                [
+                    'base_uri' => config('app.URL_GCP_LARAVEL'),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json'
+                    ]
+                ]
+            );
+        }else if ($param == 'toverify_infra') {
             return new Client(
                 [
                     'base_uri' => config('app.URL_12_LARAVEL'),
                     'headers' => [
                         'Accept' => 'application/json',
                         'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                        'Cookie' => 'Authorization-stag=' . FacadesRequest::cookie('Authorization-stag')
+                    ]
+                ]
+            );
+        }else if ($param == 'toverify_gcp') {
+            return new Client(
+                [
+                    'base_uri' => config('app.URL_GCP_LARAVEL'),
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json',
+                        'Cookie' => 'Authorization-stag=' . FacadesRequest::cookie('Authorization-stag')
                     ]
                 ]
             );
@@ -79,14 +100,14 @@ class IRKCeritaKitaGateway extends Controller
     public function signin(Request $request)
     {
         try {
-            $response = (new self)->client('param')->request('POST', 'auth/Stag', [
+            $response = (new self)->client('infra')->request('POST', 'auth/Stag', [
                 'json' => $request->all()
             ]);
 
             $result = json_decode($response->getBody()->getContents());
 
             if (str_contains($result->status,'Success'))
-                return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization', 'Bearer'.$result->token, '120', null, 'api.hrindomaret.com', true, true, false, 'none'));
+                return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization-stag', 'Bearer'.$result->token, '120', null, 'api.hrindomaret.com', true, true, false, 'none'));
             else
                 return $this->errorRes($result->message, $response->getStatusCode());
         } catch (ClientException | ServerException $e) {
@@ -101,8 +122,8 @@ class IRKCeritaKitaGateway extends Controller
     public function signout(Request $request)
     {
         try {
-            if($this->userChk($request)->message == 'Match'){
-                $response = (new self)->client()->request('POST', 'auth/Stag', [
+            if($this->userValid($request)->message == 'Match'){
+                $response = (new self)->client('toverify_infra')->request('POST', 'auth/Stag', [
                     'json' => $request->all()
                 ]);
     
@@ -110,7 +131,7 @@ class IRKCeritaKitaGateway extends Controller
     
                 return $this->successRes('Token has removed in Cookie', $result->message, $response->getStatusCode());
             }else{
-                return $this->userChk($request);
+                return $this->userValid($request);
             }
             
         } catch (ClientException | ServerException $e) {
@@ -126,8 +147,8 @@ class IRKCeritaKitaGateway extends Controller
     public function auth(Request $request)
     {
         try {
-            if($this->userChk($request)->message == 'Match'){
-                $response = (new self)->client()->request('POST', 'auth/Stag', [
+            if($this->userValid($request)->message == 'Match'){
+                $response = (new self)->client('toverify_infra')->request('POST', 'auth/Stag', [
                     'json' => $request->all()
                 ]);
     
@@ -135,7 +156,7 @@ class IRKCeritaKitaGateway extends Controller
     
                 return $this->successRes($result->data, $result->message, $response->getStatusCode());
             }else{
-                return $this->userChk($request);
+                return $this->userValid($request);
             }
             
         } catch (ClientException | ServerException $e) {
