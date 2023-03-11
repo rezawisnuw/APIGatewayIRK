@@ -118,7 +118,9 @@ class IRKCeritaKitaGateway extends Controller
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
-            return $this->errorRes($responseBody->message, $response->getStatusCode());
+
+            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
+            else return $this->errorRes($responseBody->message, $response->getStatusCode());
         } catch (\Throwable $e) {
             return $this->errorRes($e->getMessage());
         }
@@ -146,7 +148,8 @@ class IRKCeritaKitaGateway extends Controller
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
 
-            return $this->errorRes($responseBody->message, $response->getStatusCode());
+            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
+            else return $this->errorRes($responseBody->message, $response->getStatusCode());
         } catch (\Throwable $e) {
             return $this->errorRes($e->getMessage());
         }
@@ -173,7 +176,8 @@ class IRKCeritaKitaGateway extends Controller
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
 
-            return $this->errorRes($responseBody->message, $response->getStatusCode());
+            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
+            else return $this->errorRes($responseBody->message, $response->getStatusCode());
         } catch (\Throwable $e) {
             return $this->errorRes($e->getMessage());
         }
