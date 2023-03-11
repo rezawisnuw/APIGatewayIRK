@@ -1,0 +1,8 @@
+[
+    {
+        "name": "irk-gateway",
+        "ip": "GATEWAY_HOST",
+        "password": "GATEWAY_PASSWORD",
+        "port": "22"
+    }
+]
