@@ -33,13 +33,13 @@ class IRKCeritaKitaGateway extends Controller
 
     public function userValid($data)
     {
-        if(isset($data->nik)){
+        if(isset($data->userid)){
             $raw_token = str_contains($data->cookie('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($data->cookie('Authorization'),6) : 'Authorization=Bearer'.$data->cookie('Authorization');
             $split_token = explode('.', $raw_token);
             $decrypt_token = base64_decode($split_token[1]);
             $escapestring_token = json_decode($decrypt_token);
 
-            if($escapestring_token == $data->nik){    
+            if($escapestring_token == $data->userid){    
                 return $this->successRes(null, 'Match');
             }else{
                 return $this->errorRes('Your data is not verified');
@@ -100,8 +100,10 @@ class IRKCeritaKitaGateway extends Controller
     public function signin(Request $request)
     {
         try {
-            $response = (new self)->client('infra')->request('POST', 'auth', [
-                'json' => $request->all()
+            $response = (new self)->client('gcp')->request('POST', 'auth', [
+                'json'=>[
+                    'data' => $request->all()
+                ]
             ]);
 
             $result = json_decode($response->getBody()->getContents());
@@ -122,9 +124,11 @@ class IRKCeritaKitaGateway extends Controller
     public function signout(Request $request)
     {
         try {
-            if($this->userValid($request)->message == 'Match'){
-                $response = (new self)->client('toverify_infra')->request('POST', 'auth', [
-                    'json' => $request->all()
+            if($this->userValid($request)->getData()->message == 'Match'){
+                $response = (new self)->client('toverify_gcp')->request('POST', 'auth', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
@@ -147,9 +151,11 @@ class IRKCeritaKitaGateway extends Controller
     public function auth(Request $request)
     {
         try {
-            if($this->userValid($request)->message == 'Match'){
-                $response = (new self)->client('toverify_infra')->request('POST', 'auth', [
-                    'json' => $request->all()
+            if($this->userValid($request)->getData()->message == 'Match'){
+                $response = (new self)->client('toverify_gcp')->request('POST', 'auth', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
