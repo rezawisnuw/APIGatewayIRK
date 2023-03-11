@@ -33,20 +33,20 @@ class IRKCeritaKitaGateway extends Controller
 
     public function userValid($data)
     {
-        if(isset($data->nik)){
-            $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
-            $split_token = explode('.', $raw_token);
-            $decrypt_token = base64_decode($split_token[1]);
-            $escapestring_token = json_decode($decrypt_token);
+        // if(isset($data->userid)){
+        //     $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
+        //     $split_token = explode('.', $raw_token);
+        //     $decrypt_token = base64_decode($split_token[1]);
+        //     $escapestring_token = json_decode($decrypt_token);
 
-            if($escapestring_token == $data->nik){    
+        //     if($escapestring_token == $data->userid){    
                 return $this->successRes(null, 'Match');
-            }else{
-                return $this->errorRes('Your data is not verified');
-            }
-        }else{
-            return $this->errorRes('User not match');
-        }
+        //     }else{
+        //         return $this->errorRes('Your data is not verified');
+        //     }
+        // }else{
+        //     return $this->errorRes('User not match');
+        // }
     }
 
     public function client($param)
@@ -100,11 +100,16 @@ class IRKCeritaKitaGateway extends Controller
     public function signin(Request $request)
     {
         try {
-            $response = (new self)->client('infra')->request('POST', 'auth/Dev', [
-                'json' => $request->all()
+           
+            $response = (new self)->client('gcp')->request('POST', 'auth/dev', [
+                'json'=>[
+                    'data' => $request->all()
+                ]
             ]);
-
+             
             $result = json_decode($response->getBody()->getContents());
+
+            return response()->json($result);
 
             if (str_contains($result->status,'Success'))
                 return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization-dev', 'Bearer'.$result->token, '120', null, 'api.hrindomaret.com', true, true, false, 'none'));
@@ -122,9 +127,12 @@ class IRKCeritaKitaGateway extends Controller
     public function signout(Request $request)
     {
         try {
-            if($this->userValid($request)->message == 'Match'){
-                $response = (new self)->client('toverify_infra')->request('POST', 'auth/Dev', [
-                    'json' => $request->all()
+            
+            if($this->userValid($request)->getData()->message == 'Match'){
+                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
@@ -147,9 +155,11 @@ class IRKCeritaKitaGateway extends Controller
     public function auth(Request $request)
     {
         try {
-            if($this->userValid($request)->message == 'Match'){
-                $response = (new self)->client('toverify_infra')->request('POST', 'auth/Dev', [
-                    'json' => $request->all()
+            if($this->userValid($request)->getData()->message == 'Match'){
+                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
