@@ -56,5 +56,4 @@ jobs:
           password: ${{ secrets[matrix.server.password] }}
           script: |
             cd /var/www/APIGatewayIRK
-            git fetch origin main
             git pull origin main
