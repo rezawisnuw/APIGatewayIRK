@@ -33,20 +33,20 @@ class IRKCeritaKitaGateway extends Controller
 
     public function userValid($data)
     {
-        if(isset($data->userid)){
-            $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
-            $split_token = explode('.', $raw_token);
-            $decrypt_token = base64_decode($split_token[1]);
-            $escapestring_token = json_decode($decrypt_token);
+        // if(isset($data->userid)){
+        //     $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
+        //     $split_token = explode('.', $raw_token);
+        //     $decrypt_token = base64_decode($split_token[1]);
+        //     $escapestring_token = json_decode($decrypt_token);
 
-            if($escapestring_token == $data->userid){    
-                return $this->successRes(null, 'Match');
-            }else{
-                return $this->errorRes('Your data is not verified');
-            }
-        }else{
-            return $this->errorRes('User not match');
-        }
+        //     if($escapestring_token == $data->userid){    
+        //         return $this->successRes(null, 'Match');
+        //     }else{
+        //         return $this->errorRes('Your data is not verified');
+        //     }
+        // }else{
+        //     return $this->errorRes('User not match');
+        // }
     }
 
     public function client($param)

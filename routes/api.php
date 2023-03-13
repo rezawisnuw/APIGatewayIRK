@@ -58,14 +58,14 @@ Route::group(['middleware' => ['cors']], function () {
     //CeritaKita Endpoint
 	Route::group(['prefix' => 'ceritakita'], function () {
 
-		//dEV
+		//DEV
 		Route::post('signin/dev', [Dev\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifydev']], function () {
 			Route::post('auth/dev', [Dev\IRKCeritaKitaGateway::class, 'auth']);
 			Route::post('signout/dev', [Dev\IRKCeritaKitaGateway::class, 'signout']);
 		});
 
-		//sTAG
+		//STAG
 		Route::post('signin/stag', [Stag\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifystag']], function () {
 			Route::post('auth/stag', [Stag\IRKCeritaKitaGateway::class, 'auth']);
