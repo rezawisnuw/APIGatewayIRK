@@ -44,10 +44,10 @@ jobs:
       matrix:
         server: ${{ fromJson(needs.export-deployment-matrix.outputs.deployment-matrix) }}
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: "Deploy to Production Environment"
-        if: github.ref == 'refs/heads/reza'
+        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets[matrix.server.ip] }}
