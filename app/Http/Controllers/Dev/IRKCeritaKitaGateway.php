@@ -40,7 +40,7 @@ class IRKCeritaKitaGateway extends Controller
         //     $escapestring_token = json_decode($decrypt_token);
 
         //     if($escapestring_token == $data->userid){    
-        //         return $this->successRes(null, 'Match');
+                return $this->successRes(null, 'Match');
         //     }else{
         //         return $this->errorRes('Your data is not verified');
         //     }
