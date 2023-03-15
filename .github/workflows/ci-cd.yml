@@ -38,8 +38,8 @@ jobs:
           JSON="${JSON//$'\r'/'%0D'}"
           echo "::set-output name=deployment-matrix::$JSON"
   deploy:
-    name: "${{ matrix.server.name }}: Deploy"
-    needs: [tests, export-deployment-matrix]
+    name: "${{ secrets.GATEWAY_NAME }}: Deploy"
+    needs: [export-deployment-matrix]
     strategy:
       matrix:
         server: ${{ fromJson(needs.export-deployment-matrix.outputs.deployment-matrix) }}
@@ -50,10 +50,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets[matrix.server.ip] }}
+          host: ${{ secrets.GATEWAY_HOST }}
           username: ${{ secrets.GATEWAY_USERNAME }}
-          port: ${{ matrix.server.port }}
-          password: ${{ secrets[matrix.server.password] }}
+          port: ${{ secrets.GATEWAY_PORT }}
+          password: ${{ secrets.GATEWAY_PASSWORD }}
           script: |
             cd /var/www/APIGatewayIRK
             git fetch origin main
