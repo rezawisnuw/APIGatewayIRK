@@ -8,7 +8,7 @@ on:
     
 jobs:
   build:
-    name: "${{ secrets.GATEWAY_NAME }}: Deploy"
+    name: ${{ secrets.GATEWAY_NAME }}
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Production
