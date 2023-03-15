@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.1"
           tools: composer:v2
 
       - name: Copy env.php
@@ -38,7 +38,7 @@ jobs:
           JSON="${JSON//$'\r'/'%0D'}"
           echo "::set-output name=deployment-matrix::$JSON"
   deploy:
-    name: "${{ secrets.GATEWAY_NAME }}: Deploy"
+    name: "${{ matrix.server.name }}: Deploy"
     needs: [tests, export-deployment-matrix]
     strategy:
       matrix:
@@ -50,10 +50,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.GATEWAY_HOST }}
+          host: ${{ matrix.server.ip }}
           username: ${{ secrets.GATEWAY_USERNAME }}
-          port: ${{ secrets.GATEWAY_PORT }}
-          password: ${{ secrets.GATEWAY_PASSWORD }}
+          port: ${{ matrix.server.port }}
+          password: ${{ matrix.server.password }}
           script: |
             cd /var/www/APIGatewayIRK
             git fetch origin main
