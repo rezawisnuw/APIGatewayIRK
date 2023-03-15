@@ -7,53 +7,30 @@ on:
     branches: [main, reza]
     
 jobs:
-  tests:
+  build:
+    name: Check Code Setup
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.1"
           tools: composer:v2
-
-      - name: Copy env.php
-        run: php -r "file_exists('env.php') || copy('env.php.example', 'env.php');"
-
-  export-deployment-matrix:
-    runs-on: ubuntu-latest
-    outputs:
-      deployment-matrix: ${{ steps.export-deployment-matrix.outputs.deployment-matrix }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: "Export Deployment Matrix"
-        id: export-deployment-matrix
+      - name: Copy env
         run: |
-          JSON="$(cat ./.github/workflows/ci-cd.json)"
-          JSON="${JSON//'%'/'%25'}"
-          JSON="${JSON//$'\n'/'%0A'}"
-          JSON="${JSON//$'\r'/'%0D'}"
-          echo "::set-output name=deployment-matrix::$JSON"
-  deploy:
-    name: "${{ matrix.server.name }}: Deploy"
-    needs: [tests, export-deployment-matrix]
-    strategy:
-      matrix:
-        server: ${{ fromJson(needs.export-deployment-matrix.outputs.deployment-matrix) }}
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
-    steps:
-      - name: "Deploy to Production Environment"
+          cp .env ./var/www/APIGatewayIRK
+      if: ${{ github.event_name == 'push' }}
+      steps:
+      - name: Deploy to ${{ secrets.GATEWAY_NAME }}
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets[matrix.server.ip] }}
+          host: ${{ secrets.GATEWAY_HOST }}
           username: ${{ secrets.GATEWAY_USERNAME }}
-          port: ${{ matrix.server.port }}
-          password: ${{ secrets[matrix.server.password] }}
+          port: ${{ secrets.GATEWAY_PORT }}
+          password: ${{ secrets.GATEWAY_PASSWORD }}
           script: |
             cd /var/www/APIGatewayIRK
             git fetch origin main
