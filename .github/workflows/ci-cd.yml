@@ -18,9 +18,7 @@ jobs:
         with:
           php-version: "8.1"
           tools: composer:v2
-      - name: Copy env
-        run: |
-          cp .env ./var/www/APIGatewayIRK
+     
       if: ${{ github.event_name == 'push' }}
       steps:
       - name: Deploy to ${{ secrets.GATEWAY_NAME }}
