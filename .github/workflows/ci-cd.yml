@@ -10,7 +10,7 @@ jobs:
   build:
     name: "${{ secrets.GATEWAY_NAME }}: Deploy"
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Deploy to Production
         uses: appleboy/ssh-action@master
         with:
