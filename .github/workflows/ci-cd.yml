@@ -50,10 +50,10 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.GATEWAY_HOST }}
+          host: ${{ secrets[matrix.server.ip] }}
           username: ${{ secrets.GATEWAY_USERNAME }}
-          port: ${{ secrets.GATEWAY_PORT }}
-          password: ${{ secrets[GATEWAY_PASSWORD] }}
+          port: ${{ matrix.server.port }}
+          password: ${{ secrets[matrix.server.password] }}
           script: |
             cd /var/www/APIGatewayIRK
             git fetch origin main
