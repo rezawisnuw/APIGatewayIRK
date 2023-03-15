@@ -7,32 +7,11 @@ on:
     branches: [main, reza]
     
 jobs:
-  tests:
-    name: Check Code Setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.1"
-          tools: composer:v2
-  copy-env:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Copy env
-        run: |
-          cp .env ./var/www/APIGatewayIRK
-  deploy:
+  build:
     name: "${{ secrets.GATEWAY_NAME }}: Deploy"
-    needs: [tests, copy-env]
     runs-on: ubuntu-latest
       steps:
       - name: Deploy to Production
-        if: github.ref == 'refs/heads/main'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.GATEWAY_HOST }}
