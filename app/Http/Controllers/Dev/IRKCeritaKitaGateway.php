@@ -32,7 +32,7 @@ class IRKCeritaKitaGateway extends Controller
     }
 
     public function userValid($data)
-    { 
+    { //heeeeeelllppp ci cd
         if(isset($data->userid)){
             $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
             $split_token = explode('.', $raw_token);
