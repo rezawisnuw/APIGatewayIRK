@@ -91,7 +91,7 @@ class UtilityGateway extends Controller
 			$client = new \GuzzleHttp\Client();
 			$filefisik = ($request->has('filefisik') && $request->filefisik != '') ? $request->file('filefisik') : '';
 
-			$response = $client->request('POST', "http://".config('app.URL_14_WCF')."/RESTSecurityDev/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
+			$response = $client->request('POST', "http://".config('app.URL_14_WCF')."/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
 
 				'multipart' => [
 					[
@@ -158,7 +158,7 @@ class UtilityGateway extends Controller
             );
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_14_WCF')."/RESTSecurityDev/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_14_WCF')."/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
@@ -183,7 +183,7 @@ class UtilityGateway extends Controller
 
 				$client = new Client();
 				$response = $client->post(
-					'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+					'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
 					[
 						RequestOptions::JSON =>
 						['filePath' => $postbody['filePath']]
@@ -209,7 +209,7 @@ class UtilityGateway extends Controller
 
 				$client = new Client();
 				$response = $client->post(
-					'http://'.config('app.URL_14_WCF').'/RESTSecurityDev/RESTSecurity.svc/IDM/Firebase',
+					'http://'.config('app.URL_14_WCF').'/RESTSecurity.svc/IDM/Firebase',
 					[
 						RequestOptions::JSON =>
 						['param' => $postbody]

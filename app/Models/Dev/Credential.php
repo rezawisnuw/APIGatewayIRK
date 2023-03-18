@@ -17,7 +17,7 @@ class Credential extends Model
         $client = new Client();
 
 		$response = $client->post(
-                'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/Decode',
+                'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/Decode',
                 [
                     RequestOptions::JSON => 
                     ['token'=>$token]
@@ -35,7 +35,7 @@ class Credential extends Model
         $client = new Client();
         
 		$response = $client->post(
-                'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/LoginESSV2',
+                'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/LoginESSV2',
                 //'http://'.config('app.URL_INFRA_LB').':8043/RESTSecurity.svc/LoginESSV2',
                 [
                     RequestOptions::JSON => 
@@ -69,7 +69,7 @@ class Credential extends Model
 		$client = new Client(); 
 
         $response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/GetTokenFor',
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/GetTokenFor',
             [
                 RequestOptions::JSON => 
                 ['nik' => $nik]
@@ -86,7 +86,7 @@ class Credential extends Model
     {
         $client = new Client();
 		$response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityDev/RESTSecurity.svc/Decode',
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/Decode',
             [
                 RequestOptions::JSON => 
                 ['token'=>$token]
