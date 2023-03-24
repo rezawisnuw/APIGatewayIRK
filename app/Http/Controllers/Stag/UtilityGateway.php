@@ -34,7 +34,7 @@ class UtilityGateway extends Controller
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'code' => 400]);
         }
     }
 
@@ -52,7 +52,7 @@ class UtilityGateway extends Controller
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'code' => 400]);
         }
     }
 
@@ -80,7 +80,7 @@ class UtilityGateway extends Controller
 				'result'  => '',
 				'message' => 'Gagal Upload !',
 				'status' => '0',
-				'Code' => 400]
+				'code' => 400]
 			);
         }else{
 
@@ -110,7 +110,7 @@ class UtilityGateway extends Controller
 					'result'  => ''.$namaFile.' gagal diupload',
 					'message' => $result,
 					'status' => '0',
-					'Code' => 400]
+					'code' => 400]
 				);
 				
 			} else {
@@ -118,7 +118,7 @@ class UtilityGateway extends Controller
 					'result'  => ''.$namaFile.' sukses diupload',
 					'message' => $result,
 					'status' => '1',
-					'Code' => 200]
+					'code' => 200]
 				);
 			}
 
@@ -149,7 +149,7 @@ class UtilityGateway extends Controller
 				'result'  => '',
 				'message' => 'Gagal Upload !',
 				'status' => '0',
-				'Code' => 400]
+				'code' => 400]
 			);
         }else{
 
@@ -169,7 +169,7 @@ class UtilityGateway extends Controller
 				'result'  => ''.$namaFile.' sukses diupload',
 				'message' => 'Berhasil Upload !',
 				'status' => '1',
-				'Code' => 200]
+				'code' => 200]
 			);
 
         }
@@ -225,7 +225,7 @@ class UtilityGateway extends Controller
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'code' => 400]);
         }
     }
 }

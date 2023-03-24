@@ -49,9 +49,9 @@ class Credential extends Model
 
 		if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
             $token = Credential::GetTokenAuth($postbody['nik']);
-			return ['wcf' => ['result' => 'Success' , 'message' => 'Berhasil Login', 'status' => '1', 'Code' => 200], 'token' => $token['GetTokenForResult'] ];
+			return ['wcf' => ['result' => 'Success' , 'message' => 'Berhasil Login', 'status' => '1', 'code' => 200], 'token' => $token['GetTokenForResult'] ];
         }
-        return ['wcf' => ['result' => $result, 'message' => 'Gagal Login', 'status' => '0', 'Code' => 200]];
+        return ['wcf' => ['result' => $result, 'message' => 'Gagal Login', 'status' => '0', 'code' => 200]];
     }
 
     public static function Logout($postbody)
@@ -59,9 +59,9 @@ class Credential extends Model
         $token = Credential::GetTokenAuth($postbody['nik']);
         
         if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
-            return ['result' => 'Unauthorized request !!!', 'message' => 'Failed', 'status' => '0', 'Code' => 400];
+            return ['result' => 'Unauthorized request !!!', 'message' => 'Failed', 'status' => '0', 'code' => 400];
         else 
-            return ['result' => $postbody['nik'].' has beer revoked', 'message' => 'Berhasil Logout', 'status' => '1', 'Code' => 200];
+            return ['result' => $postbody['nik'].' has beer revoked', 'message' => 'Berhasil Logout', 'status' => '1', 'code' => 200];
     }
 
     public static function GetTokenAuth(string $nik)
