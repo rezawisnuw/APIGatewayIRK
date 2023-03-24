@@ -68,7 +68,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://irkgateway'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL'),
 
