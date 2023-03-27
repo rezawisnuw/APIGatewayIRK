@@ -28,13 +28,13 @@ class UtilityGateway extends Controller
 
 				$result = Credential::Login($postbody);
 				if($result['wcf']['status'] == '1') return response()->json($result['wcf'])->withCookie(cookie('Authorization', 'Bearer'.$result['token'], '120'));
-				else return response()->json($result['wcf']);
+				else return response()->json($result['wcf'], 400);
 			} else {
-				return response()->json(['result' => 'Process Not Found !!','message' => 'Gagal Login', 'status' => '0']);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Login', 'status' => '0'], 400);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0'], $th->getCode());
         }
     }
 
@@ -45,13 +45,14 @@ class UtilityGateway extends Controller
 			if (count($request->json()->all())) {
 				$postbody = $request->json(['data']);
 				$result = Credential::Logout($postbody);
-				return response()->json($result);
+				if($result['status'] == '1') return response()->json($result);
+				else return response()->json($result, 400);
 			} else {
-				return response()->json(['result' => 'Process Not Found !!!!','message' => 'Gagal Logout', 'status' => '0']);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Logout', 'status' => '0'], 400);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0'], $th->getCode());
         }
     }
 
@@ -76,10 +77,10 @@ class UtilityGateway extends Controller
         if ($validator->fails())
         {
             return response()->json([
-				'result'  => '',
+				'result'  => 'File Rusak dari awal sebelum diuplaod, mohon cek ulang file tersebut !!',
+				'data' => null,
 				'message' => 'Gagal Upload !',
-				'status' => '0',
-				'Code' => 400]
+				'status' => '0'], 400
 			);
         }else{
 
@@ -106,46 +107,96 @@ class UtilityGateway extends Controller
 
 			if(str_contains($result, 'Gagal')) {
 				return response()->json([
-					'result'  => ''.$namaFile.' gagal diupload',
-					'message' => $result,
-					'status' => '0',
-					'Code' => 400]
+					'result'  => $result,
+					'data' => null,
+					'message' => ''.$namaFile.' gagal diupload',
+					'status' => '0'], 400
 				);
 				
 			} else {
 				return response()->json([
-					'result'  => ''.$namaFile.' sukses diupload',
-					'message' => $result,
-					'status' => '1',
-					'Code' => 200]
+					'result'  => $result,
+					'data' => ''.$namaFile.' sukses diupload',
+					'message' => 'Success on Run',
+					'status' => '1']
 				);
 			}
 
         }
     }
 
+	public function UploadBlob(Request $request) {
+		$filePath = $request->input('filepath');
+		$namaFile = $request->input('namafile');
+		$file = $request->filefisik;
+		$extension = $file->extension();
+        $mime = $file->getClientMimeType();
+        $result = "";
+        $postbody='';
+        $code =  0;
+
+		$filetypearray = array('image' => $file);
+
+		$rules = array(
+			'image' => 'mimes:jpeg,jpg,png|required|max:500' // max 1MB
+		);
+
+		$validator = Validator::make($filetypearray, $rules);
+
+        if ($validator->fails())
+        {
+            return response()->json([
+				'result'  => 'Validator failed',
+				'data' => null,
+				'message' => 'Gagal Upload !',
+				'status' => '0'], 400
+			);
+        }else{
+
+            $filedata = array(
+                'stream' => curl_file_create($filePath,$mime,$namaFile),
+            );
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_14_WCF')."/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
+
+            $result = curl_exec($ch);
+
+			return response()->json([
+				'result'  => $result,
+				'data' => ''.$namaFile.' sukses diupload',
+				'message' => 'Success on Run',
+				'status' => '1']
+			);
+
+        }
+    }
+
     public function DownloadFile93(Request $request) {
 		if (count($request->json()->all())) {
-				$postbody = $request->json(['data']);
+			$postbody = $request->json(['data']);
 
-				$result = '';
+			$result = '';
 
-				$client = new Client();
-				$response = $client->post(
-					'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
-					[
-						RequestOptions::JSON =>
-						['filePath' => $postbody['filePath']]
-					],
-					['Content-Type' => 'application/json']
-				);
-				$body = $response->getBody();
-				$temp = json_decode($body);
-				$result = json_decode($temp->DownloadFileDariInfraKe93Result);
-				return response()->json(json_decode($result));
-			} else {
-				return response()->json(['result' => 'Process Not Found !!!!','message' => 'Gagal Mengambil data', 'status' => '0']);
-			}
+			$client = new Client();
+			$response = $client->post(
+				'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+				[
+					RequestOptions::JSON =>
+					['filePath' => $postbody['filePath']]
+				],
+				['Content-Type' => 'application/json']
+			);
+			$body = $response->getBody();
+			$temp = json_decode($body);
+			$result = json_decode($temp->DownloadFileDariInfraKe93Result);
+			return response()->json(['result' => json_decode($result), 'data' => 'Success on Run', 'message' => 'Berhasil Download data', 'status' => '1']);
+		} else {
+			return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => '0'], 400);
+		}
 
     }
 
@@ -168,13 +219,13 @@ class UtilityGateway extends Controller
 				$body = $response->getBody();
 				$temp = json_decode($body);
 				$result = json_decode($temp->FirebaseResult);
-				return response()->json($result);
+				return response()->json(['result' => $result, 'data' => 'Success on Run', 'message' => 'Berhasil Mengambil data', 'status' => '1']);
 			} else {
-				return response()->json(['result' => 'Process Not Found !!','message' => 'Gagal Mengambil data', 'status' => '0']);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => '0'], 400);
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['result' => '','message' => 'Process Not Found !!!', 'status' => '0', 'Code' => 400]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0'], $th->getCode());
         }
     }
 }

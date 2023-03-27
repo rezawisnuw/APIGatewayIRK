@@ -16,18 +16,20 @@ class IRKCeritaKitaGateway extends Controller
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
         return response()->json([
-            'result' => 1,
+            'result' => $message,
             'data' => $data,
-            'message' => $message
+            'message' => 'Success on Run',
+            'status' => 1
         ], $statusCode);
     }
 
     public function errorRes($message, $statusCode = Response::HTTP_BAD_REQUEST)
     {
         return response()->json([
-            'result' => 0,
+            'result' => $message,
             'data' => null,
-            'message' => $message,
+            'message' => 'Error in Catch',
+            'status' => 0
         ], $statusCode);
     }
 
@@ -111,7 +113,12 @@ class IRKCeritaKitaGateway extends Controller
             if (str_contains($result->status,'Success'))
                 return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization-stag', 'Bearer'.$result->token, '120', null, 'api.hrindomaret.com', true, true, false, 'none'));
             else
-                return $this->errorRes($result->message, $response->getStatusCode());
+                return response()->json([
+                    'result' => $result->message,
+                    'data' => null,
+                    'message' => $result->status,
+                    'status' => 0
+                ], $response->getStatusCode());
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
