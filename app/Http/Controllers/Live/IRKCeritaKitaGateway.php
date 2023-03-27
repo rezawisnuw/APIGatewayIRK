@@ -112,16 +112,26 @@ class IRKCeritaKitaGateway extends Controller
 
             $result = json_decode($response->getBody()->getContents());
 
-            if (str_contains($result->status,'Success'))
-                return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization', 'Bearer'.$result->token, '120', null, 'api.hrindomaret.com', true, true, false, 'none'));
-            else
+            if($result != null){
+                if (str_contains($result->status,'Success'))
+                    return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization', 'Bearer'.$result->token, '120'));
+                else
+                    return response()->json([
+                        'result' => $result->message,
+                        'data' => null,
+                        'message' => $result->status,
+                        'status' => 0,
+                        'statuscode' => $response->getStatusCode()
+                    ]);
+            }else{
                 return response()->json([
-                    'result' => $result->message,
-                    'data' => null,
-                    'message' => $result->status,
+                    'result' => null,
+                    'data' => $result,
+                    'message' => 'Data Kosong',
                     'status' => 0,
                     'statuscode' => $response->getStatusCode()
                 ]);
+            }
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
