@@ -19,8 +19,9 @@ class IRKCeritaKitaGateway extends Controller
             'result' => $message,
             'data' => $data,
             'message' => 'Success on Run',
-            'status' => 1
-        ], $statusCode);
+            'status' => 1,
+            'statuscode' => $statusCode
+        ]);
     }
 
     public function errorRes($message, $statusCode = Response::HTTP_BAD_REQUEST)
@@ -29,8 +30,9 @@ class IRKCeritaKitaGateway extends Controller
             'result' => $message,
             'data' => null,
             'message' => 'Error in Catch',
-            'status' => 0
-        ], $statusCode);
+            'status' => 0,
+            'statuscode' => $statusCode
+        ]);
     }
 
     public function userValid($data)
@@ -117,8 +119,9 @@ class IRKCeritaKitaGateway extends Controller
                     'result' => $result->message,
                     'data' => null,
                     'message' => $result->status,
-                    'status' => 0
-                ], $response->getStatusCode());
+                    'status' => 0,
+                    'statuscode' => $response->getStatusCode()
+                ]);
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
             $responseBody = json_decode((string) $response->getBody());
