@@ -17,7 +17,7 @@ class Credential extends Model
         $client = new Client();
 
 		$response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityStag/RESTSecurity.svc/DecodeTokenStag',
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/DecodeTokenStag',
             [
                 RequestOptions::JSON => 
                 ['token'=>$token]
@@ -36,7 +36,7 @@ class Credential extends Model
         $client = new Client();
         
 		$response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityStag/RESTSecurity.svc/LoginESSV2',
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/LoginESSV2',
             [
                 RequestOptions::JSON => 
                 ['user'=>$postbody]
@@ -50,9 +50,9 @@ class Credential extends Model
 
 		if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
             $token = Credential::GetTokenAuth($postbody['nik']);
-			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Berhasil Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
+			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
         }
-        return ['wcf' => ['result' => $result, 'data' => null, 'message' => 'Gagal Login', 'status' => '0', 'statuscode' => 400]];
+        return ['wcf' => ['result' => $result, 'data' => null, 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
     }
 
     public static function Logout($postbody)
@@ -60,9 +60,9 @@ class Credential extends Model
         $token = Credential::GetTokenAuth($postbody['nik']);
 
         if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
-            return ['result' => 'Unauthorized request !!!', 'data' => null, 'message' => 'Failed', 'status' => '0', 'statuscode' => 400];
+            return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
         else 
-            return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Berhasil Logout', 'status' => '1', 'statuscode' => 200];
+            return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
     }
 
     public static function GetTokenAuth(string $nik)
@@ -70,7 +70,7 @@ class Credential extends Model
 		$client = new Client(); 
 
         $response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityStag/RESTSecurity.svc/GetTokenForStag',				
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/GetTokenForStag',				
             [
                 RequestOptions::JSON => 
                 ['nik' => $nik]
@@ -88,7 +88,7 @@ class Credential extends Model
         $client = new Client();
 
 		$response = $client->post(
-            'http://'.config('app.URL_12_WCF').'/RESTSecurityStag/RESTSecurity.svc/DecodeTokenStag',
+            'http://'.config('app.URL_12_WCF').'/RESTSecurity.svc/DecodeTokenStag',
             [
                 RequestOptions::JSON => 
                 ['token'=>$token]

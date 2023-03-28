@@ -38,7 +38,12 @@ class IRKCeritaKitaGateway extends Controller
     public function userValid($data)
     {
         if(isset($data->userid)){
-            $raw_token = str_contains($data->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->cookie('Authorization-stag');
+            if(env('APP_ENV') == 'local'){
+                $raw_token = str_contains($data->header('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->header('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->header('Authorization-stag');
+            }else{
+                $raw_token = str_contains($data->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->cookie('Authorization-stag');
+            }
+
             $split_token = explode('.', $raw_token);
             $decrypt_token = base64_decode($split_token[1]);
             $escapestring_token = json_decode($decrypt_token);

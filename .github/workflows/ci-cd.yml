@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.1"
+          php-version: "8.2"
           tools: composer:v2
 
       - name: Copy env.php
@@ -56,8 +56,11 @@ jobs:
           password: ${{ secrets[matrix.server.password] }}
           script: |
             cd /var/www/APIGatewayIRK
+            git add .
+            git commit -m "update"
             git fetch origin main
-            git pull --no-ff origin main
-            php artisan cache:clear
+            git pull origin main
+            sudo php artisan cache:clear
             php artisan config:cache
+            php artisan config:clear
             php artisan route:clear
