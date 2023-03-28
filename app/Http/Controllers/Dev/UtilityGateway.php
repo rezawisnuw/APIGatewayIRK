@@ -32,7 +32,7 @@ class UtilityGateway extends Controller
 					if(env('APP_ENV') == 'local'){
 						$request->headers->set('Authorization-dev','Bearer'.$result['token']);
 					} else{
-						$result['wcf']->withCookie(cookie('Authorization-dev', 'Bearer'.$result['token'], '120'));
+						$request->cookie('Authorization-dev', 'Bearer'.$result['token'], '120');
 					}
 					$param['param'] = ['code' => 1,'nik' => $request['data']['nik']];
 					return response()->json($this->WorkerESS($request, $param));
