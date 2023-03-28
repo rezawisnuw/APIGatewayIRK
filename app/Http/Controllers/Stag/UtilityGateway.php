@@ -27,10 +27,21 @@ class UtilityGateway extends Controller
 				$postbody = $request->json(['data']);
 
 				$result = Credential::Login($postbody);
-				if($result['wcf']['status'] == '1') return response()->json($result['wcf'])->withCookie(cookie('Authorization-stag', 'Bearer'.$result['token'], '120'));
-				else return response()->json($result['wcf'], 400);
+
+				if($result['wcf']['status'] == '1') {
+					if(env('APP_ENV') == 'local'){
+						$request->headers->set('Authorization-stag','Bearer'.$result['token']);
+					} else{
+						$result['wcf']->withCookie(cookie('Authorization-stag', 'Bearer'.$result['token'], '120'));
+					}
+					$param['param'] = ['code' => 1,'nik' => $request['data']['nik']];
+					return response()->json($this->WorkerESS($request, $param));
+				} else {
+					return response()->json($result['wcf']);
+				}
+				
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Login', 'status' => '0', 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
@@ -49,7 +60,7 @@ class UtilityGateway extends Controller
 				if($result['status'] == '1') return response()->json($result);
 				else return response()->json($result, 400);
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Logout', 'status' => '0', 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Logout', 'status' => '0', 'statuscode' => 400]);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
@@ -238,6 +249,70 @@ class UtilityGateway extends Controller
         } catch (\Throwable $th) {
             return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0', 'statuscode' => $th->getCode()]);
         }
+    }
+
+	public static function WorkerESS(Request $request, $param){
+		if(env('APP_ENV') == 'local'){
+			$raw_token = str_contains($request->header('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->header('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->header('Authorization-stag');
+		} else{
+			$raw_token = str_contains($request->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->cookie('Authorization-stag');
+		}
+
+		$split_token = explode('.', $raw_token);
+		$decrypt_token = base64_decode($split_token[1]);
+		$escapestring_token = json_decode($decrypt_token);
+
+		if(!isset($request['data']['code']) && $param != null){
+			
+			if($escapestring_token == $param['param']['nik']){ 
+				try {
+					$client = new Client(); 
+					$response = $client->post(
+						'http://'.config('app.URL_14_WCF').'/RESTSecurity.svc/IDM/Worker',
+						[
+							RequestOptions::JSON => 
+							['param' => $param['param']]
+						],
+						['Content-Type' => 'application/json']
+					);
+					$body = $response->getBody();
+					$temp = json_decode($body);
+					$result = json_decode($temp->WorkerResult);
+					return $result[0];
+				} catch (\Throwable $th) {
+					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
+				}
+
+			} else {
+				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+			}
+
+		} 
+		else {
+
+			if($escapestring_token == $request['data']['find']){ 
+				try {
+					$client = new Client(); 
+					$response = $client->post(
+						'http://'.config('app.URL_14_WCF').'/RESTSecurity.svc/IDM/Worker',
+						[
+							RequestOptions::JSON => 
+							['param' => $request['data']]
+						],
+						['Content-Type' => 'application/json']
+					);
+					$body = $response->getBody();
+					$temp = json_decode($body);
+					$result = json_decode($temp->WorkerResult);
+					return $result[0];
+				} catch (\Throwable $th) {
+					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
+				}
+			} else {
+				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+			}
+
+		}  
     }
 }
 
