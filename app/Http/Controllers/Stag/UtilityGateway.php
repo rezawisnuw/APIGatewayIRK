@@ -29,13 +29,16 @@ class UtilityGateway extends Controller
 				$result = Credential::Login($postbody);
 
 				if($result['wcf']['status'] == '1') {
+					$param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 					if(env('APP_ENV') == 'local'){
-						$request->headers->set('Authorization-stag','Bearer'.$result['token']);
+						return response()
+						->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						->header('Authorization-stag','Bearer'.$result['token'])->send();
 					} else{
-						$request->cookie('Authorization-stag', 'Bearer'.$result['token'], '120');
+						return response()
+						->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						->withCookie(cookie('Authorization-stag', 'Bearer'.$result['token'], '120'));
 					}
-					$param['param'] = ['code' => 1,'nik' => $request['data']['nik']];
-					return response()->json($this->WorkerESS($request, $param));
 				} else {
 					return response()->json($result['wcf']);
 				}
@@ -252,17 +255,13 @@ class UtilityGateway extends Controller
     }
 
 	public static function WorkerESS(Request $request, $param){
-		if(env('APP_ENV') == 'local'){
-			$raw_token = str_contains($request->header('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->header('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->header('Authorization-stag');
-		} else{
-			$raw_token = str_contains($request->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->cookie('Authorization-stag');
-		}
-
-		$split_token = explode('.', $raw_token);
-		$decrypt_token = base64_decode($split_token[1]);
-		$escapestring_token = json_decode($decrypt_token);
 
 		if(!isset($request['data']['code']) && $param != null){
+
+			$raw_token = $param['param']['token'];
+			$split_token = explode('.', $raw_token);
+			$decrypt_token = base64_decode($split_token[1]);
+			$escapestring_token = json_decode($decrypt_token);
 			
 			if($escapestring_token == $param['param']['nik']){ 
 				try {
@@ -289,7 +288,16 @@ class UtilityGateway extends Controller
 
 		} 
 		else {
-
+			if(env('APP_ENV') == 'local'){
+				$raw_token = str_contains($request->header('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->header('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->header('Authorization-stag');
+			} else{
+				$raw_token = str_contains($request->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($request->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$request->cookie('Authorization-stag');
+			}
+	
+			$split_token = explode('.', $raw_token);
+			$decrypt_token = base64_decode($split_token[1]);
+			$escapestring_token = json_decode($decrypt_token);
+			
 			if($escapestring_token == $request['data']['find']){ 
 				try {
 					$client = new Client(); 
