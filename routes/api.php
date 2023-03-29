@@ -53,7 +53,7 @@ Route::group(['middleware' => 'cors'], function () {
 });
 
 //IRK Endpoint
-Route::group(['middleware' => ['cors']], function () {
+Route::group(['prefix' => 'irk', 'middleware' => ['cors']], function () {
 
     //CeritaKita Endpoint
 	Route::group(['prefix' => 'ceritakita'], function () {
@@ -79,6 +79,35 @@ Route::group(['middleware' => ['cors']], function () {
 			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
 			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
 
+		});
+	
+	});
+
+	//Motivasi Endpoint
+	Route::group(['prefix' => 'motivasi'], function () {
+
+		//DEV
+		Route::group(['middleware' => ['tokenverifydev']], function () {
+			Route::post('get/dev', [Dev\IRKMotivasiGateway::class, 'get']);
+			Route::post('post/dev', [Dev\IRKMotivasiGateway::class, 'post']);
+			Route::post('put/dev', [Dev\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete/dev', [Dev\IRKMotivasiGateway::class, 'delete']);
+		});
+
+		//STAG
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get/stag', [Stag\IRKMotivasiGateway::class, 'get']);
+			Route::post('post/stag', [Stag\IRKMotivasiGateway::class, 'post']);
+			Route::post('put/stag', [Stag\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete/stag', [Stag\IRKMotivasiGateway::class, 'delete']);
+		});
+
+		//LIVE
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKMotivasiGateway::class, 'get']);
+			Route::post('post', [Live\IRKMotivasiGateway::class, 'post']);
+			Route::post('put', [Live\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete', [Live\IRKMotivasiGateway::class, 'delete']);
 		});
 	
 	});

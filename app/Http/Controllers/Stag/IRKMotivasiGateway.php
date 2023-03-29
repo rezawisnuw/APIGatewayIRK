@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dev;
+namespace App\Http\Controllers\Stag;
 
 use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\ClientException;
@@ -11,7 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Maatwebsite\Excel\Facades\Excel;
 
-class IRKCeritaKitaGateway extends Controller
+class IRKMotivasiGateway extends Controller
 {
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
@@ -39,15 +39,15 @@ class IRKCeritaKitaGateway extends Controller
     { 
         if(isset($data->all()['userid'])){
             if(env('APP_ENV') == 'local'){
-                $raw_token = str_contains($data->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->header('Authorization-dev');
+                $raw_token = str_contains($data->header('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->header('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->header('Authorization-stag');
             }else{
-                $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
+                $raw_token = str_contains($data->cookie('Authorization-stag'), 'Bearer') ? 'Authorization-stag=Bearer'.substr($data->cookie('Authorization-stag'),6) : 'Authorization-stag=Bearer'.$data->cookie('Authorization-stag');
             }
             
             $split_token = explode('.', $raw_token);
             $decrypt_token = base64_decode($split_token[1]);
             $escapestring_token = json_decode($decrypt_token);
-
+           
             if($escapestring_token == $data->userid){    
                 return $this->successRes(null, 'Match');
             }else{
@@ -88,7 +88,7 @@ class IRKCeritaKitaGateway extends Controller
                     'headers' => [
                         'Accept' => 'application/json',
                         'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization-dev=' . FacadesRequest::cookie('Authorization-dev')
+                        'Cookie' => 'Authorization-stag=' . FacadesRequest::cookie('Authorization-stag')
                     ]
                 ]
             );
@@ -99,91 +99,18 @@ class IRKCeritaKitaGateway extends Controller
                     'headers' => [
                         'Accept' => 'application/json',
                         'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization-dev=' . FacadesRequest::cookie('Authorization-dev')
+                        'Cookie' => 'Authorization-stag=' . FacadesRequest::cookie('Authorization-stag')
                     ]
                 ]
             );
         }
     }
-  
-    public function signin(Request $request)
-    {
-        try {
-           
-            $response = (new self)->client('gcp')->request('POST', 'auth/dev', [
-                'json'=>[
-                    'data' => $request->all()
-                ]
-            ]);
-             
-            $result = json_decode($response->getBody()->getContents());
-            
-            if($result != null){
-                if (str_contains($result->status,'Success'))
-                    return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization-dev', 'Bearer'.$result->token, '120'));
-                else
-                    return response()->json([
-                        'result' => $result->message,
-                        'data' => null,
-                        'message' => $result->status,
-                        'status' => 0,
-                        'statuscode' => $response->getStatusCode()
-                    ]);
-            }else{
-                return response()->json([
-                    'result' => null,
-                    'data' => $result,
-                    'message' => 'Data Kosong',
-                    'status' => 0,
-                    'statuscode' => $response->getStatusCode()
-                ]);
-            }
-            
-        } catch (ClientException | ServerException $e) {
-            $response = $e->getResponse();
-            $responseBody = json_decode((string) $response->getBody());
-            
-            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
-            else return $this->errorRes($responseBody->message, $response->getStatusCode());
-        } catch (\Throwable $e) {
-            return $this->errorRes($e->getMessage());
-        }
-    }
-
-    public function signout(Request $request)
-    {
+    
+    public function get(Request $request){
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
-                    'json'=>[
-                        'data' => $request->all()
-                    ]
-                ]);
-    
-                $result = json_decode($response->getBody()->getContents());
-    
-                return $this->successRes('Token has removed in Cookie', $result->message, $response->getStatusCode());
-            }else{
-                return $this->userValid($request);
-            }
-            
-        } catch (ClientException | ServerException $e) {
-            $response = $e->getResponse();
-            $responseBody = json_decode((string) $response->getBody());
-
-            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
-            else return $this->errorRes($responseBody->message, $response->getStatusCode());
-        } catch (\Throwable $e) {
-            return $this->errorRes($e->getMessage());
-        }
-    }
-
-    public function auth(Request $request)
-    {
-        try {
-            if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/motivasi/get/stag', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -205,5 +132,17 @@ class IRKCeritaKitaGateway extends Controller
         } catch (\Throwable $e) {
             return $this->errorRes($e->getMessage());
         }
+    }
+
+    public function post(Request $request){
+        
+    }
+
+    public function put(Request $request){
+        
+    }
+
+    public function delete(Request $request){
+        
     }
 }
