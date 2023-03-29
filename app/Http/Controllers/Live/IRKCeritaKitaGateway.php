@@ -37,7 +37,7 @@ class IRKCeritaKitaGateway extends Controller
 
     public function userValid($data)
     {
-        if(isset($data->userid)){
+        if(isset($data->all()['userid'])){
             if(env('APP_ENV') == 'local'){
                 $raw_token = str_contains($data->header('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($data->header('Authorization'),6) : 'Authorization=Bearer'.$data->header('Authorization');
             }else{
@@ -151,7 +151,7 @@ class IRKCeritaKitaGateway extends Controller
     public function signout(Request $request)
     {
         try {
-            if($this->userValid($request)->getData()->message == 'Match'){
+            if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'auth', [
                     'json'=>[
                         'data' => $request->all()
@@ -179,7 +179,7 @@ class IRKCeritaKitaGateway extends Controller
     public function auth(Request $request)
     {
         try {
-            if($this->userValid($request)->getData()->message == 'Match'){
+            if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'auth', [
                     'json'=>[
                         'data' => $request->all()

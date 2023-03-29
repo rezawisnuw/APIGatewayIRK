@@ -44,11 +44,11 @@ class UtilityGateway extends Controller
 				}
 				
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Login', 'status' => 0, 'statuscode' => 400]);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0', 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
@@ -62,11 +62,11 @@ class UtilityGateway extends Controller
 				if($result['status'] == '1') return response()->json($result);
 				else return response()->json($result, 400);
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Logout', 'status' => '0', 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Logout', 'status' => 0, 'statuscode' => 400]);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0', 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
@@ -94,7 +94,7 @@ class UtilityGateway extends Controller
 				'result'  => 'File Rusak dari awal sebelum diuplaod, mohon cek ulang file tersebut !!',
 				'data' => null,
 				'message' => 'Gagal Upload !',
-				'status' => '0',
+				'status' => 0,
 				'statuscode' => 400
 				]
 			);
@@ -126,7 +126,7 @@ class UtilityGateway extends Controller
 					'result'  => $result,
 					'data' => null,
 					'message' => ''.$namaFile.' gagal diupload',
-					'status' => '0',
+					'status' => 0,
 					'statuscode' => 400
 					]
 				);
@@ -169,7 +169,7 @@ class UtilityGateway extends Controller
 				'result'  => 'Validator failed',
 				'data' => null,
 				'message' => 'Gagal Upload !',
-				'status' => '0',
+				'status' => 0,
 				'statuscode' => 400
 				]
 			);
@@ -219,7 +219,7 @@ class UtilityGateway extends Controller
 			$result = json_decode($temp->DownloadFileDariInfraKe93Result);
 			return response()->json(['result' => json_decode($result), 'data' => 'Success on Run', 'message' => 'Berhasil Download data', 'status' => '1', 'statuscode' => 200]);
 		} else {
-			return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => '0', 'statuscode' => 400]);
+			return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => 0, 'statuscode' => 400]);
 		}
     }
 
@@ -244,11 +244,11 @@ class UtilityGateway extends Controller
 				$result = json_decode($temp->FirebaseResult);
 				return response()->json(['result' => $result, 'data' => 'Success on Run', 'message' => 'Berhasil Mengambil data', 'status' => '1', 'statuscode' => 200]);
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => '0', 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Gagal Mengambil data', 'status' => 0, 'statuscode' => 400]);
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => '0', 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
