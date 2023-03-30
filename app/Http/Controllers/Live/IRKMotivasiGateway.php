@@ -110,7 +110,7 @@ class IRKMotivasiGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/motivasi/get', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'live/motivasi/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]

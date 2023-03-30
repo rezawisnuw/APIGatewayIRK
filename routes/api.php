@@ -27,28 +27,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['middleware' => 'cors'], function () {
 
 	#DEV
-	Route::post('login/dev', [Dev\UtilityGateway::class, 'LoginESS']);
-	Route::post('logout/dev', [Dev\UtilityGateway::class, 'LogoutESS']);
-	Route::post('uploadFisik/dev', [Dev\UtilityGateway::class, 'UploadFisik']);
-	Route::post('uploadBlob/dev', [Dev\UtilityGateway::class, 'UploadBlob']);
-	Route::post('downloadFisik/dev', [Dev\UtilityGateway::class, 'DownloadFile93']);
-	Route::post('firebase/dev', [Dev\UtilityGateway::class, 'Firebase']);
+	Route::post('dev/login', [Dev\UtilityGateway::class, 'LoginESS']);
+	Route::post('dev/logout', [Dev\UtilityGateway::class, 'LogoutESS']);
+	Route::post('dev/uploadFisik', [Dev\UtilityGateway::class, 'UploadFisik']);
+	Route::post('dev/uploadBlob', [Dev\UtilityGateway::class, 'UploadBlob']);
+	Route::post('dev/downloadFisik', [Dev\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('dev/firebase', [Dev\UtilityGateway::class, 'Firebase']);
 
     #STAG
-	Route::post('login/stag', [Stag\UtilityGateway::class, 'LoginESS']);
-	Route::post('logout/stag', [Stag\UtilityGateway::class, 'LogoutESS']);
-	Route::post('uploadFisik/stag', [Stag\UtilityGateway::class, 'UploadFisik']);
-	Route::post('uploadBlob/stag', [Stag\UtilityGateway::class, 'UploadBlob']);
-	Route::post('downloadFisik/stag', [Stag\UtilityGateway::class, 'DownloadFile93']);
-	Route::post('firebase/stag', [Stag\UtilityGateway::class, 'Firebase']);
+	Route::post('stag/login', [Stag\UtilityGateway::class, 'LoginESS']);
+	Route::post('stag/logout', [Stag\UtilityGateway::class, 'LogoutESS']);
+	Route::post('stag/uploadFisik', [Stag\UtilityGateway::class, 'UploadFisik']);
+	Route::post('stag/uploadBlob', [Stag\UtilityGateway::class, 'UploadBlob']);
+	Route::post('stag/downloadFisik', [Stag\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('stag/firebase', [Stag\UtilityGateway::class, 'Firebase']);
 
     #LIVE
-	Route::post('login', [Live\UtilityGateway::class, 'LoginESS']);
-	Route::post('logout', [Live\UtilityGateway::class, 'LogoutESS']);
-	Route::post('uploadFisik', [Live\UtilityGateway::class, 'UploadFisik']);
-	Route::post('uploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
-	Route::post('downloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
-	Route::post('firebase', [Live\UtilityGateway::class, 'Firebase']);
+	Route::post('live/login', [Live\UtilityGateway::class, 'LoginESS']);
+	Route::post('live/logout', [Live\UtilityGateway::class, 'LogoutESS']);
+	Route::post('live/uploadFisik', [Live\UtilityGateway::class, 'UploadFisik']);
+	Route::post('live/uploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
+	Route::post('live/downloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('live/firebase', [Live\UtilityGateway::class, 'Firebase']);
 
 });
 
@@ -93,10 +93,10 @@ Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
 	Route::group(['prefix' => 'comment'], function () {
 
 		Route::group(['middleware' => ['tokenverifydev']], function () {
-			Route::post('get/dev', [Dev\IRKCommentGateway::class, 'get']);
-			Route::post('post/dev', [Dev\IRKCommentGateway::class, 'post']);
-			Route::post('put/dev', [Dev\IRKCommentGateway::class, 'put']);
-			Route::post('delete/dev', [Dev\IRKCommentGateway::class, 'delete']);
+			Route::post('get', [Dev\IRKCommentGateway::class, 'get']);
+			Route::post('post', [Dev\IRKCommentGateway::class, 'post']);
+			Route::post('put', [Dev\IRKCommentGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKCommentGateway::class, 'delete']);
 		});
 
 	});
