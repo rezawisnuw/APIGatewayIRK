@@ -11,7 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Maatwebsite\Excel\Facades\Excel;
 
-class IRKCurhatkuGateway extends Controller
+class IRKCommentGateway extends Controller
 {
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
@@ -110,7 +110,7 @@ class IRKCurhatkuGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/curhatku/get/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/comment/get/dev', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -138,7 +138,7 @@ class IRKCurhatkuGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/curhatku/post/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/comment/post/dev', [
                     'json'=>[
                         'data' => $request->all()
                     ]
