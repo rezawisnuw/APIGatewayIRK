@@ -52,99 +52,46 @@ Route::group(['middleware' => 'cors'], function () {
 
 });
 
-//IRK Endpoint
-Route::group(['prefix' => 'irk', 'middleware' => ['cors']], function () {
-
-    //CeritaKita Endpoint
+//IRK Endpoint DEV
+Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
+	//CeritaKita Endpoint
 	Route::group(['prefix' => 'ceritakita'], function () {
 
-		//DEV
-		Route::post('signin/dev', [Dev\IRKCeritaKitaGateway::class, 'signin']);
+		Route::post('signin', [Dev\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifydev']], function () {
-			Route::post('auth/dev', [Dev\IRKCeritaKitaGateway::class, 'auth']);
-			Route::post('signout/dev', [Dev\IRKCeritaKitaGateway::class, 'signout']);
+			Route::post('auth', [Dev\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout', [Dev\IRKCeritaKitaGateway::class, 'signout']);
 		});
 
-		//STAG
-		Route::post('signin/stag', [Stag\IRKCeritaKitaGateway::class, 'signin']);
-		Route::group(['middleware' => ['tokenverifystag']], function () {
-			Route::post('auth/stag', [Stag\IRKCeritaKitaGateway::class, 'auth']);
-			Route::post('signout/stag', [Stag\IRKCeritaKitaGateway::class, 'signout']);
-
-		});
-
-		//LIVE
-		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
-			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
-
-		});
-	
 	});
 
 	//Motivasi Endpoint
 	Route::group(['prefix' => 'motivasi'], function () {
 
-		//DEV
 		Route::group(['middleware' => ['tokenverifydev']], function () {
-			Route::post('get/dev', [Dev\IRKMotivasiGateway::class, 'get']);
-			Route::post('post/dev', [Dev\IRKMotivasiGateway::class, 'post']);
-			Route::post('put/dev', [Dev\IRKMotivasiGateway::class, 'put']);
-			Route::post('delete/dev', [Dev\IRKMotivasiGateway::class, 'delete']);
+			Route::post('get', [Dev\IRKMotivasiGateway::class, 'get']);
+			Route::post('post', [Dev\IRKMotivasiGateway::class, 'post']);
+			Route::post('put', [Dev\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKMotivasiGateway::class, 'delete']);
 		});
 
-		//STAG
-		Route::group(['middleware' => ['tokenverifystag']], function () {
-			Route::post('get/stag', [Stag\IRKMotivasiGateway::class, 'get']);
-			Route::post('post/stag', [Stag\IRKMotivasiGateway::class, 'post']);
-			Route::post('put/stag', [Stag\IRKMotivasiGateway::class, 'put']);
-			Route::post('delete/stag', [Stag\IRKMotivasiGateway::class, 'delete']);
-		});
-
-		//LIVE
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKMotivasiGateway::class, 'get']);
-			Route::post('post', [Live\IRKMotivasiGateway::class, 'post']);
-			Route::post('put', [Live\IRKMotivasiGateway::class, 'put']);
-			Route::post('delete', [Live\IRKMotivasiGateway::class, 'delete']);
-		});
-	
 	});
 
 	//Curhatku Endpoint
 	Route::group(['prefix' => 'curhatku'], function () {
 
-		//DEV
 		Route::group(['middleware' => ['tokenverifydev']], function () {
-			Route::post('get/dev', [Dev\IRKCurhatkuGateway::class, 'get']);
-			Route::post('post/dev', [Dev\IRKCurhatkuGateway::class, 'post']);
-			Route::post('put/dev', [Dev\IRKCurhatkuGateway::class, 'put']);
-			Route::post('delete/dev', [Dev\IRKCurhatkuGateway::class, 'delete']);
+			Route::post('get', [Dev\IRKCurhatkuGateway::class, 'get']);
+			Route::post('post', [Dev\IRKCurhatkuGateway::class, 'post']);
+			Route::post('put', [Dev\IRKCurhatkuGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKCurhatkuGateway::class, 'delete']);
 		});
-
-		//STAG
-		Route::group(['middleware' => ['tokenverifystag']], function () {
-			Route::post('get/stag', [Stag\IRKCurhatkuGateway::class, 'get']);
-			Route::post('post/stag', [Stag\IRKCurhatkuGateway::class, 'post']);
-			Route::post('put/stag', [Stag\IRKCurhatkuGateway::class, 'put']);
-			Route::post('delete/stag', [Stag\IRKCurhatkuGateway::class, 'delete']);
-		});
-
-		//LIVE
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKCurhatkuGateway::class, 'get']);
-			Route::post('post', [Live\IRKCurhatkuGateway::class, 'post']);
-			Route::post('put', [Live\IRKCurhatkuGateway::class, 'put']);
-			Route::post('delete', [Live\IRKCurhatkuGateway::class, 'delete']);
-		});
-	
+		
 	});
 
 	//Comment Endpoint
 	Route::group(['prefix' => 'comment'], function () {
 
-		//DEV
 		Route::group(['middleware' => ['tokenverifydev']], function () {
 			Route::post('get/dev', [Dev\IRKCommentGateway::class, 'get']);
 			Route::post('post/dev', [Dev\IRKCommentGateway::class, 'post']);
@@ -152,23 +99,111 @@ Route::group(['prefix' => 'irk', 'middleware' => ['cors']], function () {
 			Route::post('delete/dev', [Dev\IRKCommentGateway::class, 'delete']);
 		});
 
-		//STAG
+	});
+});
+
+//IRK Endpoint STAG
+Route::group(['prefix' => 'stag', 'middleware' => ['cors']], function () {
+
+	//CeritaKita Endpoint
+	Route::group(['prefix' => 'ceritakita'], function () {
+
+		Route::post('signin', [Stag\IRKCeritaKitaGateway::class, 'signin']);
 		Route::group(['middleware' => ['tokenverifystag']], function () {
-			Route::post('get/stag', [Stag\IRKCommentGateway::class, 'get']);
-			Route::post('post/stag', [Stag\IRKCommentGateway::class, 'post']);
-			Route::post('put/stag', [Stag\IRKCommentGateway::class, 'put']);
-			Route::post('delete/stag', [Stag\IRKCommentGateway::class, 'delete']);
+			Route::post('auth', [Stag\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout', [Stag\IRKCeritaKitaGateway::class, 'signout']);
+
 		});
 
-		//LIVE
+	});
+
+	//Motivasi Endpoint
+	Route::group(['prefix' => 'motivasi'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKMotivasiGateway::class, 'get']);
+			Route::post('post', [Stag\IRKMotivasiGateway::class, 'post']);
+			Route::post('put', [Stag\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKMotivasiGateway::class, 'delete']);
+		});
+
+	});
+
+	//Curhatku Endpoint
+	Route::group(['prefix' => 'curhatku'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKCurhatkuGateway::class, 'get']);
+			Route::post('post', [Stag\IRKCurhatkuGateway::class, 'post']);
+			Route::post('put', [Stag\IRKCurhatkuGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKCurhatkuGateway::class, 'delete']);
+		});
+
+	});
+
+	//Comment Endpoint
+	Route::group(['prefix' => 'comment'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKCommentGateway::class, 'get']);
+			Route::post('post', [Stag\IRKCommentGateway::class, 'post']);
+			Route::post('put', [Stag\IRKCommentGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKCommentGateway::class, 'delete']);
+		});
+
+	});
+
+});
+
+//IRK Endpoint LIVE
+Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
+
+	//CeritaKita Endpoint
+	Route::group(['prefix' => 'ceritakita'], function () {
+		
+		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
+			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
+
+		});
+
+	});
+
+	//Motivasi Endpoint
+	Route::group(['prefix' => 'motivasi'], function () {
+
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKMotivasiGateway::class, 'get']);
+			Route::post('post', [Live\IRKMotivasiGateway::class, 'post']);
+			Route::post('put', [Live\IRKMotivasiGateway::class, 'put']);
+			Route::post('delete', [Live\IRKMotivasiGateway::class, 'delete']);
+		});
+
+	});
+
+	//Curhatku Endpoint
+	Route::group(['prefix' => 'curhatku'], function () {
+
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKCurhatkuGateway::class, 'get']);
+			Route::post('post', [Live\IRKCurhatkuGateway::class, 'post']);
+			Route::post('put', [Live\IRKCurhatkuGateway::class, 'put']);
+			Route::post('delete', [Live\IRKCurhatkuGateway::class, 'delete']);
+		});
+
+	});
+
+	//Comment Endpoint
+	Route::group(['prefix' => 'comment'], function () {
+
 		Route::group(['middleware' => ['tokenverify']], function () {
 			Route::post('get', [Live\IRKCommentGateway::class, 'get']);
 			Route::post('post', [Live\IRKCommentGateway::class, 'post']);
 			Route::post('put', [Live\IRKCommentGateway::class, 'put']);
 			Route::post('delete', [Live\IRKCommentGateway::class, 'delete']);
 		});
-	
-	});
 
+	});
 
 });
