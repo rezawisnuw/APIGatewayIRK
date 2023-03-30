@@ -110,7 +110,7 @@ class IRKCurhatkuGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/curhatku/get/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -138,7 +138,7 @@ class IRKCurhatkuGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/curhatku/post/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
                     'json'=>[
                         'data' => $request->all()
                     ]

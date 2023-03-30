@@ -109,7 +109,7 @@ class IRKCeritaKitaGateway extends Controller
     public function signin(Request $request)
     {
         try {
-            $response = (new self)->client('gcp')->request('POST', 'auth/stag', [
+            $response = (new self)->client('gcp')->request('POST', 'stag/auth', [
                 'json'=>[
                     'data' => $request->all()
                 ]
@@ -152,7 +152,7 @@ class IRKCeritaKitaGateway extends Controller
     {
         try {
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/stag', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'stag/auth', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -180,7 +180,7 @@ class IRKCeritaKitaGateway extends Controller
     {
         try {
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/stag', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'stag/auth', [
                     'json'=>[
                         'data' => $request->all()
                     ]

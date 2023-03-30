@@ -110,7 +110,7 @@ class IRKCommentGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/comment/get/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/comment/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -138,7 +138,7 @@ class IRKCommentGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'irk/comment/post/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/comment/post', [
                     'json'=>[
                         'data' => $request->all()
                     ]

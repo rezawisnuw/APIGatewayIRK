@@ -110,7 +110,7 @@ class IRKCeritaKitaGateway extends Controller
     {
         try {
            
-            $response = (new self)->client('gcp')->request('POST', 'auth/dev', [
+            $response = (new self)->client('gcp')->request('POST', 'dev/auth', [
                 'json'=>[
                     'data' => $request->all()
                 ]
@@ -155,7 +155,7 @@ class IRKCeritaKitaGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/auth', [
                     'json'=>[
                         'data' => $request->all()
                     ]
@@ -183,7 +183,7 @@ class IRKCeritaKitaGateway extends Controller
     {
         try {
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'auth/dev', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/auth', [
                     'json'=>[
                         'data' => $request->all()
                     ]
