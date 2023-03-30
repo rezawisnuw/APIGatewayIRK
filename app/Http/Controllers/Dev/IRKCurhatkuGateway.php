@@ -139,8 +139,15 @@ class IRKCurhatkuGateway extends Controller
             
             if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
-                    'json'=>[
-                        'data' => $request->all()
+                    'multipart'=>[
+                        [
+                            'name' => 'data',
+                            'contents' => json_encode($request->all())
+                        ],
+                        [
+                            'name'     => 'file',
+                            'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
+                        ]
                     ]
                 ]);
     
