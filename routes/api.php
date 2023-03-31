@@ -61,6 +61,11 @@ Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
 		Route::group(['middleware' => ['tokenverifydev']], function () {
 			Route::post('auth', [Dev\IRKCeritaKitaGateway::class, 'auth']);
 			Route::post('signout', [Dev\IRKCeritaKitaGateway::class, 'signout']);
+
+			Route::post('get', [Dev\IRKCeritaKitaGateway::class, 'get']);
+			Route::post('post', [Dev\IRKCeritaKitaGateway::class, 'post']);
+			Route::post('put', [Dev\IRKCeritaKitaGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKCeritaKitaGateway::class, 'delete']);
 		});
 
 	});
@@ -113,6 +118,10 @@ Route::group(['prefix' => 'stag', 'middleware' => ['cors']], function () {
 			Route::post('auth', [Stag\IRKCeritaKitaGateway::class, 'auth']);
 			Route::post('signout', [Stag\IRKCeritaKitaGateway::class, 'signout']);
 
+			Route::post('get', [Stag\IRKCeritaKitaGateway::class, 'get']);
+			Route::post('post', [Stag\IRKCeritaKitaGateway::class, 'post']);
+			Route::post('put', [Stag\IRKCeritaKitaGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKCeritaKitaGateway::class, 'delete']);
 		});
 
 	});
@@ -166,6 +175,10 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
 			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
 
+			Route::post('get', [Live\IRKCeritaKitaGateway::class, 'get']);
+			Route::post('post', [Live\IRKCeritaKitaGateway::class, 'post']);
+			Route::post('put', [Live\IRKCeritaKitaGateway::class, 'put']);
+			Route::post('delete', [Live\IRKCeritaKitaGateway::class, 'delete']);
 		});
 
 	});
