@@ -139,14 +139,41 @@ class IRKCurhatkuGateway extends Controller
             
             if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'stag/curhatku/post', [
-                    'json'=>[
-                        'data' => $request->all()
+                    'multipart'=>[
+                        [
+                            'name' => 'data',
+                            'contents' => json_encode($request->all())
+                        ],
+                        [
+                            'name'     => 'file',
+                            'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
+                        ]
                     ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
     
-                return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                if($result->data){
+                    $client = new Client();
+                    $response = $client->post(
+                            'https://cloud.hrindomaret.com/api/irk/upload',
+                            [
+                                RequestOptions::JSON => 
+                                [
+                                 'file'=> $request->gambar,
+                                 'file_name' => $result->data
+                                ]
+                            ]
+                        );
+
+                    $body = $response->getBody();
+                    
+                    $temp = json_decode($body);
+                    return $this->successRes($temp, $result->message, $response->getStatusCode());
+                } else {
+                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                }
+                
             }else{
                 return $this->userValid($request);
             }

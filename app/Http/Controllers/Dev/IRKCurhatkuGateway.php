@@ -152,8 +152,28 @@ class IRKCurhatkuGateway extends Controller
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
+
+                if($result->data){
+                    $client = new Client();
+                    $response = $client->post(
+                            'https://cloud.hrindomaret.com/api/irk/upload',
+                            [
+                                RequestOptions::JSON => 
+                                [
+                                 'file'=> $request->gambar,
+                                 'file_name' => $result->data
+                                ]
+                            ]
+                        );
+
+                    $body = $response->getBody();
+                    
+                    $temp = json_decode($body);
+                    return $this->successRes($temp, $result->message, $response->getStatusCode());
+                } else {
+                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                }
     
-                return $this->successRes($result->data, $result->message, $response->getStatusCode());
             }else{
                 return $this->userValid($request);
             }
