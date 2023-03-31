@@ -128,41 +128,39 @@ class IRKCurhatkuGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
     
                 if(!empty($result->data)){
-                    if(!empty($result->data[0]->Gambar)){
-                        $client = new Client();
-                        $filesplit =  explode("/",$result->data[0]->Gambar);
-                        $response = $client->request('GET',
-                                'https://cloud.hrindomaret.com/api/irk/download',
-                                [
-                                    'query' => [
-                                        'file_name' => $filesplit[0].'%2f'.$filesplit[1]
+
+                    $newdata = array();
+
+                    foreach($result->data as $key=>$value){
+
+                        if(!empty($result->data[0]->Gambar)){
+                            $client = new Client();
+                            $filesplit =  explode("/",$result->data[0]->Gambar);
+                            $response = $client->request('GET',
+                                    'https://cloud.hrindomaret.com/api/irk/download',
+                                    [
+                                        'query' => [
+                                            'file_name' => $filesplit[0].'%2f'.$filesplit[1]
+                                        ]
                                     ]
-                                ]
-                            );
-
-                        $body = $response->getBody();
-                        
-                        $temp = json_decode($body);
-
-                        $newdata = array();
-                        foreach($result->data as $key=>$value){
+                                );
+    
+                            $body = $response->getBody();
                             
+                            $temp = json_decode($body);
+
                             $value->Gambar_Cloud = $temp;
-
-                            $newdata[] = $value;
-                        }
-
-                        return $this->successRes($newdata, $result->message, $response->getStatusCode());
-                    }else{
-                        $newdata = array();
-                        foreach($result->data as $key=>$value){
+                            
+                        }else{
                             
                             $value->Gambar_Cloud = '';
 
-                            $newdata[] = $value;
                         }
+                            
+                        $newdata[] = $value;
                         return $this->successRes($newdata, $result->message, $response->getStatusCode());
                     }
+                    
                 } else{
                     return $this->successRes($result->data, $result->message, $response->getStatusCode());
                 }
