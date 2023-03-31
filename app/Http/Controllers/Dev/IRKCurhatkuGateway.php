@@ -108,8 +108,7 @@ class IRKCurhatkuGateway extends Controller
                 [
                     'headers' => [
                         'Accept' => 'application/json',
-                        'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization-dev=' . FacadesRequest::cookie('Authorization-dev')
+                        'Content-type' => 'application/json'
                     ]
                 ]
             );
@@ -204,9 +203,17 @@ class IRKCurhatkuGateway extends Controller
 
                 if(!empty($result->data)){
                     $response = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
-                        'json'=>[
-                            'file' => $request->gambar,
-                            'file_name' => $result->data
+                        'multipart' => [
+                            [
+                                'name' => 'file',
+                                'contents' => file_get_contents($request->gambar),
+                                'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
+                                'filename' => $request->gambar->getClientOriginalName()
+                            ],
+                            [
+                                'name' => 'file_name',
+                                'contents' => $result->data
+                            ]
                         ]
                     ]);
         
