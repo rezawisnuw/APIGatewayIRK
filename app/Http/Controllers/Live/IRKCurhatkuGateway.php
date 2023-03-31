@@ -103,6 +103,15 @@ class IRKCurhatkuGateway extends Controller
                     ]
                 ]
             );
+        }else{
+            return new Client(
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json'
+                    ]
+                ]
+            );
         }
     }
     
@@ -122,8 +131,8 @@ class IRKCurhatkuGateway extends Controller
                     if(!empty($result->data[0]->Gambar)){
                         $client = new Client();
                         $filesplit =  explode("/",$result->data[0]->Gambar);
-                        $response = $client->get(
-                                'https://cloud.hrindomaret.com/api/irk/download?file_name='.$filesplit[0].'%2f'.$filesplit[1],
+                        $response = $client->request('GET',
+                                'https://cloud.hrindomaret.com/api/irk/download',
                                 [
                                     'query' => [
                                         'file_name' => $filesplit[0].'%2f'.$filesplit[1]
@@ -193,9 +202,17 @@ class IRKCurhatkuGateway extends Controller
     
                 if(!empty($result->data)){
                     $response = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
-                        'json'=>[
-                            'file' => $request->gambar,
-                            'file_name' => $result->data
+                        'multipart' => [
+                            [
+                                'name' => 'file',
+                                'contents' => file_get_contents($request->gambar),
+                                'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
+                                'filename' => $request->gambar->getClientOriginalName()
+                            ],
+                            [
+                                'name' => 'file_name',
+                                'contents' => $result->data
+                            ]
                         ]
                     ]);
         
