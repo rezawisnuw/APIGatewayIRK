@@ -131,8 +131,8 @@ class IRKCurhatkuGateway extends Controller
                     if(!empty($result->data[0]->Gambar)){
                         $client = new Client();
                         $filesplit =  explode("/",$result->data[0]->Gambar);
-                        $response = $client->get(
-                                'https://cloud.hrindomaret.com/api/irk/download?file_name='.$filesplit[0].'%2f'.$filesplit[1],
+                        $response = $client->request('GET',
+                                'https://cloud.hrindomaret.com/api/irk/download',
                                 [
                                     'query' => [
                                         'file_name' => $filesplit[0].'%2f'.$filesplit[1]
