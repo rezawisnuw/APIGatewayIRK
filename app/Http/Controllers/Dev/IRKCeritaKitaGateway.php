@@ -206,4 +206,44 @@ class IRKCeritaKitaGateway extends Controller
             return $this->errorRes($e->getMessage());
         }
     }
+
+    public function get(Request $request){
+        try {
+            
+            if($this->userValid($request)->getData()->result == 'Match'){
+                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/ceritakita/get', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
+                ]);
+    
+                $result = json_decode($response->getBody()->getContents());
+    
+                return $this->successRes($result->data, $result->message, $response->getStatusCode());
+            }else{
+                return $this->userValid($request);
+            }
+            
+        } catch (ClientException | ServerException $e) {
+            $response = $e->getResponse();
+            $responseBody = json_decode((string) $response->getBody());
+
+            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
+            else return $this->errorRes($responseBody->message, $response->getStatusCode());
+        } catch (\Throwable $e) {
+            return $this->errorRes($e->getMessage());
+        }
+    }
+
+    public function post(Request $request){
+        
+    }
+
+    public function put(Request $request){
+        
+    }
+
+    public function delete(Request $request){
+        
+    }
 }
