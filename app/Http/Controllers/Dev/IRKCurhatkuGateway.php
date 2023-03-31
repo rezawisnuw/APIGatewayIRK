@@ -158,9 +158,8 @@ class IRKCurhatkuGateway extends Controller
                         }
                             
                         $newdata[] = $value;
-                        return $this->successRes($newdata, $result->message, $response->getStatusCode());
                     }
-
+                    return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
                     return $this->successRes($result->data, $result->message, $response->getStatusCode());
                 }
