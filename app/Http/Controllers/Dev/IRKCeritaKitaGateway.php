@@ -103,6 +103,15 @@ class IRKCeritaKitaGateway extends Controller
                     ]
                 ]
             );
+        }else{
+            return new Client(
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json'
+                    ]
+                ]
+            );
         }
     }
   
@@ -230,6 +239,7 @@ class IRKCeritaKitaGateway extends Controller
                             $response = $client->request('GET',
                                     'https://cloud.hrindomaret.com/api/irk/download',
                                     [
+                                        'http_errors' => false,
                                         'query' => [
                                             'file_name' => $result->data[0]->Picture
                                         ]
@@ -240,7 +250,11 @@ class IRKCeritaKitaGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Picture_Cloud = $temp;
+                            if($temp->status == 1){
+                                $value->Picture_Cloud = $temp->data->encoded_file;
+                            }else{
+                                $value->Picture_Cloud = $temp->message;
+                            }
                             
                         }else{
                             
@@ -251,7 +265,13 @@ class IRKCeritaKitaGateway extends Controller
                     }
                     return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
-                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                    return response()->json([
+                        'result' => null,
+                        'data' => $result,
+                        'message' => 'Data is Empty',
+                        'status' => 0,
+                        'statuscode' => $response->getStatusCode()
+                    ]);
                 }
 
             }else{
