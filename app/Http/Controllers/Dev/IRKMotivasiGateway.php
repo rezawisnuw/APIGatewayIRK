@@ -103,6 +103,15 @@ class IRKMotivasiGateway extends Controller
                     ]
                 ]
             );
+        }else{
+            return new Client(
+                [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-type' => 'application/json'
+                    ]
+                ]
+            );
         }
     }
     
