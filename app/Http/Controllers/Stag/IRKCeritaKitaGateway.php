@@ -216,7 +216,41 @@ class IRKCeritaKitaGateway extends Controller
     
                 $result = json_decode($response->getBody()->getContents());
     
-                return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                if(!empty($result->data)){
+
+                    $newdata = array();
+
+                    foreach($result->data as $key=>$value){
+
+                        if(!empty($result->data[0]->Picture)){
+                            $client = new Client();
+                            $response = $client->request('GET',
+                                    'https://cloud.hrindomaret.com/api/irk/download',
+                                    [
+                                        'query' => [
+                                            'file_name' => $result->data[0]->Picture
+                                        ]
+                                    ]
+                                );
+    
+                            $body = $response->getBody();
+                            
+                            $temp = json_decode($body);
+
+                            $value->Picture_Cloud = $temp;
+                            
+                        }else{
+                            
+                            $value->Picture_Cloud = '';
+                        }
+                            
+                        $newdata[] = $value;
+                    }
+                    return $this->successRes($newdata, $result->message, $response->getStatusCode());
+                } else{
+                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                }
+                
             }else{
                 return $this->userValid($request);
             }
