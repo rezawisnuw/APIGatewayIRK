@@ -233,13 +233,13 @@ class IRKCeritaKitaGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($result->data[0]->Picture) && str_contains($result->data[0]->Picture,'Dev/Ceritakita')){
+                        if(!empty($value->Picture) && str_contains($value->Picture,'Dev/Ceritakita/')){
                             $client = new Client();
                             $response = $client->request('GET',
                                     'https://cloud.hrindomaret.com/api/irk/download',
                                     [
                                         'query' => [
-                                            'file_name' => $result->data[0]->Picture
+                                            'file_name' => $value->Picture
                                         ]
                                     ]
                                 );
@@ -248,7 +248,7 @@ class IRKCeritaKitaGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Picture_Cloud = $temp->data->encoded_file;
+                            $value->Picture_Cloud = $temp->status == 1 ? $temp->data->encoded_file : 'Corrupt';
                             
                         }else{
                             

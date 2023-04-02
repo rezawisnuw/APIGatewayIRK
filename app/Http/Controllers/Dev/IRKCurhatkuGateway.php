@@ -132,13 +132,13 @@ class IRKCurhatkuGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($result->data[0]->Gambar) && str_contains($result->data[0]->Gambar,'Dev/CeritakitaCurhatku/')){
+                        if(!empty($value->Gambar) && str_contains($value->Gambar,'Dev/Ceritakita/Curhatku/')){
                             $client = new Client();
                             $response = $client->request('GET',
                                     'https://cloud.hrindomaret.com/api/irk/download',
                                     [
                                         'query' => [
-                                            'file_name' => $result->data[0]->Gambar
+                                            'file_name' => $value->Gambar
                                         ]
                                     ]
                                 );
@@ -147,7 +147,7 @@ class IRKCurhatkuGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Gambar_Cloud = $temp->data->encoded_file;
+                            $value->Gambar_Cloud = $temp->status == 1 ? $temp->data->encoded_file : 'Corrupt';
                             
                         }else{
                             
