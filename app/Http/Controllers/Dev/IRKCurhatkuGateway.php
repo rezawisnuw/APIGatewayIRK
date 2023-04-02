@@ -138,7 +138,7 @@ class IRKCurhatkuGateway extends Controller
                                     'https://cloud.hrindomaret.com/api/irk/download',
                                     [
                                         'query' => [
-                                            'file_name' => $result->data[0]->Gambar
+                                            'file_name' => $value->Gambar
                                         ]
                                     ]
                                 );
