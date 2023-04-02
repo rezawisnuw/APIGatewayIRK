@@ -130,50 +130,32 @@ class IRKCurhatkuGateway extends Controller
                 if(!empty($result->data)){
                     $newdata = array();
 
-                    if(!empty($result->data[0]->Gambar) && str_contains($result->data[0]->Gambar,'Dev/Ceritakita')){
-                        $client = new Client();
-                        $response = $client->request('GET',
-                                'https://cloud.hrindomaret.com/api/irk/download',
-                                [
-                                    'query' => [
-                                        'file_name' => $result->data[0]->Gambar
+                    foreach($result->data as $key=>$value){
+
+                        if(!empty($result->data[0]->Gambar) && str_contains($result->data[0]->Gambar,'Dev/CeritakitaCurhatku/')){
+                            $client = new Client();
+                            $response = $client->request('GET',
+                                    'https://cloud.hrindomaret.com/api/irk/download',
+                                    [
+                                        'query' => [
+                                            'file_name' => $result->data[0]->Gambar
+                                        ]
                                     ]
-                                ]
-                            );
-
-                        $body = $response->getBody();
-                        
-                        $temp = json_decode($body);
-
-                        foreach($result->data as $key=>$value){
+                                );
+    
+                            $body = $response->getBody();
                             
+                            $temp = json_decode($body);
+
                             $value->Gambar_Cloud = $temp->data->encoded_file;
+                            
+                        }else{
+                            
+                            $value->Gambar_Cloud = 'File not found';
 
-                            $newdata[] = $value;
                         }
                             
-                    }else{
-                        $client = new Client();
-                        $response = $client->request('GET',
-                                'https://cloud.hrindomaret.com/api/irk/download',
-                                [
-                                    'query' => [
-                                        'file_name' => $result->data[0]->Gambar
-                                    ]
-                                ]
-                            );
-
-                        $body = $response->getBody();
-                        
-                        $temp = json_decode($body);
-                        
-                        foreach($result->data as $key=>$value){
-                            
-                            $value->Gambar_Cloud = $temp->message;
-
-                            $newdata[] = $value;
-                        }
-                        
+                        $newdata[] = $value;
                     }
                     return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
