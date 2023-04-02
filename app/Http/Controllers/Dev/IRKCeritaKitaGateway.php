@@ -231,34 +231,51 @@ class IRKCeritaKitaGateway extends Controller
                 if(!empty($result->data)){
                     $newdata = array();
 
-                    foreach($result->data as $key=>$value){
-
-                        if(!empty($result->data[0]->Picture) && str_contains($result->data[0]->Picture,'Dev/Ceritakita')){
-                            $client = new Client();
-                            $response = $client->request('GET',
-                                    'https://cloud.hrindomaret.com/api/irk/download',
-                                    [
-                                        'query' => [
-                                            'file_name' => $result->data[0]->Picture
-                                        ]
+                    if(!empty($result->data[0]->Picture) && str_contains($result->data[0]->Picture,'Dev/Ceritakita')){
+                        $client = new Client();
+                        $response = $client->request('GET',
+                                'https://cloud.hrindomaret.com/api/irk/download',
+                                [
+                                    'query' => [
+                                        'file_name' => $result->data[0]->Picture
                                     ]
-                                );
-    
-                            $body = $response->getBody();
-                            
-                            $temp = json_decode($body);
+                                ]
+                            );
 
+                        $body = $response->getBody();
+                        
+                        $temp = json_decode($body);
+
+                        foreach($result->data as $key=>$value){
+                            
                             $value->Picture_Cloud = $temp->data->encoded_file;
-                            
-                        }else{
-                            
-                            $value->Picture_Cloud = 'File not found';
 
+                            $newdata[] = $value;
                         }
                             
-                        $newdata[] = $value;
-                    }
-                    
+                    }else{
+                        $client = new Client();
+                        $response = $client->request('GET',
+                                'https://cloud.hrindomaret.com/api/irk/download',
+                                [
+                                    'query' => [
+                                        'file_name' => $result->data[0]->Picture
+                                    ]
+                                ]
+                            );
+
+                        $body = $response->getBody();
+                        
+                        $temp = json_decode($body);
+                        
+                        foreach($result->data as $key=>$value){
+                            
+                            $value->Picture_Cloud = $temp->message;
+
+                            $newdata[] = $value;
+                        }
+                        
+                    }                    
                     return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
                     return response()->json([
