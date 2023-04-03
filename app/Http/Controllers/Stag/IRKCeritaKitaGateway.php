@@ -221,7 +221,7 @@ class IRKCeritaKitaGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->Picture) && str_contains($value->Picture,'Dev/Ceritakita/')){
+                        if(!empty($value->Picture) && str_contains($value->Picture,'Stag/Ceritakita/')){
                             $client = new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',

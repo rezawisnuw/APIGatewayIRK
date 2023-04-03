@@ -132,7 +132,7 @@ class IRKCurhatkuGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->Gambar) && str_contains($value->Gambar,'Dev/Ceritakita/Curhatku/')){
+                        if(!empty($value->Gambar) && str_contains($value->Gambar,'Live/Ceritakita/Curhatku/')){
                             $client = new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
