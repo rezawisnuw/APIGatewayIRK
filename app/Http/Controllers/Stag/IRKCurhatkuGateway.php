@@ -134,11 +134,12 @@ class IRKCurhatkuGateway extends Controller
 
                         if(!empty($value->Gambar) && str_contains($value->Gambar,'Dev/Ceritakita/Curhatku/')){
                             $client = new Client();
-                            $response = $client->request('GET',
-                                    'https://cloud.hrindomaret.com/api/irk/download',
+                            $response = $client->request('POST',
+                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
-                                        'query' => [
-                                            'file_name' => $value->Gambar
+                                        'json' => [
+                                            'file_name' => $value->Gambar,
+                                            'expired' => 30
                                         ]
                                     ]
                                 );
@@ -147,7 +148,7 @@ class IRKCurhatkuGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Gambar_Cloud = $temp->status == 1 ? $temp->data->encoded_file : 'Corrupt';
+                            $value->Gambar_Cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
                             
                         }else{
                             
