@@ -117,6 +117,30 @@ Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
 		});
 
 	});
+
+	//Report Endpoint
+	Route::group(['prefix' => 'report'], function () {
+
+		Route::group(['middleware' => ['tokenverifydev']], function () {
+			Route::post('get', [Dev\IRKReportGateway::class, 'get']);
+			Route::post('post', [Dev\IRKReportGateway::class, 'post']);
+			Route::post('put', [Dev\IRKReportGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKReportGateway::class, 'delete']);
+		});
+
+	});
+
+	//Profile Endpoint
+	Route::group(['prefix' => 'profile'], function () {
+
+		Route::group(['middleware' => ['tokenverifydev']], function () {
+			Route::post('get', [Dev\IRKProfileGateway::class, 'get']);
+			Route::post('post', [Dev\IRKProfileGateway::class, 'post']);
+			Route::post('put', [Dev\IRKProfileGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKProfileGateway::class, 'delete']);
+		});
+
+	});
 });
 
 //IRK Endpoint STAG
@@ -186,6 +210,30 @@ Route::group(['prefix' => 'stag', 'middleware' => ['cors']], function () {
 
 	});
 
+	//Report Endpoint
+	Route::group(['prefix' => 'report'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKReportGateway::class, 'get']);
+			Route::post('post', [Stag\IRKReportGateway::class, 'post']);
+			Route::post('put', [Stag\IRKReportGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKReportGateway::class, 'delete']);
+		});
+
+	});
+
+	//Profile Endpoint
+	Route::group(['prefix' => 'profile'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKProfileGateway::class, 'get']);
+			Route::post('post', [Stag\IRKProfileGateway::class, 'post']);
+			Route::post('put', [Stag\IRKProfileGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKProfileGateway::class, 'delete']);
+		});
+
+	});
+
 });
 
 //IRK Endpoint LIVE
@@ -251,6 +299,30 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 			Route::post('post', [Live\IRKLikeGateway::class, 'post']);
 			Route::post('put', [Live\IRKLikeGateway::class, 'put']);
 			Route::post('delete', [Live\IRKLikeGateway::class, 'delete']);
+		});
+
+	});
+
+	//Report Endpoint
+	Route::group(['prefix' => 'report'], function () {
+
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKReportGateway::class, 'get']);
+			Route::post('post', [Live\IRKReportGateway::class, 'post']);
+			Route::post('put', [Live\IRKReportGateway::class, 'put']);
+			Route::post('delete', [Live\IRKReportGateway::class, 'delete']);
+		});
+
+	});
+
+	//Profile Endpoint
+	Route::group(['prefix' => 'profile'], function () {
+
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKProfileGateway::class, 'get']);
+			Route::post('post', [Live\IRKProfileGateway::class, 'post']);
+			Route::post('put', [Live\IRKProfileGateway::class, 'put']);
+			Route::post('delete', [Live\IRKProfileGateway::class, 'delete']);
 		});
 
 	});
