@@ -299,7 +299,7 @@ class UtilityGateway extends Controller
 							
 							$temp = json_decode($body);
 								
-							$value->ALIAS = !empty($temp->data) ? $temp->data->Alias : 'Sidomar'.$value->NIK;
+							$value->ALIAS = !empty($temp->data) ? $temp->data[0]->Alias : 'Sidomar'.$value->NIK;
                             
                         }else{
                             
