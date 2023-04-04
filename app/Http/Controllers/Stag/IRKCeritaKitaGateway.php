@@ -103,6 +103,27 @@ class IRKCeritaKitaGateway extends Controller
                     ]
                 ]
             );
+        }else{
+            if(env('APP_ENV') == 'local'){
+                return new Client(
+                    [
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ],
+                        'verify' => false
+                    ]
+                );
+            }else{
+                return new Client(
+                    [
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
+                    ]
+                );
+            }
         }
     }
   
