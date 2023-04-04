@@ -310,7 +310,7 @@ class UtilityGateway extends Controller
 						$newdata[] = $value;
 					}
 
-					return $newdata;
+					return $newdata[0];
 				} catch (\Throwable $th) {
 					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 				}
