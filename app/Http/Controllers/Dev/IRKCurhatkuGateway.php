@@ -100,18 +100,30 @@ class IRKCurhatkuGateway extends Controller
                         'Accept' => 'application/json',
                         'Content-type' => 'application/json',
                         'Cookie' => 'Authorization-dev=' . FacadesRequest::cookie('Authorization-dev')
-                    ]
+                    ],
                 ]
             );
         }else{
-            return new Client(
-                [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-type' => 'application/json'
+            if(env('APP_ENV') == 'local'){
+                return new Client(
+                    [
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ],
+                        'verify' => false
                     ]
-                ]
-            );
+                );
+            }else{
+                return new Client(
+                    [
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
+                    ]
+                );
+            }
         }
     }
     
