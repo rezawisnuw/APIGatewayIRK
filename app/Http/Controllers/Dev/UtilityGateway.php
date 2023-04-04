@@ -33,7 +33,7 @@ class UtilityGateway extends Controller
 					if(env('APP_ENV') == 'local'){
 						return response()
 						->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						->header('Authorization-dev','Bearer'.$result['token'])->send();
+						->header('Authorization-dev','Bearer'.$result['token']);
 					} else{
 						return response()
 						->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
@@ -276,7 +276,41 @@ class UtilityGateway extends Controller
 					$body = $response->getBody();
 					$temp = json_decode($body);
 					$result = json_decode($temp->WorkerResult);
-					return $result[0];
+					//return $result[0];
+					$newdata = array();
+					foreach($result as $key=>$value){
+			
+						if(isset($value->NIK)){
+							
+							$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+							
+							$client = new Client();
+							$response = $client->post(
+								'http://'.config('app.URL_GCP_LARAVEL').'dev/profile/get',
+								[
+									RequestOptions::JSON =>[
+										'data' => $object
+									]
+								]
+							);
+	
+							$body = $response->getBody();
+							
+							$temp = json_decode($body);
+								
+							$value->ALIAS = !empty($temp->data) ? $temp->data->Alias : 'Sidomar'.$value->NIK;
+                            
+                        }else{
+                            
+                            $value->ALIAS = null;
+
+                        }
+
+						$newdata[] = $value;
+					}
+
+					return $newdata;
+
 				} catch (\Throwable $th) {
 					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 				}

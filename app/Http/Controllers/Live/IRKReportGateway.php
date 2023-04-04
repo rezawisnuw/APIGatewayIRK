@@ -60,51 +60,54 @@ class IRKReportGateway extends Controller
 
     public function client($param)
     {
-        
-        if ($param == 'infra') {
-            return new Client(
-                [
-                    'base_uri' => config('app.URL_12_LARAVEL'),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-type' => 'application/json'
+        if(env('APP_ENV') == 'local'){
+            if ($param == 'infra') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_12_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ],
+                        'verify' => false
                     ]
-                ]
-            );
-        }else if ($param == 'gcp') {
-            return new Client(
-                [
-                    'base_uri' => config('app.URL_GCP_LARAVEL'),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-type' => 'application/json'
+                );
+            }else if ($param == 'gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ],
+                        'verify' => false
                     ]
-                ]
-            );
-        }else if ($param == 'toverify_infra') {
-            return new Client(
-                [
-                    'base_uri' => config('app.URL_12_LARAVEL'),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                );
+            }else if ($param == 'toverify_infra') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_12_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json',
+                            'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                        ],
+                        'verify' => false
                     ]
-                ]
-            );
-        }else if ($param == 'toverify_gcp') {
-            return new Client(
-                [
-                    'base_uri' => config('app.URL_GCP_LARAVEL'),
-                    'headers' => [
-                        'Accept' => 'application/json',
-                        'Content-type' => 'application/json',
-                        'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                );
+            }else if ($param == 'toverify_gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json',
+                            'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                        ],
+                        'verify' => false
                     ]
-                ]
-            );
-        }else{
-            if(env('APP_ENV') == 'local'){
+                );
+            }else{
                 return new Client(
                     [
                         'headers' => [
@@ -112,6 +115,51 @@ class IRKReportGateway extends Controller
                             'Content-type' => 'application/json'
                         ],
                         'verify' => false
+                    ]
+                );
+            }
+        }
+        else{
+            if ($param == 'infra') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_12_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
+                    ]
+                );
+            }else if ($param == 'gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
+                    ]
+                );
+            }else if ($param == 'toverify_infra') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_12_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json',
+                            'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                        ]
+                    ]
+                );
+            }else if ($param == 'toverify_gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json',
+                            'Cookie' => 'Authorization=' . FacadesRequest::cookie('Authorization')
+                        ]
                     ]
                 );
             }else{
@@ -124,7 +172,8 @@ class IRKReportGateway extends Controller
                     ]
                 );
             }
-        }
+        }   
+        
     }
     
     public function get(Request $request){
