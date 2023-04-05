@@ -193,13 +193,13 @@ class IRKCurhatkuGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->Gambar) && str_contains($value->Gambar,'Stag/Ceritakita/Curhatku/')){
+                        if(!empty($request->code == 1 ? $value->Gambar : $value->picture) && str_contains($request->code == 1 ? $value->Gambar : $value->picture,'Stag/Ceritakita/Curhatku/')){
                             $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
-                                            'file_name' => $value->Gambar,
+                                            'file_name' => $request->code == 1 ? $value->Gambar : $value->picture,
                                             'expired' => 30
                                         ]
                                     ]

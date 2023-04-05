@@ -186,9 +186,47 @@ class IRKMotivasiGateway extends Controller
                     ]
                 ]);
     
-                $result = json_decode($response->getBody()->getContents());
+                if(!empty($result->data)){
+                    $newdata = array();
+
+                    foreach($result->data as $key=>$value){
+
+                        if(!empty($request->code == 1 ? $value->photo : $value->picture) && str_contains($request->code == 1 ? $value->photo : $value->picture,'Live/Ceritakita/Motivasi/')){
+                            $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
+                            $response = $client->request('POST',
+                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
+                                    [
+                                        'json' => [
+                                            'file_name' => $request->code == 1 ? $value->photo : $value->picture,
+                                            'expired' => 30
+                                        ]
+                                    ]
+                                );
     
-                return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                            $body = $response->getBody();
+                            
+                            $temp = json_decode($body);
+
+                            $value->Photo_Cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            
+                        }else{
+                            
+                            $value->Photo_Cloud = 'File not found';
+
+                        }
+                            
+                        $newdata[] = $value;
+                    }
+                    return $this->successRes($newdata, $result->message, $response->getStatusCode());
+                } else{
+                    return response()->json([
+                        'result' => null,
+                        'data' => $result,
+                        'message' => 'Data is Empty',
+                        'status' => 0,
+                        'statuscode' => $response->getStatusCode()
+                    ]);
+                }   
             }else{
                 return $this->userValid($request);
             }
