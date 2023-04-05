@@ -203,7 +203,7 @@ class IRKCeritaKitaGateway extends Controller
                 return response()->json([
                     'result' => null,
                     'data' => $result,
-                    'message' => 'Data is Empty',
+                    'message' => 'Data Kosong',
                     'status' => 0,
                     'statuscode' => $response->getStatusCode()
                 ]);
@@ -294,13 +294,13 @@ class IRKCeritaKitaGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->Picture) && str_contains($value->Picture,'Dev/Ceritakita/')){
+                        if(!empty($value->picture) && str_contains($value->picture,'Dev/Ceritakita/')){
                             $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
-                                            'file_name' => $value->Picture,
+                                            'file_name' => $value->picture,
                                             'expired' => 30
                                         ]
                                     ]

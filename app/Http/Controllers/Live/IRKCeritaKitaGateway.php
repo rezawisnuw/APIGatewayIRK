@@ -291,13 +291,13 @@ class IRKCeritaKitaGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->Picture) && str_contains($value->Picture,'Live/Ceritakita/')){
+                        if(!empty($value->picture) && str_contains($value->picture,'Live/Ceritakita/')){
                             $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
-                                            'file_name' => $value->Picture,
+                                            'file_name' => $value->picture,
                                             'expired' => 30
                                         ]
                                     ]
