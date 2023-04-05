@@ -13,6 +13,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class IRKCeritaKitaGateway extends Controller
 {
+    //------///
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
         return response()->json([
