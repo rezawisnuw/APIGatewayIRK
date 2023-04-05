@@ -248,7 +248,7 @@ class IRKProfileGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'live/photo/post', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'live/profile/post', [
                     'multipart'=>[
                         [
                             'name' => 'data',
@@ -303,7 +303,7 @@ class IRKProfileGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'live/photo/put', [
+                $response = (new self)->client('toverify_gcp')->request('POST', 'live/profile/put', [
                     'multipart'=>[
                         [
                             'name' => 'data',
