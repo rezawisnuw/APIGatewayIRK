@@ -248,40 +248,63 @@ class IRKCurhatkuGateway extends Controller
         try {
             
             if($this->userValid($request)->getData()->result == 'Match'){
-                $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
-                    'multipart'=>[
-                        [
-                            'name' => 'data',
-                            'contents' => json_encode($request->all())
-                        ],
-                        [
-                            'name'     => 'file',
-                            'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
-                        ]
-                    ]
-                ]);
-    
-                $result = json_decode($response->getBody()->getContents());
-
-                if(!empty($result->data)){
-                    $response = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
-                        'multipart' => [
+                if(!empty($request->gambar)){
+                    $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
+                        'multipart'=>[
                             [
-                                'name' => 'file',
-                                'contents' => file_get_contents($request->gambar),
-                                'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
-                                'filename' => $request->gambar->getClientOriginalName()
+                                'name' => 'data',
+                                'contents' => json_encode($request->all())
                             ],
                             [
-                                'name' => 'file_name',
-                                'contents' => $result->data
+                                'name'     => 'file',
+                                'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
                             ]
                         ]
                     ]);
-        
+
                     $result = json_decode($response->getBody()->getContents());
-                    return $this->successRes($result, $result->message, $response->getStatusCode());
-                } else {
+
+                    if(!empty($result->data)){
+                        $response = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
+                            'multipart' => [
+                                [
+                                    'name' => 'file',
+                                    'contents' => file_get_contents($request->gambar),
+                                    'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
+                                    'filename' => $request->gambar->getClientOriginalName()
+                                ],
+                                [
+                                    'name' => 'file_name',
+                                    'contents' => $result->data
+                                ]
+                            ]
+                        ]);
+            
+                        $resultcloud = json_decode($response->getBody()->getContents());
+
+                        return $this->successRes($resultcloud->data, $resultcloud->message, $response->getStatusCode());
+                    } else {
+                        return response()->json([
+                            'result' => null,
+                            'data' => $result,
+                            'message' => 'Data is Empty',
+                            'status' => 0,
+                            'statuscode' => $response->getStatusCode()
+                        ]);
+                    }
+
+                }else{
+                    $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
+                        'multipart'=>[
+                            [
+                                'name' => 'data',
+                                'contents' => json_encode($request->all())
+                            ]
+                        ]
+                    ]);
+
+                    $result = json_decode($response->getBody()->getContents());
+
                     return $this->successRes($result->data, $result->message, $response->getStatusCode());
                 }
     
