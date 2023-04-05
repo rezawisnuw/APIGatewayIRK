@@ -204,7 +204,7 @@ class IRKCeritaKitaGateway extends Controller
                 return response()->json([
                     'result' => null,
                     'data' => $result,
-                    'message' => 'Data Kosong',
+                    'message' => 'Data is Empty',
                     'status' => 0,
                     'statuscode' => $response->getStatusCode()
                 ]);
