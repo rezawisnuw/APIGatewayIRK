@@ -9,7 +9,7 @@ use App\Http\Controllers\Live;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes Guidance
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These
