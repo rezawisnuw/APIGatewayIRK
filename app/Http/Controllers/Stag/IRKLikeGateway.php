@@ -16,7 +16,7 @@ class IRKLikeGateway extends Controller
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
         if(!empty($data)){
-            if($data == 'Success' || $data = true || $data != null){
+            if(str_contains($data,'Success') || $data == true || $data != null){
                 return response()->json([
                     'result' => $message,
                     'data' => $data,
