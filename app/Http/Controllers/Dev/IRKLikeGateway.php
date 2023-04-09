@@ -15,25 +15,24 @@ class IRKLikeGateway extends Controller
 {
     public function successRes($data, $message, $statusCode = Response::HTTP_OK)
     {
-        if(!empty($data)){
-            if(str_contains($data,'Success') || $data == true || $data != null){
-                return response()->json([
-                    'result' => $message,
-                    'data' => $data,
-                    'message' => 'Success on Run',
-                    'status' => 1,
-                    'statuscode' => $statusCode
-                ]);
-            }
+    
+        if($data == 'Data Doubled'){
+            return response()->json([
+                'result' => $message,
+                'data' => $data,
+                'message' => 'Failed on Run',
+                'status' => 0,
+                'statuscode' => $statusCode
+            ]);
+        }else{
+            return response()->json([
+                'result' => $message,
+                'data' => $data,
+                'message' => 'Success on Run',
+                'status' => 1,
+                'statuscode' => $statusCode
+            ]);
         }
-
-        return response()->json([
-            'result' => $message,
-            'data' => $data,
-            'message' => 'Failed on Run',
-            'status' => 0,
-            'statuscode' => $statusCode
-        ]);
     }
 
     public function errorRes($message, $statusCode = Response::HTTP_BAD_REQUEST)
