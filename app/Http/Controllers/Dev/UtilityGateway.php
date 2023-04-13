@@ -298,7 +298,7 @@ class UtilityGateway extends Controller
 							
 							$temp = json_decode($body);
 								
-							$value->ALIAS = !empty($temp->data) ? $temp->data[0]->Alias : 'Sidomar'.$value->NIK;
+							$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
                             
                         }else{
                             
@@ -355,6 +355,58 @@ class UtilityGateway extends Controller
 
 		}  
     }
+
+	public static function EncodeString(Request $request, $str) {
+		$encoded_text = '';
+
+		if(empty($request->all()) && $str != null){
+			for ($i = 0; $i < strlen($str); $i++) {
+				$ascii_code = ord(substr($str, $i, 1));
+				if (ctype_upper(substr($str, $i, 1))) {
+					// uppercase letter
+					$encoded_text .= chr(rand(65, 90));
+				} elseif (ctype_lower(substr($str, $i, 1))) {
+					// lowercase letter
+					$encoded_text .= chr(rand(97, 122));
+				} else {
+					// non-letter character
+					$encoded_text .= rand(0, 9);
+				}
+			}
+		}else {
+			if(env('APP_ENV') == 'local'){
+				$raw_token = str_contains($request->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->header('Authorization-dev');
+			} else{
+				$raw_token = str_contains($request->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->cookie('Authorization-dev');
+			}
+
+			$split_token = explode('.', $raw_token);
+			$decrypt_token = base64_decode($split_token[1]);
+			$escapestring_token = json_decode($decrypt_token);
+
+			if($escapestring_token == $request['nik']){ 
+				for ($i = 0; $i < strlen($str); $i++) {
+					$ascii_code = ord(substr($str, $i, 1));
+					if (ctype_upper(substr($str, $i, 1))) {
+						// uppercase letter
+						$encoded_text .= chr(rand(65, 90));
+					} elseif (ctype_lower(substr($str, $i, 1))) {
+						// lowercase letter
+						$encoded_text .= chr(rand(97, 122));
+					} else {
+						// non-letter character
+						$encoded_text .= rand(0, 9);
+					}
+				}
+			}else {
+				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+			}
+		
+		}
+
+		return substr(str_shuffle($encoded_text), 0, 8);
+	}
+	
 }
 
 
