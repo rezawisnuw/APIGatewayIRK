@@ -4,5 +4,11 @@
         "ip": "GATEWAY_HOST",
         "password": "GATEWAY_PASSWORD",
         "port": "22"
+    },
+    {
+        "name": "irkgatewaynonha",
+        "ip": "GATEWAY_HOST_2",
+        "password": "GATEWAY_PASSWORD",
+        "port": "22"
     }
 ]
