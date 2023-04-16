@@ -185,6 +185,8 @@ class IRKMotivasiGateway extends Controller
                         'data' => $request->all()
                     ]
                 ]);
+
+                $result = json_decode($response->getBody()->getContents());
     
                 if(!empty($result->data)){
                     $newdata = array();
