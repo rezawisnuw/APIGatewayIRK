@@ -310,11 +310,11 @@ class IRKCeritaKitaGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Picture_Cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            $value->picture_cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
                             
                         }else{
                             
-                            $value->Picture_Cloud = 'File not found';
+                            $value->picture_cloud = 'File not found';
 
                         }
                             
