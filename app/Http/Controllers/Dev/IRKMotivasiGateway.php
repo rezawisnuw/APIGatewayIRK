@@ -193,13 +193,13 @@ class IRKMotivasiGateway extends Controller
 
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($request->code == 1 ? $value->photo : $value->picture) && str_contains($request->code == 1 ? $value->photo : $value->picture,'Dev/Ceritakita/Motivasi/')){
+                        if(!empty($value->picture) && str_contains($value->picture,'Dev/Ceritakita/Motivasi/')){
                             $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
-                                            'file_name' => $request->code == 1 ? $value->photo : $value->picture,
+                                            'file_name' => $value->picture,
                                             'expired' => 30
                                         ]
                                     ]
@@ -209,11 +209,11 @@ class IRKMotivasiGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->Photo_Cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            $value->picture_cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
                             
                         }else{
                             
-                            $value->Photo_Cloud = 'File not found';
+                            $value->picture_cloud = 'File not found';
 
                         }
                             

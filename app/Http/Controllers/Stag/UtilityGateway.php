@@ -299,7 +299,8 @@ class UtilityGateway extends Controller
 							
 							$temp = json_decode($body);
 								
-							$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+							$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
                             
                         }else{
                             
@@ -356,7 +357,7 @@ class UtilityGateway extends Controller
 		}  
     }
 
-	public static function EncodeString(Request $request, $str) {
+	public static function EncodeString(Request $request, $str) { //this function cannot be recover to the original
 		$encoded_text = '';
 
 		if(empty($request->all()) && $str != null){
