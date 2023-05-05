@@ -245,7 +245,105 @@ class IRKMotivasiGateway extends Controller
     }
 
     public function post(Request $request){
-        
+        try {
+            
+            if($this->userValid($request)->getData()->result == 'Match'){
+                if(!empty($request->photo)){
+                    $response = (new self)->client('toverify_gcp')->request('POST', 'live/motivasi/post', [
+                        'multipart'=>[
+                            [
+                                'name' => 'data',
+                                'contents' => json_encode($request->all())
+                            ],
+                            [
+                                'name'     => 'file',
+                                'contents' => json_encode(base64_encode(file_get_contents($request->photo)))
+                            ]
+                        ]
+                    ]);
+
+                    $result = json_decode($response->getBody()->getContents());
+
+                    if(!empty($result->data)){
+                        $requestcloud = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
+                            'multipart' => [
+                                [
+                                    'name' => 'file',
+                                    'contents' => file_get_contents($request->photo),
+                                    'headers' => ['Content_type' => $request->photo->getClientMimeType()],
+                                    'filename' => $request->photo->getClientOriginalName()
+                                ],
+                                [
+                                    'name' => 'file_name',
+                                    'contents' => $result->data
+                                ]
+                            ]
+                        ]);
+            
+                        $userid = explode("_",$result->data);
+                        $idticket = explode("_",$result->data);
+                        $client = new Client();
+                        $response = $client->post(
+                            'http://'.config('app.URL_GCP_LARAVEL').'live/motivasi/get',
+                            [
+                                RequestOptions::JSON => 
+                                [
+                                    'data' => [
+                                        'userid'=>substr($userid[0],-10),
+                                        'code'=>'2',
+                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'page'=>'0'
+                                    ]
+                                ]
+                            ],
+                                
+                            ['Content-Type' => 'application/json']
+                        );
+                
+                        $body = $response->getBody();
+                        $temp = json_decode($body);
+            
+                        $resultcloud = json_decode($requestcloud->getBody()->getContents());
+
+                        return $this->successRes($temp, $resultcloud->message, $requestcloud->getStatusCode());
+                    } else {
+                        return response()->json([
+                            'result' => null,
+                            'data' => $result,
+                            'message' => 'Data is Empty',
+                            'status' => 0,
+                            'statuscode' => $response->getStatusCode()
+                        ]);
+                    }
+
+                }else{
+                    $response = (new self)->client('toverify_gcp')->request('POST', 'live/motivasi/post', [
+                        'multipart'=>[
+                            [
+                                'name' => 'data',
+                                'contents' => json_encode($request->all())
+                            ]
+                        ]
+                    ]);
+
+                    $result = json_decode($response->getBody()->getContents());
+
+                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                }
+    
+            }else{
+                return $this->userValid($request);
+            }
+            
+        } catch (ClientException | ServerException $e) {
+            $response = $e->getResponse();
+            $responseBody = json_decode((string) $response->getBody());
+
+            if($responseBody == '') return $this->errorRes($e->getMessage(), $response->getStatusCode());
+            else return $this->errorRes($responseBody->message, $response->getStatusCode());
+        } catch (\Throwable $e) {
+            return $this->errorRes($e->getMessage());
+        }
     }
 
     public function put(Request $request){

@@ -265,7 +265,7 @@ class IRKCurhatkuGateway extends Controller
                     $result = json_decode($response->getBody()->getContents());
 
                     if(!empty($result->data)){
-                        $response = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
+                        $requestcloud = (new self)->client('')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
                             'multipart' => [
                                 [
                                     'name' => 'file',
@@ -279,10 +279,33 @@ class IRKCurhatkuGateway extends Controller
                                 ]
                             ]
                         ]);
-            
-                        $resultcloud = json_decode($response->getBody()->getContents());
 
-                        return $this->successRes($resultcloud->data, $resultcloud->message, $response->getStatusCode());
+                        $userid = explode("_",$result->data);
+                        $idticket = explode("_",$result->data);
+                        $client = new Client();
+                        $response = $client->post(
+                            'http://'.config('app.URL_GCP_LARAVEL').'dev/curhatku/get',
+                            [
+                                RequestOptions::JSON => 
+                                [
+                                    'data' => [
+                                        'userid'=>substr($userid[0],-10),
+                                        'code'=>'2',
+                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'page'=>'0'
+                                    ]
+                                ]
+                            ],
+                                
+                            ['Content-Type' => 'application/json']
+                        );
+                
+                        $body = $response->getBody();
+                        $temp = json_decode($body);
+            
+                        $resultcloud = json_decode($requestcloud->getBody()->getContents());
+
+                        return $this->successRes($temp, $resultcloud->message, $requestcloud->getStatusCode());
                     } else {
                         return response()->json([
                             'result' => null,
