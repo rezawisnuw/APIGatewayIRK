@@ -75,7 +75,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -98,7 +98,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -133,7 +133,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -154,7 +154,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -284,7 +284,7 @@ class IRKMotivasiGateway extends Controller
                         $idticket = explode("_",$result->data);
                         $client = new Client();
                         $response = $client->post(
-                            'http://'.config('app.URL_GCP_LARAVEL').'live/motivasi/get',
+                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/motivasi/get',
                             [
                                 RequestOptions::JSON => 
                                 [
@@ -305,7 +305,7 @@ class IRKMotivasiGateway extends Controller
             
                         $resultcloud = json_decode($requestcloud->getBody()->getContents());
 
-                        return $this->successRes($temp, $resultcloud->message, $requestcloud->getStatusCode());
+                        return $this->successRes($temp->data, $resultcloud->message, $requestcloud->getStatusCode());
                     } else {
                         return response()->json([
                             'result' => null,

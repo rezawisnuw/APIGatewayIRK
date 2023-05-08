@@ -287,7 +287,7 @@ class UtilityGateway extends Controller
 							
 							$client = new Client();
 							$response = $client->post(
-								'http://'.config('app.URL_GCP_LARAVEL').'stag/profile/get',
+								'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
 								[
 									RequestOptions::JSON =>[
 										'data' => $object
