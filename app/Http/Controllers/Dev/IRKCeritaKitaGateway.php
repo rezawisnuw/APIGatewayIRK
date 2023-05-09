@@ -76,7 +76,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -99,7 +99,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -134,7 +134,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -155,7 +155,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
