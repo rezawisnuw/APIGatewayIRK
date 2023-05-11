@@ -282,8 +282,8 @@ class IRKCurhatkuGateway extends Controller
 
                         $userid = explode("_",$result->data);
                         $idticket = explode("_",$result->data);
-                        $client = new Client();
-                        $response = $client->post(
+                        $newclient = new Client();
+                        $newresponse = $newclient->post(
                             'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/curhatku/get',
                             [
                                 RequestOptions::JSON => 
@@ -300,12 +300,35 @@ class IRKCurhatkuGateway extends Controller
                             ['Content-Type' => 'application/json']
                         );
                 
-                        $body = $response->getBody();
+                        $body = $newresponse->getBody();
                         $temp = json_decode($body);
+
+                        $newdata = array();
+                        foreach($temp->data as $key=>$value){
+
+                            $clientcloud = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
+                            $responsecloud = $clientcloud->request('POST',
+                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
+                                    [
+                                        'json' => [
+                                            'file_name' => $result->data,
+                                            'expired' => 30
+                                        ]
+                                    ]
+                                );
+    
+                            $bodycloud = $responsecloud->getBody();
+                            
+                            $tempcloud = json_decode($bodycloud);
+
+                            $value->picture_cloud = $tempcloud->status == 1 ? $tempcloud->url : 'Corrupt';
+                                
+                            $newdata[] = $value;
+                        }
             
                         $resultcloud = json_decode($requestcloud->getBody()->getContents());
 
-                        return $this->successRes($temp->data, $resultcloud->message, $requestcloud->getStatusCode());
+                        return $this->successRes($newdata, $resultcloud->message, $requestcloud->getStatusCode());
                     } else {
                         return response()->json([
                             'result' => null,
@@ -328,9 +351,50 @@ class IRKCurhatkuGateway extends Controller
 
                     $result = json_decode($response->getBody()->getContents());
 
-                    return $this->successRes($result->data, $result->message, $response->getStatusCode());
-                }
+                    if(!empty($result->data)){
+                        $userid = explode("_",$result->data);
+                        $idticket = explode("_",$result->data);
+                        $newclient = new Client();
+                        $newresponse = $newclient->post(
+                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/curhatku/get',
+                            [
+                                RequestOptions::JSON => 
+                                [
+                                    'data' => [
+                                        'userid'=>substr($userid[0],-10),
+                                        'code'=>'2',
+                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'page'=>'0'
+                                    ]
+                                ]
+                            ],
+                                
+                            ['Content-Type' => 'application/json']
+                        );
                 
+                        $body = $newresponse->getBody();
+                        $temp = json_decode($body);
+
+                        $newdata = array();
+                        foreach($temp->data as $key=>$value){
+                            $value->picture_cloud = 'File not found';
+                                
+                            $newdata[] = $value;
+                        }
+
+                        return $this->successRes($newdata, $result->message, $response->getStatusCode());
+
+                    } else {
+                        return response()->json([
+                            'result' => null,
+                            'data' => $result,
+                            'message' => 'Data is Empty',
+                            'status' => 0,
+                            'statuscode' => $response->getStatusCode()
+                        ]);
+                    }
+                }
+    
             }else{
                 return $this->userValid($request);
             }
