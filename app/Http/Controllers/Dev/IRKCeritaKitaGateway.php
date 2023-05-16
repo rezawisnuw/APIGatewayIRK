@@ -189,21 +189,22 @@ class IRKCeritaKitaGateway extends Controller
             $result = json_decode($response->getBody()->getContents());
             
             if($result != null){
-                if (str_contains($result->status,'Success'))
+                if (str_contains($result->status,'Success')){
                     return $this->successRes('Token has stored in Cookie', $result->message, $response->getStatusCode())->withCookie(cookie('Authorization-dev', 'Bearer'.$result->token, '120'));
-                else
+                }else {
                     return response()->json([
                         'result' => $result->message,
-                        'data' => null,
+                        'data' => $result->data,
                         'message' => $result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
+                }
             }else{
                 return response()->json([
-                    'result' => null,
-                    'data' => $result,
-                    'message' => 'Data Kosong',
+                    'result' => $result->message,
+                    'data' => $result->data,
+                    'message' => $result->status,
                     'status' => 0,
                     'statuscode' => $response->getStatusCode()
                 ]);
@@ -324,9 +325,9 @@ class IRKCeritaKitaGateway extends Controller
                     return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => null,
-                        'data' => $result,
-                        'message' => 'Data is Empty',
+                        'result' => $result->message,
+                        'data' => $result->data,
+                        'message' => $result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);

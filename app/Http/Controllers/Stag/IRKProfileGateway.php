@@ -222,9 +222,9 @@ class IRKProfileGateway extends Controller
                     return $this->successRes($newdata, $result->message, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => null,
-                        'data' => $result,
-                        'message' => 'Data is Empty',
+                        'result' => $result->message,
+                        'data' => $result->data,
+                        'message' => $result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
@@ -285,9 +285,9 @@ class IRKProfileGateway extends Controller
                         return $this->successRes($resultcloud, $resultcloud->message, $response->getStatusCode());
                     } else {
                         return response()->json([
-                            'result' => null,
-                            'data' => $result,
-                            'message' => 'Data is Empty',
+                            'result' => $result->message,
+                            'data' => $result->data,
+                            'message' => $result->status,
                             'status' => 0,
                             'statuscode' => $response->getStatusCode()
                         ]);
@@ -363,9 +363,9 @@ class IRKProfileGateway extends Controller
                         return $this->successRes($resultcloud, $resultcloud->message, $response->getStatusCode());
                     } else {
                         return response()->json([
-                            'result' => null,
-                            'data' => $result,
-                            'message' => 'Data is Empty',
+                            'result' => $result->message,
+                            'data' => $result->data,
+                            'message' => $result->status,
                             'status' => 0,
                             'statuscode' => $response->getStatusCode()
                         ]);
