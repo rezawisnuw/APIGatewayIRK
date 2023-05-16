@@ -190,10 +190,10 @@ class IRKMotivasiGateway extends Controller
     
                 if(!empty($result->data)){
                     $newdata = array();
-
+                    $format = array("jpeg", "jpg", "png");
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->picture) && str_contains($value->picture,'Stag/Ceritakita/Motivasi/')){
+                        if(!empty($value->picture) && str_contains($value->picture,'Stag/Ceritakita/Motivasi/') && in_array(explode('.',$value->picture)[1], $format)){
                             $client = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
                             $response = $client->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
