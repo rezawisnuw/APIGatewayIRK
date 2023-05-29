@@ -33,6 +33,7 @@ Route::group(['middleware' => 'cors'], function () {
 	Route::post('dev/uploadBlob', [Dev\UtilityGateway::class, 'UploadBlob']);
 	Route::post('dev/downloadFisik', [Dev\UtilityGateway::class, 'DownloadFile93']);
 	Route::post('dev/firebase', [Dev\UtilityGateway::class, 'Firebase']);
+	Route::post('dev/worker', [Dev\UtilityGateway::class, 'WorkerESS']);
 
     #STAG
 	Route::post('stag/login', [Stag\UtilityGateway::class, 'LoginESS']);
@@ -41,6 +42,7 @@ Route::group(['middleware' => 'cors'], function () {
 	Route::post('stag/uploadBlob', [Stag\UtilityGateway::class, 'UploadBlob']);
 	Route::post('stag/downloadFisik', [Stag\UtilityGateway::class, 'DownloadFile93']);
 	Route::post('stag/firebase', [Stag\UtilityGateway::class, 'Firebase']);
+	Route::post('stag/worker', [Stag\UtilityGateway::class, 'WorkerESS']);
 
     #LIVE
 	Route::post('live/login', [Live\UtilityGateway::class, 'LoginESS']);
@@ -49,6 +51,7 @@ Route::group(['middleware' => 'cors'], function () {
 	Route::post('live/uploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
 	Route::post('live/downloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
 	Route::post('live/firebase', [Live\UtilityGateway::class, 'Firebase']);
+	Route::post('live/worker', [Live\UtilityGateway::class, 'WorkerESS']);
 
 });
 
