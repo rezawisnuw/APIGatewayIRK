@@ -32,11 +32,13 @@ class UtilityGateway extends Controller
 					$param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 					if(env('APP_ENV') == 'local'){
 						return response()
-						->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						//->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						->json(['result' => 'Token has Stored in Header', 'data' => null, 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
 						->header('Authorization-dev','Bearer'.$result['token']);
 					} else{
 						return response()
-						->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						//->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						->json(['result' => 'Token has Stored in Cookie', 'data' => null, 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
 						->withCookie(cookie('Authorization-dev', 'Bearer'.$result['token'], '120'));
 					}
 				} else {
@@ -253,8 +255,8 @@ class UtilityGateway extends Controller
         }
     }
 
-	public static function WorkerESS(Request $request, $param){
-
+	public static function WorkerESS(Request $request, $param=null){
+		
 		if(!isset($request['data']['code']) && $param != null){
 			
 			$raw_token = $param['param']['token'];
@@ -322,6 +324,7 @@ class UtilityGateway extends Controller
 
 		} 
 		else {
+		
 			if(env('APP_ENV') == 'local'){
 				$raw_token = str_contains($request->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->header('Authorization-dev');
 			} else{
@@ -332,28 +335,51 @@ class UtilityGateway extends Controller
 			$decrypt_token = base64_decode($split_token[1]);
 			$escapestring_token = json_decode($decrypt_token);
 
-			if($escapestring_token == $request['data']['find']){ 
-				try {
-					$client = new Client(); 
-					$response = $client->post(
-						'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
-						[
-							RequestOptions::JSON => 
-							['param' => $request['data']]
-						],
-						['Content-Type' => 'application/json']
-					);
-					$body = $response->getBody();
-					$temp = json_decode($body);
-					$result = json_decode($temp->WorkerResult);
-					return $result[0];
-				} catch (\Throwable $th) {
-					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
+			if($request['data']['code'] == '1'){
+				if($escapestring_token == $request['data']['nik']){ 
+					try {
+						$client = new Client(); 
+						$response = $client->post(
+							'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
+							[
+								RequestOptions::JSON => 
+								['param' => $request['data']]
+							],
+							['Content-Type' => 'application/json']
+						);
+						$body = $response->getBody();
+						$temp = json_decode($body);
+						$result = json_decode($temp->WorkerResult);
+						return $result[0];
+					} catch (\Throwable $th) {
+						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
+					}
+				} else {
+					return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 				}
-			} else {
-				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+			}else{
+				if($escapestring_token == $request['data']['find']){ 
+					try {
+						$client = new Client(); 
+						$response = $client->post(
+							'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
+							[
+								RequestOptions::JSON => 
+								['param' => $request['data']]
+							],
+							['Content-Type' => 'application/json']
+						);
+						$body = $response->getBody();
+						$temp = json_decode($body);
+						$result = json_decode($temp->WorkerResult);
+						return $result[0];
+					} catch (\Throwable $th) {
+						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
+					}
+				} else {
+					return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+				}
 			}
-
 		}  
     }
 
