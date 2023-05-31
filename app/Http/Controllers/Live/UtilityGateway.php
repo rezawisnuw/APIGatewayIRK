@@ -308,7 +308,15 @@ class UtilityGateway extends Controller
 
                         }
 
-						$newdata[] = $value;
+						$newjson = new \stdClass();
+
+						$newjson->NIK = base64_encode($value->NIK);
+						$newjson->NAMA = $value->NAMA;
+						$newjson->EMAIL = $value->EMAIL;
+						$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+						$newjson->ALIAS = $value->ALIAS;
+
+						$newdata[] = $newjson;
 					}
 
 					return $newdata[0];
@@ -347,7 +355,49 @@ class UtilityGateway extends Controller
 						$body = $response->getBody();
 						$temp = json_decode($body);
 						$result = json_decode($temp->WorkerResult);
-						return $result[0];
+
+						$newdata = array();
+                        foreach($result as $key=>$value){
+							
+							if(isset($value->NIK)){
+							
+								$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+								
+								$client = new Client();
+								$response = $client->post(
+									'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/profile/get',
+									[
+										RequestOptions::JSON =>[
+											'data' => $object
+										]
+									]
+								);
+		
+								$body = $response->getBody();
+								
+								$temp = json_decode($body);
+									
+								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+								$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
+								
+							}else{
+								
+								$value->ALIAS = null;
+	
+							}
+
+							$newjson = new \stdClass();
+
+							$newjson->NIK = base64_encode($value->NIK);
+							$newjson->NAMA = $value->NAMA;
+							$newjson->EMAIL = $value->EMAIL;
+							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->ALIAS = $value->ALIAS;
+
+							$newdata[] = $newjson;
+						}
+						//return $result[0];
+						return $newdata[0];
 					} catch (\Throwable $th) {
 						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 					}
@@ -369,7 +419,49 @@ class UtilityGateway extends Controller
 						$body = $response->getBody();
 						$temp = json_decode($body);
 						$result = json_decode($temp->WorkerResult);
-						return $result[0];
+						
+						$newdata = array();
+                        foreach($result as $key=>$value){
+							
+							if(isset($value->NIK)){
+							
+								$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+								
+								$client = new Client();
+								$response = $client->post(
+									'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/profile/get',
+									[
+										RequestOptions::JSON =>[
+											'data' => $object
+										]
+									]
+								);
+		
+								$body = $response->getBody();
+								
+								$temp = json_decode($body);
+									
+								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+								$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
+								
+							}else{
+								
+								$value->ALIAS = null;
+	
+							}
+
+							$newjson = new \stdClass();
+
+							$newjson->NIK = base64_encode($value->NIK);
+							$newjson->NAMA = $value->NAMA;
+							$newjson->EMAIL = $value->EMAIL;
+							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->ALIAS = $value->ALIAS;
+
+							$newdata[] = $newjson;
+						}
+						//return $result[0];
+						return $newdata[0];
 					} catch (\Throwable $th) {
 						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 					}
