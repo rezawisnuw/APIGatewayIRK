@@ -323,7 +323,34 @@ class IRKMotivasiGateway extends Controller
 
                             $value->picture_cloud = $tempcloud->status == 1 ? $tempcloud->url : 'Corrupt';
                                 
-                            $newdata[] = $value;
+                            $newjson = new \stdClass();
+
+                            $newjson->idticket = $value->idticket;
+                            $newjson->employee = base64_encode($value->employee);
+                            $newjson->header = $value->header;
+                            $newjson->text = $value->text;
+
+                            $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                            $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                            $encodedStringPicture = base64_encode($substringPicture);
+                            $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+
+                            $newjson->picture = $newPicture;
+                            $newjson->key = $value->key;
+                            $newjson->alias = $value->alias;
+                            $newjson->created = $value->created;
+                            $newjson->ttlcomment = $value->ttlcomment;
+                            $newjson->ttllike = $value->ttllike;
+                            $newjson->likeby = $value->likeby;
+
+                            $substringPictureCloud = substr($value->picture_cloud, strrpos($value->picture_cloud, '/') + 1);
+                            $substringPictureCloud = substr($substringPictureCloud, 0, strpos($substringPictureCloud, '_'));
+                            $encodedStringPictureCloud = base64_encode($substringPictureCloud);
+                            $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
+
+                            $newjson->picture_cloud = $newPictureCloud;
+                                
+                            $newdata[] = $newjson;
                         }
             
                         $resultcloud = json_decode($requestcloud->getBody()->getContents());
@@ -381,7 +408,28 @@ class IRKMotivasiGateway extends Controller
 
                             $value->picture_cloud = 'File not found';
                                 
-                            $newdata[] = $value;
+                            $newjson = new \stdClass();
+
+                            $newjson->idticket = $value->idticket;
+                            $newjson->employee = base64_encode($value->employee);
+                            $newjson->header = $value->header;
+                            $newjson->text = $value->text;
+
+                            $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                            $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                            $encodedStringPicture = base64_encode($substringPicture);
+                            $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+
+                            $newjson->picture = $newPicture;
+                            $newjson->key = $value->key;
+                            $newjson->alias = $value->alias;
+                            $newjson->created = $value->created;
+                            $newjson->ttlcomment = $value->ttlcomment;
+                            $newjson->ttllike = $value->ttllike;
+                            $newjson->likeby = $value->likeby;
+                            $newjson->picture_cloud = $value->picture_cloud;
+                                
+                            $newdata[] = $newjson;
                         }
 
                         return $this->successRes($result->data, $result->message, $response->getStatusCode());
