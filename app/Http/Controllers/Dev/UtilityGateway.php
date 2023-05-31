@@ -314,6 +314,7 @@ class UtilityGateway extends Controller
 							$newjson->NAMA = $value->NAMA;
 							$newjson->EMAIL = $value->EMAIL;
 							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->JENIS_KELAMIN = $value->JENIS_KELAMIN;
 							$newjson->ALIAS = $value->ALIAS;
 
 							$newdata[] = $newjson;
@@ -394,6 +395,7 @@ class UtilityGateway extends Controller
 							$newjson->NAMA = $value->NAMA;
 							$newjson->EMAIL = $value->EMAIL;
 							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->JENIS_KELAMIN = $value->JENIS_KELAMIN;
 							$newjson->ALIAS = $value->ALIAS;
 
 							$newdata[] = $newjson;
@@ -458,6 +460,7 @@ class UtilityGateway extends Controller
 							$newjson->NAMA = $value->NAMA;
 							$newjson->EMAIL = $value->EMAIL;
 							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->JENIS_KELAMIN = $value->JENIS_KELAMIN;
 							$newjson->ALIAS = $value->ALIAS;
 
 							$newdata[] = $newjson;
