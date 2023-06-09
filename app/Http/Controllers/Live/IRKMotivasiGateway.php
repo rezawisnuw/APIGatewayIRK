@@ -343,12 +343,13 @@ class IRKMotivasiGateway extends Controller
                             $newjson->ttllike = $value->ttllike;
                             $newjson->likeby = $value->likeby;
 
-                            $substringPictureCloud = substr($value->picture_cloud, strrpos($value->picture_cloud, '/') + 1);
-                            $substringPictureCloud = substr($substringPictureCloud, 0, strpos($substringPictureCloud, '_'));
-                            $encodedStringPictureCloud = base64_encode($substringPictureCloud);
-                            $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
+                            // $substringPictureCloud = substr($value->picture_cloud, strrpos($value->picture_cloud, '/') + 1);
+                            // $substringPictureCloud = substr($substringPictureCloud, 0, strpos($substringPictureCloud, '_'));
+                            // $encodedStringPictureCloud = base64_encode($substringPictureCloud);
+                            // $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
 
-                            $newjson->picture_cloud = $newPictureCloud;
+                            // $newjson->picture_cloud = $newPictureCloud;
+                            $newjson->picture_cloud = base64_encode($value->picture_cloud);
                                 
                             $newdata[] = $newjson;
                         }
