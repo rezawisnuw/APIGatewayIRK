@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Dev;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\database\QueryException;
 use Telegram;
 use GuzzleHttp;
@@ -391,7 +392,7 @@ class UtilityGateway extends Controller
 
 							$newjson = new \stdClass();
 
-							$newjson->NIK = base64_encode($value->NIK);
+							$newjson->NIK = Crypt::encryptString($value->NIK);
 							$newjson->NAMA = $value->NAMA;
 							$newjson->EMAIL = $value->EMAIL;
 							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
