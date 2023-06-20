@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
 
 class IRKMotivasiGateway extends Controller
@@ -326,7 +327,7 @@ class IRKMotivasiGateway extends Controller
                             $newjson = new \stdClass();
 
                             $newjson->idticket = $value->idticket;
-                            $newjson->employee = base64_encode($value->employee);
+                            $newjson->employee = Crypt::encryptString($value->employee);
                             $newjson->header = $value->header;
                             $newjson->text = $value->text;
 
@@ -335,7 +336,7 @@ class IRKMotivasiGateway extends Controller
                             $encodedStringPicture = base64_encode($substringPicture);
                             $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
-                            $newjson->picture = $newPicture;
+                            //$newjson->picture = $newPicture;
                             $newjson->key = $value->key;
                             $newjson->alias = $value->alias;
                             $newjson->created = $value->created;
@@ -349,7 +350,7 @@ class IRKMotivasiGateway extends Controller
                             // $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
 
                             // $newjson->picture_cloud = $newPictureCloud;
-                            $newjson->picture_cloud = base64_encode($value->picture_cloud);
+                            $newjson->picture_cloud = Crypt::encryptString($value->picture_cloud);
                                 
                             $newdata[] = $newjson;
                         }
@@ -412,7 +413,7 @@ class IRKMotivasiGateway extends Controller
                             $newjson = new \stdClass();
 
                             $newjson->idticket = $value->idticket;
-                            $newjson->employee = base64_encode($value->employee);
+                            $newjson->employee = Crypt::encryptString($value->employee);
                             $newjson->header = $value->header;
                             $newjson->text = $value->text;
 
@@ -421,7 +422,7 @@ class IRKMotivasiGateway extends Controller
                             $encodedStringPicture = base64_encode($substringPicture);
                             $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
-                            $newjson->picture = $newPicture;
+                            //$newjson->picture = $newPicture;
                             $newjson->key = $value->key;
                             $newjson->alias = $value->alias;
                             $newjson->created = $value->created;
