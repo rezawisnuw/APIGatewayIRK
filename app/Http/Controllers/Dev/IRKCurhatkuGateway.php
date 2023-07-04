@@ -38,25 +38,48 @@ class IRKCurhatkuGateway extends Controller
 
     public function userValid($data)
     { 
-        if(isset($data->all()['userid'])){
-            if(env('APP_ENV') == 'local'){
-                $raw_token = str_contains($data->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->header('Authorization-dev');
+        if($data->all()['userid'] ==  $data->all()['nik']){
+            if(isset($data->all()['userid']) && isset($data->all()['nik'])){
+                if(env('APP_ENV') == 'local'){
+                    $raw_token = str_contains($data->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->header('Authorization-dev');
+                }else{
+                    $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
+                }
+                
+                $split_token = explode('.', $raw_token);
+                $decrypt_token = base64_decode($split_token[1]);
+                $escapestring_token = json_decode($decrypt_token);
+               
+                if($escapestring_token == ($data->userid && $data->nik)){    
+                    return $this->successRes(null, 'Match1');
+                }else{
+                    return $this->errorRes('Your data is not verified');
+                }
             }else{
-                $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
-            }
-            
-            $split_token = explode('.', $raw_token);
-            $decrypt_token = base64_decode($split_token[1]);
-            $escapestring_token = json_decode($decrypt_token);
-           
-            if($escapestring_token == $data->userid){    
-                return $this->successRes(null, 'Match');
-            }else{
-                return $this->errorRes('Your data is not verified');
+                return $this->errorRes('User not match');
             }
         }else{
-            return $this->errorRes('User not match');
+            if(isset($data->all()['userid'])){
+                if(env('APP_ENV') == 'local'){
+                    $raw_token = str_contains($data->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->header('Authorization-dev');
+                }else{
+                    $raw_token = str_contains($data->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($data->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$data->cookie('Authorization-dev');
+                }
+                
+                $split_token = explode('.', $raw_token);
+                $decrypt_token = base64_decode($split_token[1]);
+                $escapestring_token = json_decode($decrypt_token);
+               
+                if($escapestring_token == $data->userid){    
+                    return $this->successRes(null, 'Match2');
+                }else{
+                    return $this->errorRes('Your data is not verified');
+                }
+            }else{
+                return $this->errorRes('User not match');
+            }
         }
+        
     }
 
     public function client($param)
@@ -247,7 +270,7 @@ class IRKCurhatkuGateway extends Controller
 
     public function post(Request $request){
         try {
-            
+            //return $this->userValid($request);
             if($this->userValid($request)->getData()->result == 'Match'){
                 if(!empty($request->gambar)){
                     $response = (new self)->client('toverify_gcp')->request('POST', 'dev/curhatku/post', [
@@ -262,7 +285,7 @@ class IRKCurhatkuGateway extends Controller
                             ]
                         ]
                     ]);
-
+                    
                     $result = json_decode($response->getBody()->getContents());
 
                     if(!empty($result->data)){

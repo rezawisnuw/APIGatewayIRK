@@ -31,6 +31,7 @@ class UtilityGateway extends Controller
 				
 				if($result['wcf']['status'] == '1') {
 					$param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
+					//return response()->json(env('APP_ENV'));
 					if(env('APP_ENV') == 'local'){
 						return response()
 						//->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
@@ -110,7 +111,7 @@ class UtilityGateway extends Controller
 			$client = new \GuzzleHttp\Client();
 			$filefisik = ($request->has('filefisik') && $request->filefisik != '') ? $request->file('filefisik') : '';
 
-			$response = $client->request('POST', "http://".config('app.URL_DEV')."/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
+			$response = $client->request('POST', "http://".config('app.URL_DEV')."/RESTSecurity/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
 
 				'multipart' => [
 					[
@@ -183,7 +184,7 @@ class UtilityGateway extends Controller
             );
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_DEV')."/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_DEV')."/RESTSecurity/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
@@ -210,7 +211,7 @@ class UtilityGateway extends Controller
 
 			$client = new Client();
 			$response = $client->post(
-				'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+				'http://'.config('app.URL_DEV').'/RESTSecurity/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
 				[
 					RequestOptions::JSON =>
 					['filePath' => $postbody['filePath']]
@@ -236,7 +237,7 @@ class UtilityGateway extends Controller
 
 				$client = new Client();
 				$response = $client->post(
-					'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Firebase',
+					'http://'.config('app.URL_DEV').'/RESTSecurity/RESTSecurity.svc/IDM/Firebase',
 					[
 						RequestOptions::JSON =>
 						['param' => $postbody]
@@ -269,7 +270,7 @@ class UtilityGateway extends Controller
 				try {
 					$client = new Client(); 
 					$response = $client->post(
-						'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
+						'http://'.config('app.URL_DEV').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 						[
 							RequestOptions::JSON => 
 							['param' => $param['param']]
@@ -349,7 +350,7 @@ class UtilityGateway extends Controller
 					try {
 						$client = new Client(); 
 						$response = $client->post(
-							'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
+							'http://'.config('app.URL_DEV').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 							[
 								RequestOptions::JSON => 
 								['param' => $request['data']]
@@ -414,7 +415,7 @@ class UtilityGateway extends Controller
 					try {
 						$client = new Client(); 
 						$response = $client->post(
-							'http://'.config('app.URL_DEV').'/RESTSecurity.svc/IDM/Worker',
+							'http://'.config('app.URL_DEV').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 							[
 								RequestOptions::JSON => 
 								['param' => $request['data']]
