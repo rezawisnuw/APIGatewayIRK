@@ -51,7 +51,7 @@ class IRKCurhatkuGateway extends Controller
                     $decrypt_token = base64_decode($split_token[1]);
                     $escapestring_token = json_decode($decrypt_token);
                    
-                    if($escapestring_token == ($data->userid && $data->nik)){    
+                    if($escapestring_token == $data->userid && $escapestring_token == $data->nik){       
                         return $this->successRes(null, 'Match');
                     }else{
                         return $this->errorRes('Your data is not verified');
@@ -74,7 +74,7 @@ class IRKCurhatkuGateway extends Controller
                 $decrypt_token = base64_decode($split_token[1]);
                 $escapestring_token = json_decode($decrypt_token);
                
-                if($escapestring_token == $data->userid && $escapestring_token == $data->nik){       
+                if($escapestring_token == $data->userid){    
                     return $this->successRes(null, 'Match');
                 }else{
                     return $this->errorRes('Your data is not verified');
