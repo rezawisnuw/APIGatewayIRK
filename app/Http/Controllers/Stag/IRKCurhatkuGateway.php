@@ -50,8 +50,10 @@ class IRKCurhatkuGateway extends Controller
                     $split_token = explode('.', $raw_token);
                     $decrypt_token = base64_decode($split_token[1]);
                     $escapestring_token = json_decode($decrypt_token);
+
+                    return $escapestring_token;
                    
-                    if($escapestring_token == ($data->userid && $data->nik)){    
+                    if($escapestring_token == $data->userid && $escapestring_token == $data->nik){       
                         return $this->successRes(null, 'Match');
                     }else{
                         return $this->errorRes('Your data is not verified');
@@ -273,7 +275,7 @@ class IRKCurhatkuGateway extends Controller
 
     public function post(Request $request){
         try {
-            
+            return response()->json($this->userValid($request));
             if($this->userValid($request)->getData()->result == 'Match'){
                 if(!empty($request->gambar)){
                     $response = (new self)->client('toverify_gcp')->request('POST', 'stag/curhatku/post', [
