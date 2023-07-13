@@ -25,7 +25,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //Utility EndPoint
 Route::group(['middleware' => 'cors'], function () {
-
+//WCF Services
 	#DEV
 	Route::post('dev/login', [Dev\UtilityGateway::class, 'LoginESS']);
 	Route::post('dev/logout', [Dev\UtilityGateway::class, 'LogoutESS']);
@@ -144,6 +144,18 @@ Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
 		});
 
 	});
+
+	//Version Endpoint
+	Route::group(['prefix' => 'version'], function () {
+
+		Route::group(['middleware' => ['tokenverifydev']], function () {
+			Route::post('get', [Dev\IRKVersionGateway::class, 'get']);
+			Route::post('post', [Dev\IRKVersionGateway::class, 'post']);
+			Route::post('put', [Dev\IRKVersionGateway::class, 'put']);
+			Route::post('delete', [Dev\IRKVersionGateway::class, 'delete']);
+		});
+
+	});
 });
 
 //IRK Endpoint STAG
@@ -237,6 +249,18 @@ Route::group(['prefix' => 'stag', 'middleware' => ['cors']], function () {
 
 	});
 
+	//Version Endpoint
+	Route::group(['prefix' => 'version'], function () {
+
+		Route::group(['middleware' => ['tokenverifystag']], function () {
+			Route::post('get', [Stag\IRKVersionGateway::class, 'get']);
+			Route::post('post', [Stag\IRKVersionGateway::class, 'post']);
+			Route::post('put', [Stag\IRKVersionGateway::class, 'put']);
+			Route::post('delete', [Stag\IRKVersionGateway::class, 'delete']);
+		});
+
+	});
+
 });
 
 //IRK Endpoint LIVE
@@ -326,6 +350,18 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 			Route::post('post', [Live\IRKProfileGateway::class, 'post']);
 			Route::post('put', [Live\IRKProfileGateway::class, 'put']);
 			Route::post('delete', [Live\IRKProfileGateway::class, 'delete']);
+		});
+
+	});
+
+	//Version Endpoint
+	Route::group(['prefix' => 'profile'], function () {
+
+		Route::group(['middleware' => ['tokenverify']], function () {
+			Route::post('get', [Live\IRKVersionGateway::class, 'get']);
+			Route::post('post', [Live\IRKVersionGateway::class, 'post']);
+			Route::post('put', [Live\IRKVersionGateway::class, 'put']);
+			Route::post('delete', [Live\IRKVersionGateway::class, 'delete']);
 		});
 
 	});

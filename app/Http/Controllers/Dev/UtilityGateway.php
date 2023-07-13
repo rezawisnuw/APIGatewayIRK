@@ -529,7 +529,7 @@ class UtilityGateway extends Controller
 
 		return substr(str_shuffle($encoded_text), 0, 8);
 	}
-	
+
 }
 
 
