@@ -179,7 +179,7 @@ class IRKVersionGateway extends Controller
     public function get(Request $request){
         try {
             
-            if($this->userValid($request)->getData()->result == 'Match'){
+            //if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'live/version/get', [
                     'json'=>[
                         'data' => $request->all()
@@ -189,9 +189,9 @@ class IRKVersionGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
     
                 return $this->successRes($result->data, $result->message, $response->getStatusCode());
-            }else{
-                return $this->userValid($request);
-            }
+            // }else{
+            //     return $this->userValid($request);
+            // }
             
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
@@ -207,7 +207,7 @@ class IRKVersionGateway extends Controller
     public function post(Request $request){
         try {
             
-            if($this->userValid($request)->getData()->result == 'Match'){
+            //if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'live/version/post', [
                     'json'=>[
                         'data' => $request->all()
@@ -217,9 +217,9 @@ class IRKVersionGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
     
                 return $this->successRes($result->data, $result->message, $response->getStatusCode());
-            }else{
-                return $this->userValid($request);
-            }
+            // }else{
+            //     return $this->userValid($request);
+            // }
             
         } catch (ClientException | ServerException $e) {
             $response = $e->getResponse();
