@@ -148,12 +148,12 @@ Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
 
-		Route::group(['middleware' => ['tokenverifydev']], function () {
+		//Route::group(['middleware' => ['tokenverifydev']], function () {
 			Route::post('get', [Dev\IRKVersionGateway::class, 'get']);
 			Route::post('post', [Dev\IRKVersionGateway::class, 'post']);
 			Route::post('put', [Dev\IRKVersionGateway::class, 'put']);
 			Route::post('delete', [Dev\IRKVersionGateway::class, 'delete']);
-		});
+		//});
 
 	});
 });
@@ -252,12 +252,12 @@ Route::group(['prefix' => 'stag', 'middleware' => ['cors']], function () {
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
 
-		Route::group(['middleware' => ['tokenverifystag']], function () {
+		//Route::group(['middleware' => ['tokenverifystag']], function () {
 			Route::post('get', [Stag\IRKVersionGateway::class, 'get']);
 			Route::post('post', [Stag\IRKVersionGateway::class, 'post']);
 			Route::post('put', [Stag\IRKVersionGateway::class, 'put']);
 			Route::post('delete', [Stag\IRKVersionGateway::class, 'delete']);
-		});
+		//});
 
 	});
 
@@ -357,12 +357,12 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 	//Version Endpoint
 	Route::group(['prefix' => 'profile'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
+		//Route::group(['middleware' => ['tokenverify']], function () {
 			Route::post('get', [Live\IRKVersionGateway::class, 'get']);
 			Route::post('post', [Live\IRKVersionGateway::class, 'post']);
 			Route::post('put', [Live\IRKVersionGateway::class, 'put']);
 			Route::post('delete', [Live\IRKVersionGateway::class, 'delete']);
-		});
+		//});
 
 	});
 
