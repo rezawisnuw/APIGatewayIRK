@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
 
 class IRKCeritaKitaGateway extends Controller
@@ -312,13 +313,16 @@ class IRKCeritaKitaGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->picture_cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
                             
                         }else{
                             
                             $value->picture_cloud = 'File not found';
 
                         }
+                        
+                        $value->employee = Crypt::encryptString($value->employee);
+                        $value->picture = Crypt::encryptString($value->picture);
                             
                         $newdata[] = $value;
                     }

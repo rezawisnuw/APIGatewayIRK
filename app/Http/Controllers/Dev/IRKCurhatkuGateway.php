@@ -237,12 +237,40 @@ class IRKCurhatkuGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->picture_cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
                             
                         }else{
                             
                             $value->picture_cloud = 'File not found';
 
+                        }
+                        
+                        if($request->code == '2'){
+                            // $value->idticket = $value->idticket;
+                            $value->employee = Crypt::encryptString($value->employee);
+                            // $value->header = $value->header;
+                            // $value->text = $value->text;
+                            $value->picture = Crypt::encryptString($value->picture);
+                            // $value->key = $value->key;
+                            // $value->alias = $value->alias;
+                            // $value->created = $value->created;
+                            // $value->ttlcomment = $value->ttlcomment;
+                            // $value->ttllike = $value->ttllike;
+                            // $value->likeby = $value->likeby;
+                            // $value->comment = $value->comment;
+                            // $value->like = $value->like;
+                        }else{
+                            // $value->idticket = $value->idticket;
+                            $value->employee = Crypt::encryptString($value->employee);
+                            // $value->header = $value->header;
+                            // $value->text = $value->text;
+                            $value->picture = Crypt::encryptString($value->picture);
+                            // $value->key = $value->key;
+                            // $value->alias = $value->alias;
+                            // $value->created = $value->created;
+                            // $value->ttlcomment = $value->ttlcomment;
+                            // $value->ttllike = $value->ttllike;
+                            // $value->likeby = $value->likeby;
                         }
                             
                         $newdata[] = $value;
