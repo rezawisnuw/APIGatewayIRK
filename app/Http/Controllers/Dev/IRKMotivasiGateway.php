@@ -236,13 +236,16 @@ class IRKMotivasiGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->picture_cloud = $temp->status == 1 ? $temp->url : 'Corrupt';
+                            $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
                             
                         }else{
                             
                             $value->picture_cloud = 'File not found';
 
                         }
+                        
+                        $value->employee = Crypt::encryptString($value->employee);
+                        $value->picture = Crypt::encryptString($value->picture);
                             
                         $newdata[] = $value;
                     }
