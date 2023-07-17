@@ -245,33 +245,8 @@ class IRKCurhatkuGateway extends Controller
 
                         }
                         
-                        if($request->code == '2'){
-                            // $value->idticket = $value->idticket;
-                            $value->employee = Crypt::encryptString($value->employee);
-                            // $value->header = $value->header;
-                            // $value->text = $value->text;
-                            $value->picture = Crypt::encryptString($value->picture);
-                            // $value->key = $value->key;
-                            // $value->alias = $value->alias;
-                            // $value->created = $value->created;
-                            // $value->ttlcomment = $value->ttlcomment;
-                            // $value->ttllike = $value->ttllike;
-                            // $value->likeby = $value->likeby;
-                            // $value->comment = $value->comment;
-                            // $value->like = $value->like;
-                        }else{
-                            // $value->idticket = $value->idticket;
-                            $value->employee = Crypt::encryptString($value->employee);
-                            // $value->header = $value->header;
-                            // $value->text = $value->text;
-                            $value->picture = Crypt::encryptString($value->picture);
-                            // $value->key = $value->key;
-                            // $value->alias = $value->alias;
-                            // $value->created = $value->created;
-                            // $value->ttlcomment = $value->ttlcomment;
-                            // $value->ttllike = $value->ttllike;
-                            // $value->likeby = $value->likeby;
-                        }
+                        $value->employee = Crypt::encryptString($value->employee);
+                        $value->picture = Crypt::encryptString($value->picture);
                             
                         $newdata[] = $value;
                     }
