@@ -360,10 +360,10 @@ class IRKCurhatkuGateway extends Controller
                             $newjson->header = $value->header;
                             $newjson->text = $value->text;
 
-                            $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
-                            $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
-                            $encodedStringPicture = base64_encode($substringPicture);
-                            $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+                            // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                            // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                            // $encodedStringPicture = base64_encode($substringPicture);
+                            // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
                             //$newjson->picture = $newPicture;
                             $newjson->key = $value->key;
@@ -444,10 +444,10 @@ class IRKCurhatkuGateway extends Controller
                             $newjson->header = $value->header;
                             $newjson->text = $value->text;
 
-                            $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
-                            $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
-                            $encodedStringPicture = base64_encode($substringPicture);
-                            $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+                            // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                            // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                            // $encodedStringPicture = base64_encode($substringPicture);
+                            // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
                             //$newjson->picture = $newPicture;
                             $newjson->key = $value->key;
