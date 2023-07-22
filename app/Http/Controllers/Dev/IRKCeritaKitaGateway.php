@@ -21,7 +21,8 @@ class IRKCeritaKitaGateway extends Controller
             'data' => $data,
             'message' => 'Success on Run',
             'status' => 1,
-            'statuscode' => $statusCode
+            'statuscode' => $statusCode,
+            'ttldata' => !empty($data) ? count($data) : '',
         ]);
     }
 
@@ -292,6 +293,7 @@ class IRKCeritaKitaGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
     
                 if(!empty($result->data)){
+                    
                     $newdata = array();
                     $format = array("jpeg", "jpg", "png");
                     foreach($result->data as $key=>$value){
