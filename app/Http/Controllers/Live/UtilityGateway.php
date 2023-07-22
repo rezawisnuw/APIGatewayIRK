@@ -47,11 +47,11 @@ class UtilityGateway extends Controller
 				}
 				
 			} else {
-				return response()->json(['result' => 'Request Data is Empty', 'data' => null, 'message' => 'Failed Login', 'status' => 0, 'statuscode' => 400]);
+				return response()->json(['result' => 'Request Data is Empty', 'data' => [], 'message' => 'Failed Login', 'status' => 0, 'statuscode' => 400]);
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => [], 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
