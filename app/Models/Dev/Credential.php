@@ -50,7 +50,7 @@ class Credential extends Model
             $token = Credential::GetTokenAuth($postbody['nik']);
 			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
         }
-        return ['wcf' => ['result' => $result, 'data' => null, 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
+        return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
     }
 
     public static function Logout($postbody)
