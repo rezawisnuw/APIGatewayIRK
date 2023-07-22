@@ -355,7 +355,7 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 	});
 
 	//Version Endpoint
-	Route::group(['prefix' => 'profile'], function () {
+	Route::group(['prefix' => 'version'], function () {
 
 		//Route::group(['middleware' => ['tokenverify']], function () {
 			Route::post('get', [Live\IRKVersionGateway::class, 'get']);
