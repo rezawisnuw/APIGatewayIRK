@@ -21,7 +21,8 @@ class IRKCurhatkuGateway extends Controller
             'data' => $data,
             'message' => 'Success on Run',
             'status' => 1,
-            'statuscode' => $statusCode
+            'statuscode' => $statusCode,
+            'ttldata' => !empty($data) ? count($data) : '',
         ]);
     }
 
