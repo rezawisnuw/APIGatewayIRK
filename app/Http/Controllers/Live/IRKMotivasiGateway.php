@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class IRKMotivasiGateway extends Controller
 {
-    public function successRes($data, $message, $statusCode = Response::HTTP_OK)
+    public function successRes($data, $message, $ttldata, $statusCode = Response::HTTP_OK)
     {
         return response()->json([
             'result' => $message,
@@ -22,7 +22,7 @@ class IRKMotivasiGateway extends Controller
             'message' => 'Success on Run',
             'status' => 1,
             'statuscode' => $statusCode,
-            'ttldata' => !empty($data) ? count($data) : '',
+            'ttldata' => $ttldata,
         ]);
     }
 
@@ -53,7 +53,7 @@ class IRKMotivasiGateway extends Controller
                     $escapestring_token = json_decode($decrypt_token);
                    
                     if($escapestring_token == $data->userid && $escapestring_token == $data->nik){       
-                        return $this->successRes(null, 'Match');
+                        return $this->successRes(null, 'Match', '');
                     }else{
                         return $this->errorRes('Your data is not verified');
                     }
@@ -76,7 +76,7 @@ class IRKMotivasiGateway extends Controller
                 $escapestring_token = json_decode($decrypt_token);
                
                 if($escapestring_token == $data->userid){    
-                    return $this->successRes(null, 'Match');
+                    return $this->successRes(null, 'Match', '');
                 }else{
                     return $this->errorRes('Your data is not verified');
                 }
@@ -250,7 +250,26 @@ class IRKMotivasiGateway extends Controller
                             
                         $newdata[] = $value;
                     }
-                    return $this->successRes($newdata, $result->message, $response->getStatusCode());
+                    $userid = $request->userid;
+                    $newclient = new Client();
+                    $newresponse = $newclient->post(
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/motivasi/get',
+                        [
+                            RequestOptions::JSON => 
+                            [
+                                'data' => [
+                                    'userid'=> $userid,
+                                    'code'=>'3'
+                                ]
+                            ]
+                        ],
+                            
+                        ['Content-Type' => 'application/json']
+                    );
+            
+                    $newbody = $newresponse->getBody();
+                    $newtemp = json_decode($newbody);
+                    return $this->successRes($newdata, $result->message, $newtemp->data, $response->getStatusCode());
                 } else{
                     return response()->json([
                         'result' => $result->message,
