@@ -47,10 +47,11 @@ class Credential extends Model
         $body = $response->getBody();
 		$temp = json_decode($body);
 		$result = $temp->LoginESSV2Result;
-
+        
 		if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
             $token = Credential::GetTokenAuth($postbody['nik']);
-			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
+            
+			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForStagResult']];
         }
         return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
     }
@@ -59,7 +60,7 @@ class Credential extends Model
     {
         $token = Credential::GetTokenAuth($postbody['nik']);
 
-        if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
+        if($token['GetTokenForStagResult'] == 'Login failed, No gain access for entry !!!')
             return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
         else 
             return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
