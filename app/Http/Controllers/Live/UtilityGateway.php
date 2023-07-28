@@ -110,7 +110,7 @@ class UtilityGateway extends Controller
 			$client = new \GuzzleHttp\Client();
 			$filefisik = ($request->has('filefisik') && $request->filefisik != '') ? $request->file('filefisik') : '';
 
-			$response = $client->request('POST', "http://".config('app.URL_LIVE')."/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
+			$response = $client->request('POST', "http://".config('app.URL_LIVE')."/RESTSecurity/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",[
 
 				'multipart' => [
 					[
@@ -183,7 +183,7 @@ class UtilityGateway extends Controller
             );
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_LIVE')."/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_URL, "http://".config('app.URL_LIVE')."/RESTSecurity/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
@@ -210,7 +210,7 @@ class UtilityGateway extends Controller
 
 			$client = new Client();
 			$response = $client->post(
-				'http://'.config('app.URL_LIVE').'/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+				'http://'.config('app.URL_LIVE').'/RESTSecurity/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
 				[
 					RequestOptions::JSON =>
 					['filePath' => $postbody['filePath']]
@@ -235,7 +235,7 @@ class UtilityGateway extends Controller
 
 				$client = new Client();
 				$response = $client->post(
-					'http://'.config('app.URL_LIVE').'/RESTSecurity.svc/IDM/Firebase',
+					'http://'.config('app.URL_LIVE').'/RESTSecurity/RESTSecurity.svc/IDM/Firebase',
 					[
 						RequestOptions::JSON =>
 						['param' => $postbody]
@@ -268,7 +268,7 @@ class UtilityGateway extends Controller
 				try {
 					$client = new Client(); 
 					$response = $client->post(
-						'http://'.config('app.URL_LIVE').'/RESTSecurity.svc/IDM/Worker',
+						'http://'.config('app.URL_LIVE').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 						[
 							RequestOptions::JSON => 
 							['param' => $param['param']]
@@ -348,7 +348,7 @@ class UtilityGateway extends Controller
 					try {
 						$client = new Client(); 
 						$response = $client->post(
-							'http://'.config('app.URL_LIVE').'/RESTSecurity.svc/IDM/Worker',
+							'http://'.config('app.URL_LIVE').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 							[
 								RequestOptions::JSON => 
 								['param' => $request['data']]
@@ -414,7 +414,7 @@ class UtilityGateway extends Controller
 					try {
 						$client = new Client(); 
 						$response = $client->post(
-							'http://'.config('app.URL_LIVE').'/RESTSecurity.svc/IDM/Worker',
+							'http://'.config('app.URL_LIVE').'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
 							[
 								RequestOptions::JSON => 
 								['param' => $request['data']]
