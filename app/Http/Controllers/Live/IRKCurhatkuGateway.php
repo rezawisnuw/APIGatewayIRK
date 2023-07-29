@@ -341,7 +341,7 @@ class IRKCurhatkuGateway extends Controller
                                     'data' => [
                                         'userid'=>substr($userid[0],-10),
                                         'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'idticket'=>explode(".",$idticket[1])[0].'-C',
                                         'page'=>'0'
                                     ]
                                 ]
@@ -441,7 +441,7 @@ class IRKCurhatkuGateway extends Controller
                                     'data' => [
                                         'userid'=>substr($userid[0],-10),
                                         'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'idticket'=>explode(".",$idticket[1])[0].'-C',
                                         'page'=>'0'
                                     ]
                                 ]

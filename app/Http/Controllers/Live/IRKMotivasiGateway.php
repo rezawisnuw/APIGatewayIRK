@@ -341,7 +341,7 @@ class IRKMotivasiGateway extends Controller
                                     'data' => [
                                         'userid'=>substr($userid[0],-10),
                                         'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'idticket'=>explode(".",$idticket[1])[0].'-M',
                                         'page'=>'0'
                                     ]
                                 ]
@@ -442,7 +442,7 @@ class IRKMotivasiGateway extends Controller
                                     'data' => [
                                         'userid'=>substr($userid[0],-10),
                                         'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
+                                        'idticket'=>explode(".",$idticket[1])[0].'-M',
                                         'page'=>'0'
                                     ]
                                 ]
