@@ -22,8 +22,8 @@ class IRKCurhatkuGateway extends Controller
             'message' => 'Success on Run',
             'status' => 1,
             'statuscode' => $statusCode,
-            'ttldata' => $ttldata,
-            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? (($ttldata-fmod($ttldata,10))/10) + 1 : ($ttldata/10) + 0 : ''
+            'ttldata' => !empty($ttldata) ? $ttldata : 0,
+            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? (($ttldata-fmod($ttldata,10))/10) + 1 : ($ttldata/10) + 0 : 0
         ]);
     }
 
