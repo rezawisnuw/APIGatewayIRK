@@ -23,6 +23,7 @@ class IRKCeritaKitaGateway extends Controller
             'status' => 1,
             'statuscode' => $statusCode,
             'ttldata' => $ttldata,
+            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? ($ttldata/10) + 1 : ($ttldata/10) + 0 : ''
         ]);
     }
 
@@ -288,7 +289,7 @@ class IRKCeritaKitaGateway extends Controller
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
-    
+                
                 if(!empty($result->data)){                    
                     $newdata = array();
                     $format = array("jpeg", "jpg", "png");
@@ -323,6 +324,7 @@ class IRKCeritaKitaGateway extends Controller
                             
                         $newdata[] = $value;
                     }
+                    
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(

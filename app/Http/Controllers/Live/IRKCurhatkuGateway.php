@@ -23,6 +23,7 @@ class IRKCurhatkuGateway extends Controller
             'status' => 1,
             'statuscode' => $statusCode,
             'ttldata' => $ttldata,
+            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? ($ttldata/10) + 1 : ($ttldata/10) + 0 : ''
         ]);
     }
 
