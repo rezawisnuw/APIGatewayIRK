@@ -347,9 +347,9 @@ class IRKCeritaKitaGateway extends Controller
                     return $this->successRes($newdata, $result->message, $newtemp->data, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => $result->message,
-                        'data' => [], //$result->data,
-                        'message' => $result->status,
+                        'result' => 'Data has been process',//$result->message,
+                        'data' => [],//$result->data,
+                        'message' => 'Success on Run',//$result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
