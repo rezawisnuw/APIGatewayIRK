@@ -273,9 +273,9 @@ class IRKMotivasiGateway extends Controller
                     return $this->successRes($newdata, $result->message, $newtemp->data, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => $result->message,
+                        'result' => 'Data has been process',//$result->message,
                         'data' => [],//$result->data,
-                        'message' => $result->status,
+                        'message' => 'Success on Run',//$result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
