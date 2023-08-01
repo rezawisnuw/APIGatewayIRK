@@ -348,7 +348,7 @@ class IRKCeritaKitaGateway extends Controller
                 } else{
                     return response()->json([
                         'result' => $result->message,
-                        'data' => $result->data,
+                        'data' => [], //$result->data,
                         'message' => $result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
