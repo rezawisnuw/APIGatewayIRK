@@ -22,7 +22,8 @@ class IRKMotivasiGateway extends Controller
             'message' => 'Success on Run',
             'status' => 1,
             'statuscode' => $statusCode,
-            'ttldata' => $ttldata,
+            'ttldata' => !empty($ttldata) ? $ttldata : 0,
+            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? (($ttldata-fmod($ttldata,10))/10) + 1 : ($ttldata/10) + 0 : 0
         ]);
     }
 
@@ -206,7 +207,7 @@ class IRKMotivasiGateway extends Controller
     
     public function get(Request $request){
         try {
-
+            
             if($this->userValid($request)->getData()->result == 'Match'){
                 $response = (new self)->client('toverify_gcp')->request('POST', 'dev/motivasi/get', [
                     'json'=>[
@@ -237,7 +238,7 @@ class IRKMotivasiGateway extends Controller
                             
                             $temp = json_decode($body);
 
-                            $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
+                             $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
                             
                         }else{
                             
@@ -272,9 +273,9 @@ class IRKMotivasiGateway extends Controller
                     return $this->successRes($newdata, $result->message, $newtemp->data, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => $result->message,
-                        'data' => $result->data,
-                        'message' => $result->status,
+                        'result' => 'Data has been process',//$result->message,
+                        'data' => [],//$result->data,
+                        'message' => 'Success on Run',//$result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
@@ -330,83 +331,85 @@ class IRKMotivasiGateway extends Controller
                             ]
                         ]);
             
-                        $userid = explode("_",$result->data);
-                        $idticket = explode("_",$result->data);
-                        $newclient = new Client();
-                        $newresponse = $newclient->post(
-                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/motivasi/get',
-                            [
-                                RequestOptions::JSON => 
-                                [
-                                    'data' => [
-                                        'userid'=>substr($userid[0],-10),
-                                        'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
-                                        'page'=>'0'
-                                    ]
-                                ]
-                            ],
+                        // $userid = explode("_",$result->data);
+                        // $idticket = explode("_",$result->data);
+                        // $newclient = new Client();
+                        // $newresponse = $newclient->post(
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/motivasi/get',
+                        //     [
+                        //         RequestOptions::JSON => 
+                        //         [
+                        //             'data' => [
+                        //                 'userid'=>substr($userid[0],-10),
+                        //                 'code'=>'2',
+                        //                 'idticket'=>explode(".",$idticket[1])[0].'-M',
+                        //                 'page'=>'0'
+                        //             ]
+                        //         ]
+                        //     ],
                                 
-                            ['Content-Type' => 'application/json']
-                        );
+                        //     ['Content-Type' => 'application/json']
+                        // );
                 
-                        $body = $newresponse->getBody();
-                        $temp = json_decode($body);
+                        // $body = $newresponse->getBody();
+                        // $temp = json_decode($body);
 
-                        $newdata = array();
-                        foreach($temp->data as $key=>$value){
+                        // $newdata = array();
+                        // foreach($temp->data as $key=>$value){
 
-                            $clientcloud = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
-                            $responsecloud = $clientcloud->request('POST',
-                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
-                                    [
-                                        'json' => [
-                                            'file_name' => $result->data,
-                                            'expired' => 30
-                                        ]
-                                    ]
-                                );
+                        //     $clientcloud = (env('APP_ENV') == 'local') ? new Client(['verify' => false]) : new Client();
+                        //     $responsecloud = $clientcloud->request('POST',
+                        //             'https://cloud.hrindomaret.com/api/irk/generateurl',
+                        //             [
+                        //                 'json' => [
+                        //                     'file_name' => $result->data,
+                        //                     'expired' => 30
+                        //                 ]
+                        //             ]
+                        //         );
     
-                            $bodycloud = $responsecloud->getBody();
+                        //     $bodycloud = $responsecloud->getBody();
                             
-                            $tempcloud = json_decode($bodycloud);
+                        //     $tempcloud = json_decode($bodycloud);
 
-                            $value->picture_cloud = $tempcloud->status == 1 ? $tempcloud->url : 'Corrupt';
+                        //     $value->picture_cloud = $tempcloud->status == 1 ? $tempcloud->url : 'Corrupt';
                                 
-                            $newjson = new \stdClass();
+                        //     $newjson = new \stdClass();
 
-                            $newjson->idticket = $value->idticket;
-                            $newjson->employee = Crypt::encryptString($value->employee);
-                            $newjson->header = $value->header;
-                            $newjson->text = $value->text;
+                        //     $newjson->idticket = $value->idticket;
+                        //     $newjson->employee = Crypt::encryptString($value->employee);
+                        //     $newjson->header = $value->header;
+                        //     $newjson->text = $value->text;
 
-                            // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
-                            // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
-                            // $encodedStringPicture = base64_encode($substringPicture);
-                            // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+                        //     // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                        //     // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                        //     // $encodedStringPicture = base64_encode($substringPicture);
+                        //     // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
-                            //$newjson->picture = $newPicture;
-                            $newjson->key = $value->key;
-                            $newjson->alias = $value->alias;
-                            $newjson->created = $value->created;
-                            $newjson->ttlcomment = $value->ttlcomment;
-                            $newjson->ttllike = $value->ttllike;
-                            $newjson->likeby = $value->likeby;
+                        //     //$newjson->picture = $newPicture;
+                        //     $newjson->key = $value->key;
+                        //     $newjson->alias = $value->alias;
+                        //     $newjson->created = $value->created;
+                        //     $newjson->ttlcomment = $value->ttlcomment;
+                        //     $newjson->ttllike = $value->ttllike;
+                        //     $newjson->likeby = $value->likeby;
 
-                            // $substringPictureCloud = substr($value->picture_cloud, strrpos($value->picture_cloud, '/') + 1);
-                            // $substringPictureCloud = substr($substringPictureCloud, 0, strpos($substringPictureCloud, '_'));
-                            // $encodedStringPictureCloud = base64_encode($substringPictureCloud);
-                            // $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
+                        //     // $substringPictureCloud = substr($value->picture_cloud, strrpos($value->picture_cloud, '/') + 1);
+                        //     // $substringPictureCloud = substr($substringPictureCloud, 0, strpos($substringPictureCloud, '_'));
+                        //     // $encodedStringPictureCloud = base64_encode($substringPictureCloud);
+                        //     // $newPictureCloud = str_replace($substringPictureCloud, $encodedStringPictureCloud, $value->picture_cloud);
 
-                            // $newjson->picture_cloud = $newPictureCloud;
-                            $newjson->picture_cloud = Crypt::encryptString($value->picture_cloud);
+                        //     // $newjson->picture_cloud = $newPictureCloud;
+                        //     $newjson->picture_cloud = Crypt::encryptString($value->picture_cloud);
                                 
-                            $newdata[] = $newjson;
-                        }
+                        //     $newdata[] = $newjson;
+                        // }
             
                         $resultcloud = json_decode($requestcloud->getBody()->getContents());
 
-                        return $this->successRes($newdata, $resultcloud->message, $requestcloud->getStatusCode());
+                        //return $this->successRes($newdata, $resultcloud->message, $requestcloud->getStatusCode());
+
+                        return $this->successRes($resultcloud->data, $resultcloud->message, $requestcloud->getStatusCode());
                     } else {
                         return response()->json([
                             'result' => $result->message,
@@ -431,59 +434,61 @@ class IRKMotivasiGateway extends Controller
 
                     if(!empty($result->data)){
 
-                        $userid = explode("_",$result->data);
-                        $idticket = explode("_",$result->data);
-                        $newclient = new Client();
-                        $newresponse = $newclient->post(
-                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/motivasi/get',
-                            [
-                                RequestOptions::JSON => 
-                                [
-                                    'data' => [
-                                        'userid'=>substr($userid[0],-10),
-                                        'code'=>'2',
-                                        'idticket'=>explode(".",$idticket[1])[0],
-                                        'page'=>'0'
-                                    ]
-                                ]
-                            ],
+                        // $userid = explode("_",$result->data);
+                        // $idticket = explode("_",$result->data);
+                        // $newclient = new Client();
+                        // $newresponse = $newclient->post(
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/motivasi/get',
+                        //     [
+                        //         RequestOptions::JSON => 
+                        //         [
+                        //             'data' => [
+                        //                 'userid'=>substr($userid[0],-10),
+                        //                 'code'=>'2',
+                        //                 'idticket'=>explode(".",$idticket[1])[0].'-M',
+                        //                 'page'=>'0'
+                        //             ]
+                        //         ]
+                        //     ],
                                 
-                            ['Content-Type' => 'application/json']
-                        );
+                        //     ['Content-Type' => 'application/json']
+                        // );
                 
-                        $body = $newresponse->getBody();
-                        $temp = json_decode($body);
+                        // $body = $newresponse->getBody();
+                        // $temp = json_decode($body);
 
-                        $newdata = array();
-                        foreach($temp->data as $key=>$value){
+                        // $newdata = array();
+                        // foreach($temp->data as $key=>$value){
 
-                            $value->picture_cloud = 'File not found';
+                        //     $value->picture_cloud = 'File not found';
                                 
-                            $newjson = new \stdClass();
+                        //     $newjson = new \stdClass();
 
-                            $newjson->idticket = $value->idticket;
-                            $newjson->employee = Crypt::encryptString($value->employee);
-                            $newjson->header = $value->header;
-                            $newjson->text = $value->text;
+                        //     $newjson->idticket = $value->idticket;
+                        //     $newjson->employee = Crypt::encryptString($value->employee);
+                        //     $newjson->header = $value->header;
+                        //     $newjson->text = $value->text;
 
-                            // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
-                            // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
-                            // $encodedStringPicture = base64_encode($substringPicture);
-                            // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
+                        //     // $substringPicture = substr($value->picture, strrpos($value->picture, '/') + 1);
+                        //     // $substringPicture = substr($substringPicture, 0, strpos($substringPicture, '_'));
+                        //     // $encodedStringPicture = base64_encode($substringPicture);
+                        //     // $newPicture = str_replace($substringPicture, $encodedStringPicture, $value->picture);
 
-                            //$newjson->picture = $newPicture;
-                            $newjson->key = $value->key;
-                            $newjson->alias = $value->alias;
-                            $newjson->created = $value->created;
-                            $newjson->ttlcomment = $value->ttlcomment;
-                            $newjson->ttllike = $value->ttllike;
-                            $newjson->likeby = $value->likeby;
-                            $newjson->picture_cloud = $value->picture_cloud;
+                        //     //$newjson->picture = $newPicture;
+                        //     $newjson->key = $value->key;
+                        //     $newjson->alias = $value->alias;
+                        //     $newjson->created = $value->created;
+                        //     $newjson->ttlcomment = $value->ttlcomment;
+                        //     $newjson->ttllike = $value->ttllike;
+                        //     $newjson->likeby = $value->likeby;
+                        //     $newjson->picture_cloud = $value->picture_cloud;
                                 
-                            $newdata[] = $newjson;
-                        }
+                        //     $newdata[] = $newjson;
+                        // }
 
-                        return $this->successRes($result->data, $result->message, $response->getStatusCode());
+                        //return $this->successRes($newdata, $result->message, $response->getStatusCode());
+
+                        return $this->successRes(null, $result->message, $response->getStatusCode());
                     } else {
                         return response()->json([
                             'result' => $result->message,
