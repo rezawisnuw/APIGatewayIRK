@@ -258,14 +258,14 @@ class UtilityGateway extends Controller
     }
 
 	public static function WorkerESS(Request $request, $param=null){
-		
+
 		if(!isset($request['data']['code']) && $param != null){
-			
+
 			$raw_token = $param['param']['token'];
 			$split_token = explode('.', $raw_token);
 			$decrypt_token = base64_decode($split_token[1]);
 			$escapestring_token = json_decode($decrypt_token);
-
+			
 			if($escapestring_token == $param['param']['nik']){ 
 				try {
 					$client = new Client(); 
@@ -301,7 +301,7 @@ class UtilityGateway extends Controller
 							$body = $response->getBody();
 							
 							$temp = json_decode($body);
-								
+							
 							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
 							$value->ALIAS = substr(base64_encode(microtime().$value->NIK),3,8);
@@ -311,20 +311,20 @@ class UtilityGateway extends Controller
                             $value->ALIAS = null;
 
                         }
-							$newjson = new \stdClass();
 
-							$newjson->NIK = Crypt::encryptString($value->NIK);
-							$newjson->NAMA = $value->NAMA;
-							$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
-							$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
-							$newjson->JENIS_KELAMIN = $value->JENIS_KELAMIN;
-							$newjson->ALIAS = $value->ALIAS;
+						$newjson = new \stdClass();
 
-							$newdata[] = $newjson;
+						$newjson->NIK = Crypt::encryptString($value->NIK);
+						$newjson->NAMA = $value->NAMA;
+						$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
+						$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
+						$newjson->JENIS_KELAMIN = $value->JENIS_KELAMIN;
+						$newjson->ALIAS = $value->ALIAS;
+
+						$newdata[] = $newjson;
 					}
 
 					return $newdata[0];
-
 				} catch (\Throwable $th) {
 					return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 				}
@@ -335,13 +335,12 @@ class UtilityGateway extends Controller
 
 		} 
 		else {
-		
 			if(env('APP_ENV') == 'local'){
-				$raw_token = str_contains($request->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->header('Authorization-dev');
+				$raw_token = str_contains($request->header('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($request->header('Authorization'),6) : 'Authorization=Bearer'.$request->header('Authorization');
 			} else{
-				$raw_token = str_contains($request->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->cookie('Authorization-dev');
+				$raw_token = str_contains($request->cookie('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($request->cookie('Authorization'),6) : 'Authorization=Bearer'.$request->cookie('Authorization');
 			}
-
+	
 			$split_token = explode('.', $raw_token);
 			$decrypt_token = base64_decode($split_token[1]);
 			$escapestring_token = json_decode($decrypt_token);
@@ -382,7 +381,7 @@ class UtilityGateway extends Controller
 								$body = $response->getBody();
 								
 								$temp = json_decode($body);
-									
+								
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
 								$value->ALIAS = substr(base64_encode(microtime().$value->NIK),3,8);
@@ -427,7 +426,7 @@ class UtilityGateway extends Controller
 						$body = $response->getBody();
 						$temp = json_decode($body);
 						$result = json_decode($temp->WorkerResult);
-
+						
 						$newdata = array();
                         foreach($result as $key=>$value){
 							
@@ -479,6 +478,7 @@ class UtilityGateway extends Controller
 					return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 				}
 			}
+
 		}  
     }
 
