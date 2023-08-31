@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dev;
 use App\Http\Controllers\Stag;
 use App\Http\Controllers\Live;
+use App\Http\Controllers\IRKTestGateway;
 
 
 /*
@@ -23,7 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-//Utility EndPoint
+//Utility Endpoint
 Route::group(['middleware' => 'cors'], function () {
 //WCF Services
 	#DEV
@@ -365,5 +366,16 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 		//});
 
 	});
+
+});
+
+//IRK Endpoint
+Route::group(['prefix' => 'test'], function () {
+	//Route::group(['middleware' => ['tokenverify']], function () {
+		// Route::post('get', IRKTestGateway::class, 'get');
+		// Route::post('post', IRKTestGateway::class, 'post');
+		Route::post('put', [IRKTestGateway::class, 'put']);
+		//Route::post('delete', IRKTestGateway::class, 'delete');
+	//});
 
 });

@@ -24,7 +24,8 @@ class IRKCeritaKitaGateway extends Controller
             'message' => 'Success on Run',
             'status' => 1,
             'statuscode' => $statusCode,
-            'ttldata' => $ttldata,
+            'ttldata' => !empty($ttldata) ? $ttldata : 0,
+            'ttlpage' => !empty($ttldata) ? fmod($ttldata,10) > 0 ? (($ttldata-fmod($ttldata,10))/10) + 1 : ($ttldata/10) + 0 : 0
         ]);
     }
 
@@ -38,7 +39,7 @@ class IRKCeritaKitaGateway extends Controller
             'statuscode' => $statusCode
         ]);
     }
-
+    
     public function userValid($data)
     { 
         if(isset($data->all()['userid'])){
@@ -292,7 +293,7 @@ class IRKCeritaKitaGateway extends Controller
                     ]
                 ]);
     
-                $result = json_decode($response->getBody()->getContents());                    
+                $result = json_decode($response->getBody()->getContents());
                 
                 if(!empty($result->data)){                    
                     $newdata = array();
@@ -328,6 +329,7 @@ class IRKCeritaKitaGateway extends Controller
                             
                         $newdata[] = $value;
                     }
+                    
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
@@ -350,14 +352,14 @@ class IRKCeritaKitaGateway extends Controller
                     return $this->successRes($newdata, $result->message, $newtemp->data, $response->getStatusCode());
                 } else{
                     return response()->json([
-                        'result' => $result->message,
-                        'data' => $result->data,
-                        'message' => $result->status,
+                        'result' => 'Data has been process',//$result->message,
+                        'data' => [],//$result->data,
+                        'message' => 'Success on Run',//$result->status,
                         'status' => 0,
                         'statuscode' => $response->getStatusCode()
                     ]);
                 }
-
+                
             }else{
                 return $this->userValid($request);
             }
