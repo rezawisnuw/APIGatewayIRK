@@ -336,9 +336,9 @@ class UtilityGateway extends Controller
 		} 
 		else {
 			if(env('APP_ENV') == 'local'){
-				$raw_token = str_contains($request->header('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($request->header('Authorization'),6) : 'Authorization=Bearer'.$request->header('Authorization');
+				$raw_token = str_contains($request->header('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->header('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->header('Authorization-dev');
 			} else{
-				$raw_token = str_contains($request->cookie('Authorization'), 'Bearer') ? 'Authorization=Bearer'.substr($request->cookie('Authorization'),6) : 'Authorization=Bearer'.$request->cookie('Authorization');
+				$raw_token = str_contains($request->cookie('Authorization-dev'), 'Bearer') ? 'Authorization-dev=Bearer'.substr($request->cookie('Authorization-dev'),6) : 'Authorization-dev=Bearer'.$request->cookie('Authorization-dev');
 			}
 	
 			$split_token = explode('.', $raw_token);
