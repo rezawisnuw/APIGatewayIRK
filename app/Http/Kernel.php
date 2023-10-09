@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'cors' => \App\Http\Middleware\Cors::class,
         'tokenverify' => \App\Http\Middleware\TokenVerify::class,
         'tokenverifystag' => \App\Http\Middleware\TokenVerifyStag::class,
-        'tokenverifydev' => \App\Http\Middleware\TokenVerifyDev::class, // <-- add this line
+        'tokenverifydev' => \App\Http\Middleware\TokenVerifyDev::class,
+        'tokenauth' => \App\Http\Middleware\TokenAuth::class, // <-- add this line
     ];
 }
