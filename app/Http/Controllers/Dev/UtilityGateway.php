@@ -36,12 +36,21 @@ class UtilityGateway extends Controller
 						return response()
 						//->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
 						->json(['result' => 'Token has Stored in Header', 'data' => null, 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						->header('Authorization-dev','Bearer'.$result['token']);
+						//->header('Authorization-dev','Bearer'.$result['token']);
+						->withHeaders([
+							'Authorization-dev' => 'Bearer'.$result['token'],
+							'Cache-Control' => 'max-age=7200, public',
+							'Expires' => now()->addHours(2)->format('D, d M Y H:i:s \G\M\T'),
+						]);
 					} else{
 						return response()
 						//->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
 						->json(['result' => 'Token has Stored in Cookie', 'data' => null, 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						->withCookie(cookie('Authorization-dev', 'Bearer'.$result['token'], '120'));
+						//->withCookie(cookie('Authorization-dev', 'Bearer'.$result['token'], '120'));
+						->withCookie([
+							cookie('Authorization-dev', 'Bearer'.$result['token'], '120'),
+							//cookie('NameEncryption', 'ValueEncryption', 'ExpiredMinutes'),
+						]);
 					}
 				} else {
 					return response()->json($result['wcf']);
