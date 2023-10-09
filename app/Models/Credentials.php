@@ -26,92 +26,137 @@ class Credentials extends Model
 	
     public function IsTokenSignatureValid($token)
     {
-        $client = new Client();
-        
-		$response = $client->post(
-            'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
-            [
-                RequestOptions::JSON => 
-                ['token'=>$token]
-            ],
-            ['Content-Type' => 'application/json']
-        );
+        try {
+            $client = new Client();
+            
+            $response = $client->post(
+                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
+                [
+                    RequestOptions::JSON => 
+                    ['token'=>$token]
+                ],
+                ['Content-Type' => 'application/json']
+            );
 
-        $body = $response->getBody();
-		$temp = json_decode($body);
+            $body = $response->getBody();
+            $temp = json_decode($body);
 
-        return $temp;
+            return $temp;
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
+        }
     }
 
 	public function Login($postbody)
     {
-        $client = new Client();
+        try {
+            $client = new Client();
 
-		$response = $client->post(
-            'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/LoginESSV2',
-            [
-                RequestOptions::JSON => 
-                ['user'=>$postbody]
-            ],
-            ['Content-Type' => 'application/json']
-        );
+            $response = $client->post(
+                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/LoginESSV2',
+                [
+                    RequestOptions::JSON => 
+                    ['user'=>$postbody]
+                ],
+                ['Content-Type' => 'application/json']
+            );
 
-        $body = $response->getBody();
-		$temp = json_decode($body);
-		$result = $temp->LoginESSV2Result;
+            $body = $response->getBody();
+            $temp = json_decode($body);
+            $result = $temp->LoginESSV2Result;
 
-		if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
-            $token = $this->GetTokenAuth($postbody['nik']);
-			return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
+            if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
+                $token = $this->GetTokenAuth($postbody['nik']);
+                return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
+            }
+            return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
         }
-        return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
     }
 
     public function Logout($postbody)
     {
-        $token = $this->GetTokenAuth($postbody['nik']);
+        try{
+            $token = $this->GetTokenAuth($postbody['nik']);
 
-        if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
-            return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
-        else 
-            return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
+            if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
+                return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
+            else 
+                return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
+        }
+    }
+
+    public function SPExecutor($postBody){			 
+		
+		try {
+            $result = '';
+			
+            $client = new Client(); 
+            $response = $client->post(
+                'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute', 
+                [
+                    'headers' => [
+                        'Content-Type' => 'text/plain'
+                    ],
+                    'body' => json_encode(['req' => $postBody])
+                ]
+            );
+			
+			$body = $response->getBody();
+			$temp = json_decode($body);
+
+			return $temp;
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
+        }
     }
 
     public function GetTokenAuth($nik)
     {
-		$client = new Client(); 
+        try{
+            $client = new Client(); 
 
-        $response = $client->post(
-            'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/GetTokenFor',
-            [
-                RequestOptions::JSON => 
-                ['nik' => $nik]
-            ],
-            ['Content-Type' => 'application/json']
-        );
+            $response = $client->post(
+                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/GetTokenFor',
+                [
+                    RequestOptions::JSON => 
+                    ['nik' => $nik]
+                ],
+                ['Content-Type' => 'application/json']
+            );
 
-        $responseBody = json_decode($response->getBody(), true);
-		
-		return $responseBody;
+            $responseBody = json_decode($response->getBody(), true);
+            
+            return $responseBody;
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
+        }
 	}
 
     public function ValidateTokenAuth($token)
     {
-        $client = new Client();
+        try {
+            $client = new Client();
 
-		$response = $client->post(
-            'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
-            [
-                RequestOptions::JSON => 
-                ['token'=>$token]
-            ],
-                
-            ['Content-Type' => 'application/json']
-        );
+            $response = $client->post(
+                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
+                [
+                    RequestOptions::JSON => 
+                    ['token'=>$token]
+                ],
+                    
+                ['Content-Type' => 'application/json']
+            );
 
-        $body = $response->getBody();
-        $temp = json_decode($body);
-        
-        return $temp;
+            $body = $response->getBody();
+            $temp = json_decode($body);
+            
+            return $temp;
+        } catch (\Throwable $th) {
+            throw new Exception('Bad Request'); 
+        }
     }
 }

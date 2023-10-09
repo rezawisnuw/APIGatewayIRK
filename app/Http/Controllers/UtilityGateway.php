@@ -451,6 +451,66 @@ class UtilityGateway extends Controller
         }
     }
 
+	public function TransaksiGatewayDev(Request $request) {
+		
+		$raw_token = $this->tokendraw;
+		$split_token = explode('.', $raw_token);
+		$decrypt_token = base64_decode($split_token[1]);
+		$escapestring_token = json_decode($decrypt_token);
+		
+			
+		if($escapestring_token == $request['nik']){
+			try{		
+				$result = Credentials::SPExecutor($request['data']);
+
+				$this->resultresp = $result['status'] == 1 ? 'Data has been process' : 'Data cannot be process';
+				$this->dataresp = $result['result'];
+				$this->messageresp = $result['message'];
+				$this->statusresp = $result['status'];
+
+				$running = $this->helper->RunningResp(
+					$this->resultresp,
+					$this->dataresp,
+					$this->messageresp,
+					$this->statusresp,
+					$this->ttldataresp
+				);
+
+				return response()->json($running);
+
+			} catch (\Throwable $th){
+				$this->resultresp = $th->getMessage();
+				$this->messageresp = 'Error in Catch';
+				$this->statuscoderesp = $th->getCode();
+	
+				$error = $this->helper->ErrorResp(
+					$this->resultresp, 
+					$this->messageresp, 
+					$this->statuscoderesp
+				);
+	
+				return response()->json($error);
+			}
+			
+		} else {
+			$this->resultresp = 'Your data is not authorized';
+			$this->dataresp = $escapestring_token;
+			$this->messageresp = 'Failed on Run';
+			$this->statusresp = 0;
+
+			$running = $this->helper->RunningResp(
+				$this->resultresp,
+				$this->dataresp,
+				$this->messageresp,
+				$this->statusresp,
+				$this->ttldataresp
+			);
+
+			return response()->json($running);
+		}	
+		
+    }
+
 	public function WorkerESS(Request $request, $param=null){
 
 		if(!isset($request['data']['code']) && $param != null){
