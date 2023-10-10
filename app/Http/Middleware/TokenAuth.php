@@ -33,7 +33,7 @@ class TokenAuth
 
             $segment = $helper->Segment($slug);
 
-            $env = env('APP_ENV');
+            $env = config('app.env');
 
             $token = $helper->Environment($env);
 			
