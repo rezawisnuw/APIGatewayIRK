@@ -154,7 +154,7 @@ class IRKMotivasiGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch5';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -292,7 +292,7 @@ class IRKMotivasiGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch51';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
