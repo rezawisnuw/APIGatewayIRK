@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\database\QueryException;
 use Telegram;
 use GuzzleHttp;
@@ -67,7 +66,7 @@ class UtilityGateway extends Controller
 
 					// $param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 
-					if($this->env == 'local'){
+					if($this->env === 'local'){
 
 						// return response()
 						// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
@@ -113,8 +112,8 @@ class UtilityGateway extends Controller
 						);
 
 						return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], 120));
-						//->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', env('SESSION_CONFIG_DOMAIN','.hrindomaret.com'), false, false));
+						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'))
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', env('SESSION_CONFIG_DOMAIN','.hrindomaret.com'), false, false));
 						
 					}
 				} else {
@@ -156,7 +155,7 @@ class UtilityGateway extends Controller
         } catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catchs';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -254,7 +253,7 @@ class UtilityGateway extends Controller
         } catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catchm';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -446,7 +445,7 @@ class UtilityGateway extends Controller
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catchp', 'status' => 0, 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
@@ -479,7 +478,7 @@ class UtilityGateway extends Controller
 
 			} catch (\Throwable $th){
 				$this->resultresp = $th->getMessage();
-				$this->messageresp = 'Error in Catchu';
+				$this->messageresp = 'Error in Catch';
 				$this->statuscoderesp = $th->getCode();
 	
 				$error = $this->helper->ErrorResp(
@@ -596,7 +595,7 @@ class UtilityGateway extends Controller
 
 				} catch (\Throwable $th) {
 					$this->resultresp = $th->getMessage();
-					$this->messageresp = 'Error in Catcha';
+					$this->messageresp = 'Error in Catch';
 					$this->statuscoderesp = $th->getCode();
 
 					$error = $this->helper->ErrorResp(
@@ -709,7 +708,7 @@ class UtilityGateway extends Controller
 					
 					} catch (\Throwable $th) {
 						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catchf';
+						$this->messageresp = 'Error in Catch';
 						$this->statuscoderesp = $th->getCode();
 
 						$error = $this->helper->ErrorResp(
@@ -810,7 +809,7 @@ class UtilityGateway extends Controller
 						
 					} catch (\Throwable $th) {
 						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catchg';
+						$this->messageresp = 'Error in Catch';
 						$this->statuscoderesp = $th->getCode();
 
 						$error = $this->helper->ErrorResp(

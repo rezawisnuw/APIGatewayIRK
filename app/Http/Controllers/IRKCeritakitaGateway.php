@@ -156,7 +156,7 @@ class IRKCeritakitaGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch1';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
