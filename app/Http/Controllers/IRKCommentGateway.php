@@ -90,7 +90,7 @@ class IRKCommentGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch3';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -138,7 +138,7 @@ class IRKCommentGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch31';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(

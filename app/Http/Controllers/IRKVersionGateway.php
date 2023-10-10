@@ -82,7 +82,7 @@ class IRKVersionGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catchq1';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -122,7 +122,7 @@ class IRKVersionGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catchw1';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(

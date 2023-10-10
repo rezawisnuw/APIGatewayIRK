@@ -90,7 +90,7 @@ class IRKReportGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch6';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -138,7 +138,7 @@ class IRKReportGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catch61';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
