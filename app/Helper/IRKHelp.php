@@ -25,15 +25,15 @@ class IRKHelp
 
         $setting = [];
 
-        if($slug === 'dev'){
+        if($slug == 'dev'){
             $setting['authorize'] = 'Authorization-dev';
             $setting['config'] = config('app.URL_DEV');
             $setting['path'] = 'Dev';
-        }else if($slug === 'stag'){
+        }else if($slug == 'stag'){
             $setting['authorize'] = 'Authorization-stag';
             $setting['config'] = config('app.URL_STAG');
             $setting['path'] = 'Stag';
-        }else if($slug === 'live'){
+        }else if($slug == 'live'){
             $setting['authorize'] = 'Authorization';
             $setting['config'] = config('app.URL_LIVE');
             $setting['path'] = 'Live';
