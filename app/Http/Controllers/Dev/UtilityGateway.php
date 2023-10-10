@@ -61,7 +61,7 @@ class UtilityGateway extends Controller
 			}
 			return response()->json($result);
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => [], 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => [], 'message' => 'Error in CatchDev', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
