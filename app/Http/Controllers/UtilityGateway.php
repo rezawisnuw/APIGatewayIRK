@@ -112,10 +112,8 @@ class UtilityGateway extends Controller
 						);
 
 						return response()->json($running)
-						->withCookie([
-							cookie($this->authorize, 'Bearer'.$result['token'], '120'),
-							cookie('NameEncryption', 'ValueEncryption', '60'),
-						]);
+						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'))
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '60'));
 						
 					}
 				} else {
@@ -451,7 +449,7 @@ class UtilityGateway extends Controller
         }
     }
 
-	public function TransaksiGatewayDev(Request $request) {
+	public function TransaksiGateway(Request $request) {
 		
 		$raw_token = $this->tokendraw;
 		$split_token = explode('.', $raw_token);
