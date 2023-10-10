@@ -55,7 +55,7 @@ class TokenVerifyDev
             }
 			
 		} catch (\Throwable $th){
-			return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()]);
+			return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in CatchMdev' , 'status' => 0, 'statuscode' => $th->getCode()]);
 		}
         
         return $next($request);
