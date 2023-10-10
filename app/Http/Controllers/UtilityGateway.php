@@ -254,7 +254,7 @@ class UtilityGateway extends Controller
         } catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catchm';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -446,7 +446,7 @@ class UtilityGateway extends Controller
 			}
 
         } catch (\Throwable $th) {
-            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch', 'status' => 0, 'statuscode' => $th->getCode()]);
+            return response()->json(['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catchp', 'status' => 0, 'statuscode' => $th->getCode()]);
         }
     }
 
@@ -479,7 +479,7 @@ class UtilityGateway extends Controller
 
 			} catch (\Throwable $th){
 				$this->resultresp = $th->getMessage();
-				$this->messageresp = 'Error in Catch';
+				$this->messageresp = 'Error in Catchu';
 				$this->statuscoderesp = $th->getCode();
 	
 				$error = $this->helper->ErrorResp(
@@ -596,7 +596,7 @@ class UtilityGateway extends Controller
 
 				} catch (\Throwable $th) {
 					$this->resultresp = $th->getMessage();
-					$this->messageresp = 'Error in Catch';
+					$this->messageresp = 'Error in Catcha';
 					$this->statuscoderesp = $th->getCode();
 
 					$error = $this->helper->ErrorResp(
@@ -709,7 +709,7 @@ class UtilityGateway extends Controller
 					
 					} catch (\Throwable $th) {
 						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catch';
+						$this->messageresp = 'Error in Catchf';
 						$this->statuscoderesp = $th->getCode();
 
 						$error = $this->helper->ErrorResp(
@@ -810,7 +810,7 @@ class UtilityGateway extends Controller
 						
 					} catch (\Throwable $th) {
 						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catch';
+						$this->messageresp = 'Error in Catchg';
 						$this->statuscoderesp = $th->getCode();
 
 						$error = $this->helper->ErrorResp(
