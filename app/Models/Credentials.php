@@ -96,7 +96,7 @@ class Credentials extends Model
 			
             $client = new Client(); 
             $response = $client->post(
-                'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute', 
+                'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute'.isset($postBody['request']['list_sp']['query']) && $postBody['request']['list_sp']['query'] != null ? 'v3' : (isset($postBody['request']['list_sp']['sp_name']) && $postBody['request']['list_sp']['sp_name'] != null ? 'v2' : 'v?'), 
                 [
                     'headers' => [
                         'Content-Type' => 'text/plain'
