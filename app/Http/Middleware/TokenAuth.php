@@ -79,7 +79,7 @@ class TokenAuth
 			
 		} catch (\Throwable $th){
             $this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catchh';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $helper->ErrorResp(

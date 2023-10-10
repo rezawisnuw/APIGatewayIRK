@@ -155,7 +155,7 @@ class IRKCurhatkuGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch2';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
@@ -295,7 +295,7 @@ class IRKCurhatkuGateway extends Controller
             
         }catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch21';
+			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $e->getCode();
 
 			$error = $this->helper->ErrorResp(
