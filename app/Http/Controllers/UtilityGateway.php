@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\database\QueryException;
 use Telegram;
 use GuzzleHttp;
@@ -111,8 +112,9 @@ class UtilityGateway extends Controller
 							$this->ttldataresp
 						);
 
+						$cookie = Cookie::make($this->authorize, 'Bearer'.$result['token'], 120);
 						return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
+						->withCookie($cookie);
 						//->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', env('SESSION_CONFIG_DOMAIN','.hrindomaret.com'), false, false));
 						
 					}
@@ -155,7 +157,7 @@ class UtilityGateway extends Controller
         } catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catch';
+			$this->messageresp = 'Error in Catchs';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $this->helper->ErrorResp(
