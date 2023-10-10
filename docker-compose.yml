@@ -1,0 +1,25 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sd2developer/api-gateway-irk
+    container_name: sd2-gateway-irk
+    ports:
+      - "8050:8050"
+    volumes:
+      - .:/var/www/publish/container/gateway-irk
+      - ./hosts:/etc/hosts-custom:ro
+    restart: always
+    extra_hosts:
+      - "SD2ONLINELB:103.116.234.13"
+      - "SD2ONLINE12:103.116.234.253"
+      - "SD2ONLINE14:103.116.234.253"
+      - "DBINFRA:103.116.234.253"
+      - "SD2ONLINE:103.116.234.253"
+      - "SD2ONLINE2:103.116.234.253"
+      - "SD2ONLINE1:103.116.234.253"
+      - "LBINFRA:103.116.234.13"
+      - "LBINFRAPUBLIC:103.116.234.13"
+
