@@ -67,7 +67,7 @@ class UtilityGateway extends Controller
 
 					// $param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 
-					if($this->env === 'local'){
+					if($this->env == 'local'){
 
 						// return response()
 						// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
@@ -112,9 +112,8 @@ class UtilityGateway extends Controller
 							$this->ttldataresp
 						);
 
-						$cookie = Cookie::make($this->authorize, 'Bearer'.$result['token'], 120);
 						return response()->json($running)
-						->withCookie($cookie);
+						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], 120));
 						//->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', env('SESSION_CONFIG_DOMAIN','.hrindomaret.com'), false, false));
 						
 					}
