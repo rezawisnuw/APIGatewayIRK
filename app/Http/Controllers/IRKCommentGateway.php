@@ -35,7 +35,7 @@ class IRKCommentGateway extends Controller
         $slug = $request->route('slug');
 		$this->slug = $slug;
 
-        $env = env('APP_ENV');
+        $env = config('app.env');
         $this->env = $env;
 
         $helper = new IRKHelp($request);
@@ -83,7 +83,7 @@ class IRKCommentGateway extends Controller
                 );
                 
                 return response()->json($running);
-                
+
             }else{
                 return $decode_signature;
             }
