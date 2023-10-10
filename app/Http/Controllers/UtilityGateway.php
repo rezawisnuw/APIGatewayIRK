@@ -567,10 +567,10 @@ class UtilityGateway extends Controller
 						$newjson = new \stdClass();
 
 						
-						$newjson->NIK = $value->NIK;
+						$newjson->NIK = Crypt::encryptString($value->NIK);
 						$newjson->NAMA = $value->NAMA;
-						$newjson->EMAIL = $value->EMAIL;
-						$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+						$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
+						$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
 						$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
 						$newjson->ALIAS = $value->ALIAS;
 
@@ -680,10 +680,10 @@ class UtilityGateway extends Controller
 
 							$newjson = new \stdClass();
 
-							$newjson->NIK = $value->NIK;
+							$newjson->NIK = Crypt::encryptString($value->NIK);
 							$newjson->NAMA = $value->NAMA;
-							$newjson->EMAIL = $value->EMAIL;
-							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
+							$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
 							$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
 							$newjson->ALIAS = $value->ALIAS;
 
@@ -782,10 +782,10 @@ class UtilityGateway extends Controller
 	
 							}
 
-							$newjson->NIK = $value->NIK;
+							$newjson->NIK = Crypt::encryptString($value->NIK);
 							$newjson->NAMA = $value->NAMA;
-							$newjson->EMAIL = $value->EMAIL;
-							$newjson->NOHP_ISAKU = $value->NOHP_ISAKU;
+							$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
+							$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
 							$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
 							$newjson->ALIAS = $value->ALIAS;
 
