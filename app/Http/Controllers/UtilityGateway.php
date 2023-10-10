@@ -113,7 +113,7 @@ class UtilityGateway extends Controller
 
 						return response()->json($running)
 						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'))
-						->withCookie(cookie('NameEncryption', 'ValueEncryption', '60'));
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '60', '/', config('session.SESSION_DOMAIN',null), false, false));
 						
 					}
 				} else {
