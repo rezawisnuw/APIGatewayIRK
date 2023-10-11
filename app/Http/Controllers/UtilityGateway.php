@@ -887,6 +887,41 @@ class UtilityGateway extends Controller
 
 		return substr(str_shuffle($encoded_text), 0, 8);
 	}
+
+	public function Security(Request $request){
+		$type = $request['data']['type'];
+		$category = $request['data']['category'];
+		$signkey = $request['data']['signkey'];
+		$payload = $request['data']['payload'];
+
+		if($signkey == explode(':', config('app.key'))[1]){
+
+			if($type == 'decode'){
+				if($category = 'AES256CBC'){
+					$decrypt =  Crypt::decryptString($payload);
+					$decode = json_decode($decrypt);
+				}else if($category = 'BASE64'){
+					$decode = base64_decode($payload);
+				}
+	
+				return response()->json($decode);
+	
+			}else if($type == 'encode'){
+				if($category = 'AES256CBC'){
+					$encode = json_encode($payload);
+					$encrypt =  Crypt::encryptString($encode);
+				}else if($category = 'BASE64'){
+					$encode = json_encode($payload);
+				}
+	
+				return response()->json($encode);
+			}
+
+		}else{
+			return response()->json(['result' => 'Sign Key not Verified', 'data' => null, 'message' => 'Failed on Run', 'status' => 0, 'statuscode' => 400]);
+		}
+		
+	}
 }
 
 
