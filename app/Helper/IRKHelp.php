@@ -2,7 +2,6 @@
 
 namespace App\Helper;
 
-use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -195,7 +194,7 @@ class IRKHelp
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ],
                         'verify' => false
                     ]
@@ -231,7 +230,7 @@ class IRKHelp
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ]
                     ]
                 );
