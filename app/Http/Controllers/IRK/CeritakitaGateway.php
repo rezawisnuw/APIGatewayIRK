@@ -133,7 +133,7 @@ class CeritakitaGateway extends Controller
                         );
                         
                         return response()->json($running);
-                        
+
                     }else{
                         $this->resultresp = $result->message;
                         $this->dataresp = $result->data;
