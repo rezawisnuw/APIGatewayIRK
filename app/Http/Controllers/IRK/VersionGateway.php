@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\IRK;
 
 
 
@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helper\IRKHelp;
 
-class IRKVersionGateway extends Controller
+class VersionGateway extends Controller
 {
     private $resultresp;
 	private $dataresp;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\IRK;
 
 
 
@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helper\IRKHelp;
 
-class IRKMotivasiGateway extends Controller
+class IdeakuGateway extends Controller
 {
     private $resultresp;
 	private $dataresp;
@@ -61,20 +61,20 @@ class IRKMotivasiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]
                 ]);
-
-                $result = json_decode($response->getBody()->getContents());
     
+                $result = json_decode($response->getBody()->getContents());
+   
                 if(!empty($result->data)){
                     $newdata = array();
                     $format = array("jpeg", "jpg", "png");
                     foreach($result->data as $key=>$value){
 
-                        if(!empty($value->picture) && str_contains($value->picture,$this->path.'/Ceritakita/Motivasi/') && in_array(explode('.',$value->picture)[1], $format)){
+                        if(!empty($value->picture) && str_contains($value->picture,$this->path.'/Ceritakita/Ideaku/') && in_array(explode('.',$value->picture)[1], $format)){
                             $cloud = $this->helper->Client('other')->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
@@ -103,7 +103,7 @@ class IRKMotivasiGateway extends Controller
                         $newdata[] = $value;
                     }
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/get', [
+                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/get', [
                             'json' => [
                                 'data' => [
                                 'userid'=> $userid,
@@ -131,7 +131,7 @@ class IRKMotivasiGateway extends Controller
                     );
                     
                     return response()->json($running);
-                    
+
                 } else{
                     $this->resultresp = $result->message;
                     $this->dataresp = [];
@@ -147,7 +147,7 @@ class IRKMotivasiGateway extends Controller
                     );
                     
                     return response()->json($running);
-                }   
+                }
             }else{
                 return $decode_signature;
             }
@@ -164,6 +164,7 @@ class IRKMotivasiGateway extends Controller
 			);
 
 			return response()->json($error);
+
         }
     }
 
@@ -173,8 +174,8 @@ class IRKMotivasiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                if(!empty($request->photo)){
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/post', [
+                if(!empty($request->gambar)){
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/post', [
                         'multipart'=>[
                             [
                                 'name' => 'data',
@@ -182,7 +183,7 @@ class IRKMotivasiGateway extends Controller
                             ],
                             [
                                 'name'     => 'file',
-                                'contents' => json_encode(base64_encode(file_get_contents($request->photo)))
+                                'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
                             ]
                         ]
                     ]);
@@ -194,9 +195,9 @@ class IRKMotivasiGateway extends Controller
                             'multipart' => [
                                 [
                                     'name' => 'file',
-                                    'contents' => file_get_contents($request->photo),
-                                    'headers' => ['Content_type' => $request->photo->getClientMimeType()],
-                                    'filename' => $request->photo->getClientOriginalName()
+                                    'contents' => file_get_contents($request->gambar),
+                                    'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
+                                    'filename' => $request->gambar->getClientOriginalName()
                                 ],
                                 [
                                     'name' => 'file_name',
@@ -205,7 +206,7 @@ class IRKMotivasiGateway extends Controller
                             ]
                         ]);
             
-                        $resultcloud = json_decode($requestcloud->getBody()->getContents());
+                        $resultcloud = json_decode($cloud->getBody()->getContents());
 
                         $this->resultresp = $resultcloud->message;
                         $this->dataresp = $resultcloud->data;
@@ -221,7 +222,7 @@ class IRKMotivasiGateway extends Controller
                         );
                         
                         return response()->json($running);
-
+      
                     } else {
                         $this->resultresp = $result->message;
                         $this->dataresp = [];
@@ -237,10 +238,11 @@ class IRKMotivasiGateway extends Controller
                         );
                         
                         return response()->json($running);
+
                     }
 
                 }else{
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/post', [
                         'multipart'=>[
                             [
                                 'name' => 'data',
@@ -302,6 +304,7 @@ class IRKMotivasiGateway extends Controller
 			);
 
 			return response()->json($error);
+
         }
     }
 

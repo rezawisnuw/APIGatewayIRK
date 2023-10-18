@@ -2,7 +2,6 @@
 
 namespace App\Helper;
 
-use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -38,7 +37,7 @@ class IRKHelp
             $setting['config'] = config('app.URL_LIVE');
             $setting['path'] = 'Live';
         }else{
-            $response = $this->RunningResp('Something is wrong with the path of URI segment',null,'Failed on Run',0,'');
+            $response = $this->RunningResp('Something is wrong with the path of URI segment',[],'Failed on Run',0,'');
  
             $encode = json_encode($response);
             $encrypt = Crypt::encryptString($encode);
@@ -65,15 +64,28 @@ class IRKHelp
     }
 
     public function RunningResp($resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp = Response::HTTP_OK){
-        $response = [
-            'result' => $resultresp, // hasil respond asli langsung dari program
-            'data' => $dataresp, // hasil data program, data kosong bisa null atau []
-            'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
-            'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
-            'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
-            'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
-            'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
-        ];
+        if(!empty($ttldataresp)){
+            $response = [
+                'result' => $resultresp, // hasil respond asli langsung dari program
+                'data' => $dataresp, // hasil data program, data kosong bisa null atau []
+                'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
+                'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
+                'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
+                'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
+                'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
+            ];
+        }else{
+            $response = [
+                'result' => $resultresp, // hasil respond asli langsung dari program
+                'data' => $dataresp, // hasil data program, data kosong bisa null atau []
+                'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
+                'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
+                'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
+                // 'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
+                // 'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
+            ];
+        }
+        
 
         $encode = json_encode($response);
         $encrypt = Crypt::encryptString($encode);
@@ -89,7 +101,7 @@ class IRKHelp
             'data' => null,
             'message' => $messageresp, // pesan translate lebih mudah, ex : 'Error in Catch',
             'status' => 0,
-            'statuscode' => $statuscoderesp // defaultnya 400 atau bisa diganti manual
+            'statuscode' => ($statuscoderesp == 0) ? $statuscoderesp : 500 // defaultnya 400 atau bisa diganti manual
         ];
 
         $encode = json_encode($response);
@@ -182,7 +194,7 @@ class IRKHelp
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ],
                         'verify' => false
                     ]
@@ -218,7 +230,7 @@ class IRKHelp
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ]
                     ]
                 );

@@ -113,7 +113,7 @@ class UtilityGateway extends Controller
 
 						return response()->json($running)
 						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'))
-						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', env('SESSION_CONFIG_DOMAIN','.hrindomaret.com'), false, false));
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('session.domain'), false, false));
 						
 					}
 				} else {
@@ -449,17 +449,31 @@ class UtilityGateway extends Controller
         }
     }
 
-	public function TransaksiGateway(Request $request) {
+	public function SPExecutor(Request $request) {
 		
 		$raw_token = $this->tokendraw;
 		$split_token = explode('.', $raw_token);
 		$decrypt_token = base64_decode($split_token[1]);
 		$escapestring_token = json_decode($decrypt_token);
-		
 			
 		if($escapestring_token == $request['nik']){
 			try{		
-				$result = Credentials::SPExecutor($request['data']);
+
+				$client = new Client(); 
+				$response = $client->post(
+					'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute'.
+					isset($request['request']['list_sp']['query']) && $request['request']['list_sp']['query'] != null ? 'v3' : 
+					(isset($request['request']['list_sp']['sp_name']) && $request['request']['list_sp']['sp_name'] != null ? 'v2' : 'v?'), 
+					[
+						'headers' => [
+							'Content-Type' => 'text/plain'
+						],
+						'body' => json_encode(['req' => $request])
+					]
+				);
+				
+				$body = $response->getBody();
+				$result = json_decode($body);
 
 				$this->resultresp = $result['status'] == 1 ? 'Data has been process' : 'Data cannot be process';
 				$this->dataresp = $result['result'];
@@ -567,12 +581,12 @@ class UtilityGateway extends Controller
 						$newjson = new \stdClass();
 
 						
-						$newjson->NIK = Crypt::encryptString($value->NIK);
-						$newjson->NAMA = $value->NAMA;
-						$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
-						$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
-						$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-						$newjson->ALIAS = $value->ALIAS;
+						$newjson->nik = Crypt::encryptString($value->NIK);
+						$newjson->nama = $value->NAMA;
+						$newjson->email = Crypt::encryptString($value->EMAIL);
+						$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
+						$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
+						$newjson->alias = $value->ALIAS;
 
 						$newdata[] = $newjson;
 
@@ -680,12 +694,12 @@ class UtilityGateway extends Controller
 
 							$newjson = new \stdClass();
 
-							$newjson->NIK = Crypt::encryptString($value->NIK);
-							$newjson->NAMA = $value->NAMA;
-							$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
-							$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
-							$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-							$newjson->ALIAS = $value->ALIAS;
+							$newjson->nik = Crypt::encryptString($value->NIK);
+							$newjson->nama = $value->NAMA;
+							$newjson->email = Crypt::encryptString($value->EMAIL);
+							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
+							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
+							$newjson->alias = $value->ALIAS;
 
 							$newdata[] = $newjson;
 
@@ -782,12 +796,12 @@ class UtilityGateway extends Controller
 	
 							}
 
-							$newjson->NIK = Crypt::encryptString($value->NIK);
-							$newjson->NAMA = $value->NAMA;
-							$newjson->EMAIL = Crypt::encryptString($value->EMAIL);
-							$newjson->NOHP_ISAKU = Crypt::encryptString($value->NOHP_ISAKU);
-							$newjson->JENIS_KELAMIN = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-							$newjson->ALIAS = $value->ALIAS;
+							$newjson->nik = Crypt::encryptString($value->NIK);
+							$newjson->nama = $value->NAMA;
+							$newjson->email = Crypt::encryptString($value->EMAIL);
+							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
+							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
+							$newjson->alias = $value->ALIAS;
 
 							$newdata[] = $newjson;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\IRK;
 
 
 
@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helper\IRKHelp;
 
-class IRKReportGateway extends Controller
+class CommentGateway extends Controller
 {
     private $resultresp;
 	private $dataresp;
@@ -61,14 +61,14 @@ class IRKReportGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/report/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/comment/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
-
+    
                 $this->resultresp = $result->message;
                 $this->dataresp = $result->data;
                 $this->messageresp = 'Success on Run';
@@ -83,7 +83,7 @@ class IRKReportGateway extends Controller
                 );
                 
                 return response()->json($running);
-    
+
             }else{
                 return $decode_signature;
             }
@@ -109,7 +109,7 @@ class IRKReportGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/report/post', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/comment/post', [
                     'json'=>[
                         'data' => $request->all()
                     ]

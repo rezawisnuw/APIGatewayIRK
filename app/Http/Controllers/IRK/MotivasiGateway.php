@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\IRK;
 
 
 
@@ -18,7 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helper\IRKHelp;
 
-class IRKIdeakuGateway extends Controller
+class MotivasiGateway extends Controller
 {
     private $resultresp;
 	private $dataresp;
@@ -61,49 +61,17 @@ class IRKIdeakuGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/get', [
                     'json'=>[
                         'data' => $request->all()
                     ]
                 ]);
-    
+
                 $result = json_decode($response->getBody()->getContents());
-   
-                if(!empty($result->data)){
-                    $newdata = array();
-                    $format = array("jpeg", "jpg", "png");
-                    foreach($result->data as $key=>$value){
-
-                        if(!empty($value->picture) && str_contains($value->picture,$this->path.'/Ceritakita/Ideaku/') && in_array(explode('.',$value->picture)[1], $format)){
-                            $cloud = $this->helper->Client('other')->request('POST',
-                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
-                                    [
-                                        'json' => [
-                                            'file_name' => $value->picture,
-                                            'expired' => 30
-                                        ]
-                                    ]
-                                );
     
-                            $body = $cloud->getBody();
-                            
-                            $temp = json_decode($body);
-
-                            $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
-                            
-                        }else{
-                            
-                            $value->picture_cloud = 'File not found';
-
-                        }
-                        
-                        $value->employee = Crypt::encryptString($value->employee);
-                        $value->picture = Crypt::encryptString($value->picture);
-                            
-                        $newdata[] = $value;
-                    }
+                if(!empty($result->data)){
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/get', [
+                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/get', [
                             'json' => [
                                 'data' => [
                                 'userid'=> $userid,
@@ -115,23 +83,77 @@ class IRKIdeakuGateway extends Controller
             
                     $newbody = $newresponse->getBody();
                     $newtemp = json_decode($newbody);
-
-                    $this->resultresp = $result->message;
-                    $this->dataresp = $newdata;
-                    $this->messageresp = 'Success on Run';
-                    $this->statusresp = 1;
-                    $this->ttldataresp = $newtemp->data;
-
-                    $running = $this->helper->RunningResp(
-                        $this->resultresp,
-                        $this->dataresp,
-                        $this->messageresp,
-                        $this->statusresp,
-                        $this->ttldataresp
-                    );
                     
-                    return response()->json($running);
+                    if($result->status == 'Processing'){
 
+                        $newdata = array();
+                        $format = array("jpeg", "jpg", "png");
+
+                        foreach($result->data as $key=>$value){
+
+                            if(!empty($value->picture) && str_contains($value->picture,$this->path.'/Ceritakita/Motivasi/') && in_array(explode('.',$value->picture)[1], $format)){
+                                $cloud = $this->helper->Client('other')->request('POST',
+                                        'https://cloud.hrindomaret.com/api/irk/generateurl',
+                                        [
+                                            'json' => [
+                                                'file_name' => $value->picture,
+                                                'expired' => 30
+                                            ]
+                                        ]
+                                    );
+        
+                                $body = $cloud->getBody();
+                                
+                                $temp = json_decode($body);
+
+                                $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
+                                
+                            }else{
+                                
+                                $value->picture_cloud = 'File not found';
+
+                            }
+                            
+                            $value->employee = Crypt::encryptString($value->employee);
+                            $value->picture = Crypt::encryptString($value->picture);
+                                
+                            $newdata[] = $value;
+                        }
+
+                        $this->resultresp = $result->message;
+                        $this->dataresp = $newdata;
+                        $this->messageresp = 'Success on Run';
+                        $this->statusresp = 1;
+                        $this->ttldataresp = $newtemp->data;
+
+                        $running = $this->helper->RunningResp(
+                            $this->resultresp,
+                            $this->dataresp,
+                            $this->messageresp,
+                            $this->statusresp,
+                            $this->ttldataresp
+                        );
+                        
+                        return response()->json($running);
+
+                    }else{
+                        $this->resultresp = $result->message;
+                        $this->dataresp = $result->data;
+                        $this->messageresp = 'Success on Run';
+                        $this->statusresp = 1;
+                        $this->ttldataresp = $newtemp->data;
+
+                        $running = $this->helper->RunningResp(
+                            $this->resultresp,
+                            $this->dataresp,
+                            $this->messageresp,
+                            $this->statusresp,
+                            $this->ttldataresp
+                        );
+                        
+                        return response()->json($running);
+                    }
+                    
                 } else{
                     $this->resultresp = $result->message;
                     $this->dataresp = [];
@@ -147,7 +169,7 @@ class IRKIdeakuGateway extends Controller
                     );
                     
                     return response()->json($running);
-                }
+                }   
             }else{
                 return $decode_signature;
             }
@@ -164,7 +186,6 @@ class IRKIdeakuGateway extends Controller
 			);
 
 			return response()->json($error);
-
         }
     }
 
@@ -174,8 +195,8 @@ class IRKIdeakuGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                if(!empty($request->gambar)){
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/post', [
+                if(count($request->file()) > 0){
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/post', [
                         'multipart'=>[
                             [
                                 'name' => 'data',
@@ -189,7 +210,7 @@ class IRKIdeakuGateway extends Controller
                     ]);
 
                     $result = json_decode($response->getBody()->getContents());
-
+                    
                     if(!empty($result->data)){
                         $cloud = $this->helper->Client('other')->request('POST','https://cloud.hrindomaret.com/api/irk/upload', [
                             'multipart' => [
@@ -206,7 +227,7 @@ class IRKIdeakuGateway extends Controller
                             ]
                         ]);
             
-                        $resultcloud = json_decode($cloud->getBody()->getContents());
+                        $resultcloud = json_decode($requestcloud->getBody()->getContents());
 
                         $this->resultresp = $resultcloud->message;
                         $this->dataresp = $resultcloud->data;
@@ -222,7 +243,7 @@ class IRKIdeakuGateway extends Controller
                         );
                         
                         return response()->json($running);
-      
+
                     } else {
                         $this->resultresp = $result->message;
                         $this->dataresp = [];
@@ -238,11 +259,10 @@ class IRKIdeakuGateway extends Controller
                         );
                         
                         return response()->json($running);
-
                     }
 
                 }else{
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/ideaku/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/motivasi/post', [
                         'multipart'=>[
                             [
                                 'name' => 'data',
@@ -304,7 +324,6 @@ class IRKIdeakuGateway extends Controller
 			);
 
 			return response()->json($error);
-
         }
     }
 
