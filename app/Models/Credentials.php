@@ -89,31 +89,6 @@ class Credentials extends Model
         }
     }
 
-    public function SPExecutor($postBody){			 
-		
-		try {
-            $result = '';
-			
-            $client = new Client(); 
-            $response = $client->post(
-                'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute'.isset($postBody['request']['list_sp']['query']) && $postBody['request']['list_sp']['query'] != null ? 'v3' : (isset($postBody['request']['list_sp']['sp_name']) && $postBody['request']['list_sp']['sp_name'] != null ? 'v2' : 'v?'), 
-                [
-                    'headers' => [
-                        'Content-Type' => 'text/plain'
-                    ],
-                    'body' => json_encode(['req' => $postBody])
-                ]
-            );
-			
-			$body = $response->getBody();
-			$temp = json_decode($body);
-
-			return $temp;
-        } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
-        }
-    }
-
     public function GetTokenAuth($nik)
     {
         try{
