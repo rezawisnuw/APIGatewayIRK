@@ -286,21 +286,21 @@ class UtilityGateway extends Controller
 			
 						if(isset($value->NIK)){
 							
-							$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+							// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
 							
-							$client = new Client();
-							$response = $client->post(
-								'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
-								[
-									RequestOptions::JSON =>[
-										'data' => $object
-									]
-								]
-							);
+							// $client = new Client();
+							// $response = $client->post(
+							// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+							// 	[
+							// 		RequestOptions::JSON =>[
+							// 			'data' => $object
+							// 		]
+							// 	]
+							// );
 	
-							$body = $response->getBody();
+							// $body = $response->getBody();
 							
-							$temp = json_decode($body);
+							// $temp = json_decode($body);
 								
 							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
@@ -366,21 +366,21 @@ class UtilityGateway extends Controller
 							
 							if(isset($value->NIK)){
 							
-								$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+								// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
 								
-								$client = new Client();
-								$response = $client->post(
-									'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
-									[
-										RequestOptions::JSON =>[
-											'data' => $object
-										]
-									]
-								);
+								// $client = new Client();
+								// $response = $client->post(
+								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+								// 	[
+								// 		RequestOptions::JSON =>[
+								// 			'data' => $object
+								// 		]
+								// 	]
+								// );
 		
-								$body = $response->getBody();
+								// $body = $response->getBody();
 								
-								$temp = json_decode($body);
+								// $temp = json_decode($body);
 									
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
@@ -432,21 +432,21 @@ class UtilityGateway extends Controller
 							
 							if(isset($value->NIK)){
 							
-								$object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
+								// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
 								
-								$client = new Client();
-								$response = $client->post(
-									'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
-									[
-										RequestOptions::JSON =>[
-											'data' => $object
-										]
-									]
-								);
+								// $client = new Client();
+								// $response = $client->post(
+								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+								// 	[
+								// 		RequestOptions::JSON =>[
+								// 			'data' => $object
+								// 		]
+								// 	]
+								// );
 		
-								$body = $response->getBody();
+								// $body = $response->getBody();
 								
-								$temp = json_decode($body);
+								// $temp = json_decode($body);
 									
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
