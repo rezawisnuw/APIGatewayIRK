@@ -21,6 +21,9 @@ return [
     'URL_UPLOADFILE_CONFIDENTAL_DEV' => env('PATH_UPLOADFILE_CONFIDENTAL'),
     'URL_UPLOADFILE_NONCONFIDENTAL' => env('PATH_UPLOADFILE_NONCONFIDENTAL'),
 
+    'domain' => env('DOMAIN_NAME'),
+    'subdomain' => env('SUB_DOMAIN_NAME'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -32,7 +35,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME'),
 
     /*
     |--------------------------------------------------------------------------
