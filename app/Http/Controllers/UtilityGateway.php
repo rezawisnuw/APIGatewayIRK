@@ -66,33 +66,33 @@ class UtilityGateway extends Controller
 
 					// $param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 
-					if($this->env === 'local'){
+					// if($this->env === 'local'){
 
-						// return response()
-						// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						// ->header($this->authorize,'Bearer'.$result['token']);
+					// 	// return response()
+					// 	// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+					// 	// ->header($this->authorize,'Bearer'.$result['token']);
 
-						$this->resultresp = 'Token has Stored in Header';
-						$this->dataresp = null;
-						$this->messageresp = $result['wcf']['message'];
-						$this->statusresp = $result['wcf']['status'];
+					// 	$this->resultresp = 'Token has Stored in Header';
+					// 	$this->dataresp = null;
+					// 	$this->messageresp = $result['wcf']['message'];
+					// 	$this->statusresp = $result['wcf']['status'];
 
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
+					// 	$running = $this->helper->RunningResp(
+					// 		$this->resultresp,
+					// 		$this->dataresp,
+					// 		$this->messageresp,
+					// 		$this->statusresp,
+					// 		$this->ttldataresp
+					// 	);
 
-						return response()->json($running)
-						->withHeaders([
-							$this->authorize => 'Bearer'.$result['token'],
-							'Cache-Control' => 'max-age=7200, public',
-							'Expires' => now()->addHours(2)->format('D, d M Y H:i:s \G\M\T'),
-						]);
-						
-					} else{
+					// 	return response()->json($running)
+					// 	->withHeaders([
+					// 		$this->authorize => 'Bearer'.$result['token'],
+					// 		'Cache-Control' => 'max-age=7200, public',
+					// 		'Expires' => now()->addHours(2)->format('D, d M Y H:i:s \G\M\T'),
+					// 	]);
+
+					// } else{
 
 						// return response()
 						// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
@@ -112,10 +112,10 @@ class UtilityGateway extends Controller
 						);
 
 						return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'))
-						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('session.domain'), false, false));
+						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120', '/', config('app.domain'), false, false))
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('app.domain'), false, false));
 						
-					}
+					// }
 				} else {
 
 					$this->resultresp = $result['wcf']['result'];
@@ -179,24 +179,24 @@ class UtilityGateway extends Controller
 
 				if($result['status'] == '1'){
 
-					if($this->env === 'local'){
+					// if($this->env === 'local'){
 
-						$this->resultresp = 'Token has Revoked on Header';
-						$this->dataresp = null;
-						$this->messageresp = $result['message'];
-						$this->statusresp = $result['status'];
+					// 	$this->resultresp = 'Token has Revoked on Header';
+					// 	$this->dataresp = null;
+					// 	$this->messageresp = $result['message'];
+					// 	$this->statusresp = $result['status'];
 
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
+					// 	$running = $this->helper->RunningResp(
+					// 		$this->resultresp,
+					// 		$this->dataresp,
+					// 		$this->messageresp,
+					// 		$this->statusresp,
+					// 		$this->ttldataresp
+					// 	);
 
-						return response()->json($running);
+					// 	return response()->json($running);
 						
-					} else{
+					// } else{
 
 						$this->resultresp = 'Token has Revoked on Cookie';
 						$this->dataresp = null;
@@ -213,7 +213,7 @@ class UtilityGateway extends Controller
 
 						return response()->json($running);
 						
-					}
+					// }
 
 				}else{
 
