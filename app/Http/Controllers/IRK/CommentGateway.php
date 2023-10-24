@@ -152,7 +152,51 @@ class CommentGateway extends Controller
     }
 
     public function put(Request $request){
-        
+        try {
+            $decrypt_signature = Crypt::decryptString($this->signature);
+            $decode_signature = json_decode($decrypt_signature);
+           
+            if($decode_signature->result == 'Match'){
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/comment/put', [
+                    'json'=>[
+                        'data' => $request->all()
+                    ]
+                ]);
+    
+                $result = json_decode($response->getBody()->getContents());
+
+                $this->resultresp = $result->message;
+                $this->dataresp = $result->data;
+                $this->messageresp = 'Success on Run';
+                $this->statusresp = 1;
+
+                $running = $this->helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+                
+                return response()->json($running);
+    
+            }else{
+                return $decode_signature;
+            }
+            
+        }catch (\Throwable $e) {
+            $this->resultresp = $e->getMessage();
+			$this->messageresp = 'Error in Catch';
+			$this->statuscoderesp = $e->getCode();
+
+			$error = $this->helper->ErrorResp(
+				$this->resultresp, 
+				$this->messageresp, 
+				$this->statuscoderesp
+			);
+
+			return response()->json($error);
+        }
     }
 
     public function delete(Request $request){
