@@ -331,7 +331,7 @@ class IRKCeritaKitaGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/ceritakita/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'dev/ceritakita/get',
                         [
                             RequestOptions::JSON => 
                             [

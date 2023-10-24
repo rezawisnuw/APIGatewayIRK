@@ -255,7 +255,7 @@ class IRKCurhatkuGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/curhatku/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'dev/curhatku/get',
                         [
                             RequestOptions::JSON => 
                             [
@@ -336,7 +336,7 @@ class IRKCurhatkuGateway extends Controller
                         // $idticket = explode("_",$result->data);
                         // $newclient = new Client();
                         // $newresponse = $newclient->post(
-                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/curhatku/get',
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'dev/curhatku/get',
                         //     [
                         //         RequestOptions::JSON => 
                         //         [
@@ -436,7 +436,7 @@ class IRKCurhatkuGateway extends Controller
                         // $idticket = explode("_",$result->data);
                         // $newclient = new Client();
                         // $newresponse = $newclient->post(
-                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/curhatku/get',
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'dev/curhatku/get',
                         //     [
                         //         RequestOptions::JSON => 
                         //         [
