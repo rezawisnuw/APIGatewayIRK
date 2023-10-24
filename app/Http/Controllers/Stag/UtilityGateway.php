@@ -290,7 +290,7 @@ class UtilityGateway extends Controller
 							
 							// $client = new Client();
 							// $response = $client->post(
-							// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+							// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/profile/get',
 							// 	[
 							// 		RequestOptions::JSON =>[
 							// 			'data' => $object
@@ -370,7 +370,7 @@ class UtilityGateway extends Controller
 								
 								// $client = new Client();
 								// $response = $client->post(
-								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/profile/get',
 								// 	[
 								// 		RequestOptions::JSON =>[
 								// 			'data' => $object
@@ -436,7 +436,7 @@ class UtilityGateway extends Controller
 								
 								// $client = new Client();
 								// $response = $client->post(
-								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/profile/get',
+								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/profile/get',
 								// 	[
 								// 		RequestOptions::JSON =>[
 								// 			'data' => $object
