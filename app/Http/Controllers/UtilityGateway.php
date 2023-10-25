@@ -456,29 +456,35 @@ class UtilityGateway extends Controller
 		$decrypt_token = base64_decode($split_token[1]);
 		$escapestring_token = json_decode($decrypt_token);
 			
-		if($escapestring_token == $request['nik']){
+		if($escapestring_token == $request['data']['nik']){
 			try{		
-
+				if(isset($request['data']['list_sp']) && $request['data']['list_sp'] != null){
+					$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/executev2';
+				}else if(isset($request['data']['list_query']) && $request['data']['list_query'] != null){
+					$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/executev3';
+				}else{
+					$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute';
+				}
 				$client = new Client(); 
 				$response = $client->post(
-					'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute'.
-					isset($request['request']['list_sp']['query']) && $request['request']['list_sp']['query'] != null ? 'v3' : 
-					(isset($request['request']['list_sp']['sp_name']) && $request['request']['list_sp']['sp_name'] != null ? 'v2' : 'v?'), 
+					$link_url, 
 					[
 						'headers' => [
 							'Content-Type' => 'text/plain'
 						],
-						'body' => json_encode(['req' => $request])
+						'body' => json_encode([
+								'request' => $request['data']
+							])
 					]
 				);
 				
 				$body = $response->getBody();
 				$result = json_decode($body);
-
-				$this->resultresp = $result['status'] == 1 ? 'Data has been process' : 'Data cannot be process';
-				$this->dataresp = $result['result'];
-				$this->messageresp = $result['message'];
-				$this->statusresp = $result['status'];
+	
+				$this->resultresp = $result->status == 1 ? 'Data has been process' : 'Data cannot be process';
+				$this->dataresp = $result->result;
+				$this->messageresp = $result->message;
+				$this->statusresp = $result->status;
 
 				$running = $this->helper->RunningResp(
 					$this->resultresp,
