@@ -393,6 +393,7 @@ Route::group([
 	Route::post('downloadFisik', [UtilityGateway::class, 'DownloadFile93']);
 	Route::post('firebase', [UtilityGateway::class, 'Firebase']);
 	Route::post('worker', [UtilityGateway::class, 'WorkerESS']);
+	Route::post('spexecutor', [UtilityGateway::class, 'SPExecutor']);
 	Route::post('security', [UtilityGateway::class, 'Security']);
 	Route::post('unitcabang', [UtilityGateway::class, 'UnitCabang']);
 
