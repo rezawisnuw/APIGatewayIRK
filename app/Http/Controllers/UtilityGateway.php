@@ -936,6 +936,77 @@ class UtilityGateway extends Controller
 		}
 		
 	}
+
+	public function UnitCabang(Request $request){
+		$raw_token = $this->tokendraw;
+		$split_token = explode('.', $raw_token);
+		$decrypt_token = base64_decode($split_token[1]);
+		$escapestring_token = json_decode($decrypt_token);
+
+		$formbody = $request['data'];
+
+		if($escapestring_token == $formbody['nik']){ 
+			try{         
+				$client = new Client();
+				$response = $client->post(
+					'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Unit-Cabang',
+					[
+						RequestOptions::JSON => 
+						['param'=>$formbody]
+					],
+					['Content-Type' => 'application/json']
+				);
+		
+				$body = $response->getBody();
+				$temp = json_decode($body);
+				$result = json_decode($temp->UnitCabangResult);
+	
+				$this->resultresp = 'Data has been process';
+				$this->dataresp = $result;
+				$this->messageresp = 'Success on Run';
+				$this->statusresp = 1;
+	
+				$running = $this->helper->RunningResp(
+					$this->resultresp,
+					$this->dataresp,
+					$this->messageresp,
+					$this->statusresp,
+					$this->ttldataresp
+				);
+	
+				return response()->json($running);
+					
+			}
+			catch(\Throwable $th){ 
+				$this->resultresp = $th->getMessage();
+				$this->messageresp = 'Error in Catch';
+				$this->statuscoderesp = $th->getCode();
+
+				$error = $this->helper->ErrorResp(
+					$this->resultresp,
+					$this->messageresp,
+					$this->statuscoderesp
+				);
+
+				return response()->json($error);
+
+			}
+		}else {
+			$this->resultresp = 'Your data is not authorized';
+			$this->dataresp = $escapestring_token;
+			$this->messageresp = 'Failed on Run';
+			$this->statusresp = 0;
+
+			$running = $this->helper->RunningResp(
+				$this->resultresp,
+				$this->dataresp,
+				$this->messageresp,
+				$this->statusresp,
+				$this->ttldataresp
+			);
+
+			return response()->json($running);
+		}
+		
+	}
 }
-
-
