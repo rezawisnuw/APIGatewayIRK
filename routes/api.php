@@ -394,6 +394,7 @@ Route::group([
 	Route::post('firebase', [UtilityGateway::class, 'Firebase']);
 	Route::post('worker', [UtilityGateway::class, 'WorkerESS']);
 	Route::post('security', [UtilityGateway::class, 'Security']);
+	Route::post('unitcabang', [UtilityGateway::class, 'UnitCabang']);
 
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
