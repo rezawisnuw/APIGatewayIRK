@@ -474,7 +474,7 @@ class UtilityGateway extends Controller
 						],
 						'body' => json_encode([
 								'request' => $request['data']
-							])
+						])
 					]
 				);
 				
@@ -1014,5 +1014,23 @@ class UtilityGateway extends Controller
 			return response()->json($running);
 		}
 		
+	}
+
+	public function Jabatan(Request $request){
+		$data = $request['data'];
+		// $data['list_query'] = array([
+		// 	'conn'=>'DBPRESENSI',
+		// 	'query'=>'SELECT TOP 10 * FROM DaftarKaryawanPresensi WITH(NOLOCK);',
+		// 	'process_name'=>'GetJabatanResult'
+		// ]);
+		$data['list_sp'] = array([
+			'conn'=>'HRD_OPR',
+			'payload'=>['idjabatan'=>$request['data']['idjabatan']],
+			'sp_name'=>'SP_GetJabatan',
+			'process_name'=>'GetJabatanResult'
+		]);
+		$request['data'] = $data;
+		$response = $this->SPExecutor($request);
+		return $response;
 	}
 }
