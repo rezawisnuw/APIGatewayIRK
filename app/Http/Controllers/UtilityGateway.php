@@ -1018,19 +1018,100 @@ class UtilityGateway extends Controller
 
 	public function Jabatan(Request $request){
 		$data = $request['data'];
+
 		// $data['list_query'] = array([
 		// 	'conn'=>'DBPRESENSI',
 		// 	'query'=>'SELECT TOP 10 * FROM DaftarKaryawanPresensi WITH(NOLOCK);',
 		// 	'process_name'=>'GetJabatanResult'
 		// ]);
+		
 		$data['list_sp'] = array([
 			'conn'=>'HRD_OPR',
 			'payload'=>['idjabatan'=>$request['data']['idjabatan']],
 			'sp_name'=>'SP_GetJabatan',
 			'process_name'=>'GetJabatanResult'
 		]);
+
 		$request['data'] = $data;
 		$response = $this->SPExecutor($request);
 		return $response;
+	}
+
+	public function NotificationPortal(Request $request){
+		$raw_token = $this->tokendraw;
+		$split_token = explode('.', $raw_token);
+		$decrypt_token = base64_decode($split_token[1]);
+		$escapestring_token = json_decode($decrypt_token);
+
+		$formbody = $request['data'];
+
+		if($escapestring_token == $formbody['nikLogin']){ 
+
+			$data = [
+				'code'=>'1101',
+				'parm'=>$formbody
+			];
+
+			try{         
+				$client = new Client();
+				$response = $client->post(
+					'http://'.$this->config.'/PortalRESTService/PortalService.svc/portalRest',
+					[
+						RequestOptions::JSON => 
+						['req'=>$data]
+					],
+					['Content-Type' => 'application/json']
+				);
+		
+				$body = $response->getBody();
+				$temp = json_decode($body);
+				$result = $temp->Result;
+	
+				$this->resultresp = $result->status == 1 ? 'Data has been process' : 'Data cannot be process';
+				$this->dataresp = $result->message;
+				$this->messageresp = $result->status == 1 ? 'Success on Run' : 'Failed on Run';
+				$this->statusresp = $result->status;
+	
+				$running = $this->helper->RunningResp(
+					$this->resultresp,
+					$this->dataresp,
+					$this->messageresp,
+					$this->statusresp,
+					$this->ttldataresp
+				);
+	
+				return response()->json($running);
+					
+			}
+			catch(\Throwable $th){ 
+				$this->resultresp = $th->getMessage();
+				$this->messageresp = 'Error in Catch';
+				$this->statuscoderesp = $th->getCode();
+
+				$error = $this->helper->ErrorResp(
+					$this->resultresp,
+					$this->messageresp,
+					$this->statuscoderesp
+				);
+
+				return response()->json($error);
+
+			}
+		}else {
+			$this->resultresp = 'Your data is not authorized';
+			$this->dataresp = $escapestring_token;
+			$this->messageresp = 'Failed on Run';
+			$this->statusresp = 0;
+
+			$running = $this->helper->RunningResp(
+				$this->resultresp,
+				$this->dataresp,
+				$this->messageresp,
+				$this->statusresp,
+				$this->ttldataresp
+			);
+
+			return response()->json($running);
+		}
 	}
 }

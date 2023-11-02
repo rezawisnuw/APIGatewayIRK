@@ -397,6 +397,7 @@ Route::group([
 	Route::post('security', [UtilityGateway::class, 'Security']);
 	Route::post('unitcabang', [UtilityGateway::class, 'UnitCabang']);
 	Route::post('jabatan', [UtilityGateway::class, 'Jabatan']);
+	Route::post('notification', [UtilityGateway::class, 'NotificationPortal']);
 
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
