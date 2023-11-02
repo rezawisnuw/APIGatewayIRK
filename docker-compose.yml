@@ -22,4 +22,10 @@ services:
       - "SD2ONLINE1:103.116.234.253"
       - "LBINFRA:103.116.234.13"
       - "LBINFRAPUBLIC:103.116.234.13"
+      - "IRKSERVICE:172.18.0.3"
+    networks:
+      - portal-network
 
+networks:
+  portal-network:
+    external: true
