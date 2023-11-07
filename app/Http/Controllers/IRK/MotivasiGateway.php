@@ -227,7 +227,7 @@ class MotivasiGateway extends Controller
                             ]
                         ]);
             
-                        $resultcloud = json_decode($requestcloud->getBody()->getContents());
+                        $resultcloud = json_decode($cloud->getBody()->getContents());
 
                         $this->resultresp = $resultcloud->message;
                         $this->dataresp = $resultcloud->data;
