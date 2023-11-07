@@ -1027,7 +1027,7 @@ class UtilityGateway extends Controller
 		
 		$data['list_sp'] = array([
 			'conn'=>'HRD_OPR',
-			'payload'=>['idjabatan'=>$request['data']['idjabatan']],
+			'payload'=>['idjabatan'=>empty($request['data']['idjabatan']) ? "" : $request['data']['idjabatan']],
 			'sp_name'=>'SP_GetJabatan',
 			'process_name'=>'GetJabatanResult'
 		]);
