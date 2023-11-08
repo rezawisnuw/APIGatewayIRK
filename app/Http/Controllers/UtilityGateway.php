@@ -553,51 +553,9 @@ class UtilityGateway extends Controller
 					$temp = json_decode($body);
 					$result = json_decode($temp->WorkerResult);
 		
-					$newdata = array();
-					foreach($result as $key=>$value){
-			
-						if(isset($value->NIK)){
-							
-							// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
-							
-							// $client = new Client();
-							// $response = $client->post(
-							// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/get',
-							// 	[
-							// 		RequestOptions::JSON =>[
-							// 			'data' => $object
-							// 		]
-							// 	]
-							// );
-	
-							// $body = $response->getBody();
-							
-							// $temp = json_decode($body);
-							
-							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-							//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
-							$value->ALIAS = substr(base64_encode(microtime().$value->NIK),3,8);
-                            
-                        }else{
-                            
-                            $value->ALIAS = null;
-
-                        }
-
-						$newjson = new \stdClass();
-
-						
-						$newjson->nik = Crypt::encryptString($value->NIK);
-						$newjson->nama = $value->NAMA;
-						$newjson->email = Crypt::encryptString($value->EMAIL);
-						$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
-						$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-						$newjson->alias = $value->ALIAS;
-
-						$newdata[] = $newjson;
-
+					if(isset($request['userid'])){
 						$this->resultresp = 'Data has been process';
-						$this->dataresp = $newdata[0];
+						$this->dataresp = $result;
 						$this->messageresp = 'Success on Run';
 						$this->statusresp = 1;
 
@@ -610,7 +568,104 @@ class UtilityGateway extends Controller
 						);
 
 						return response()->json($running);
-						
+
+					}else{
+						$newdata = array();
+						foreach($result as $key=>$value){
+							
+							if(isset($value->NIK)){
+								$data = $request['data'];
+								$data['list_sp'] = array([
+									'conn'=>'POR_DUMMY',
+									'payload'=>['nik' => $value->NIK],
+									'sp_name'=>'SP_GetAccessLevel',
+									'process_name'=>'GetAccessLevelResult'
+								]);
+
+								$request['data'] = $data;
+								$response = $this->SPExecutor($request);
+								$level = $response->getData()->data->GetAccessLevelResult[0]->role;
+							
+								$object = array(
+									'nik' => $value->NIK, 
+									'userid' => $value->NIK, 
+									'code' => 1, 
+									'nohp' => $value->NOHP_ISAKU,
+									'nama' => $value->NAMA,
+									'kelamin' => $value->JENIS_KELAMIN,
+									'email' => $value->EMAIL,
+									'status' => 'Active',
+									'alias' => str_contains($level,'Admin') ? $level : base64_encode(microtime().$value->NIK)
+								);
+								
+								$client = new Client();
+								$response = $client->post(
+									'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/post',
+									[
+										RequestOptions::JSON =>[
+											'data' => $object
+										]
+									]
+								);
+		
+								$body = $response->getBody();
+								
+								$temp = json_decode($body);
+								
+								if($temp->status == 'Success'){
+									//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+									//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
+									$value->ALIAS = str_contains($level,'Admin') ? $level : substr($object['alias'],3,8);
+								}else{
+									$this->resultresp = $temp->message;
+									$this->dataresp = $temp->data;
+									$this->messageresp = 'Failed on Run';
+									$this->statusresp = 0;
+
+									$running = $this->helper->RunningResp(
+										$this->resultresp,
+										$this->dataresp,
+										$this->messageresp,
+										$this->statusresp,
+										$this->ttldataresp
+									);
+
+									return response()->json($running);
+								}
+								
+							}else{
+								
+								$value->ALIAS = null;
+	
+							}
+
+							$newjson = new \stdClass();
+
+							$newjson->nik = Crypt::encryptString($value->NIK);
+							$newjson->nama = $value->NAMA;
+							$newjson->email = Crypt::encryptString($value->EMAIL);
+							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
+							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
+							$newjson->alias = $value->ALIAS;
+
+							$newdata[] = $newjson;
+
+							$this->resultresp = 'Data has been process';
+							$this->dataresp = $newdata[0];
+							$this->messageresp = 'Success on Run';
+							$this->statusresp = 1;
+
+							$running = $this->helper->RunningResp(
+								$this->resultresp,
+								$this->dataresp,
+								$this->messageresp,
+								$this->statusresp,
+								$this->ttldataresp
+							);
+
+							return response()->json($running);
+
+						}
 					}
 
 				} catch (\Throwable $th) {
@@ -666,51 +721,10 @@ class UtilityGateway extends Controller
 						$body = $response->getBody();
 						$temp = json_decode($body);
 						$result = json_decode($temp->WorkerResult);
-
-						$newdata = array();
-                        foreach($result as $key=>$value){
-							
-							if(isset($value->NIK)){
-							
-								// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
-								
-								// $client = new Client();
-								// $response = $client->post(
-								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/get',
-								// 	[
-								// 		RequestOptions::JSON =>[
-								// 			'data' => $object
-								// 		]
-								// 	]
-								// );
-		
-								// $body = $response->getBody();
-								
-								// $temp = json_decode($body);
-								
-								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
-								$value->ALIAS = substr(base64_encode(microtime().$value->NIK),3,8);
-								
-							}else{
-								
-								$value->ALIAS = null;
-	
-							}
-
-							$newjson = new \stdClass();
-
-							$newjson->nik = Crypt::encryptString($value->NIK);
-							$newjson->nama = $value->NAMA;
-							$newjson->email = Crypt::encryptString($value->EMAIL);
-							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
-							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-							$newjson->alias = $value->ALIAS;
-
-							$newdata[] = $newjson;
-
+						
+						if(isset($request['userid'])){
 							$this->resultresp = 'Data has been process';
-							$this->dataresp = $newdata[0];
+							$this->dataresp = $result;
 							$this->messageresp = 'Success on Run';
 							$this->statusresp = 1;
 
@@ -724,6 +738,103 @@ class UtilityGateway extends Controller
 
 							return response()->json($running);
 
+						}else{
+							$newdata = array();
+							foreach($result as $key=>$value){
+								
+								if(isset($value->NIK)){
+									$data = $request['data'];
+									$data['list_sp'] = array([
+										'conn'=>'POR_DUMMY',
+										'payload'=>['nik' => $value->NIK],
+										'sp_name'=>'SP_GetAccessLevel',
+										'process_name'=>'GetAccessLevelResult'
+									]);
+
+									$request['data'] = $data;
+									$response = $this->SPExecutor($request);
+									$level = $response->getData()->data->GetAccessLevelResult[0]->role;
+								
+									$object = array(
+										'nik' => $value->NIK, 
+										'userid' => $value->NIK, 
+										'code' => 1, 
+										'nohp' => $value->NOHP_ISAKU,
+										'nama' => $value->NAMA,
+										'kelamin' => $value->JENIS_KELAMIN,
+										'email' => $value->EMAIL,
+										'status' => 'Active',
+										'alias' => str_contains($level,'Admin') ? $level : base64_encode(microtime().$value->NIK)
+									);
+									
+									$client = new Client();
+									$response = $client->post(
+										'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/post',
+										[
+											RequestOptions::JSON =>[
+												'data' => $object
+											]
+										]
+									);
+			
+									$body = $response->getBody();
+									
+									$temp = json_decode($body);
+
+									if($temp->status == 'Success'){
+										//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
+										//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
+										$value->ALIAS = str_contains($level,'Admin') ? $level : substr($object['alias'],3,8);
+									}else{
+										$this->resultresp = $temp->message;
+										$this->dataresp = $temp->data;
+										$this->messageresp = 'Failed on Run';
+										$this->statusresp = 0;
+
+										$running = $this->helper->RunningResp(
+											$this->resultresp,
+											$this->dataresp,
+											$this->messageresp,
+											$this->statusresp,
+											$this->ttldataresp
+										);
+
+										return response()->json($running);
+									}
+									
+								}else{
+									
+									$value->ALIAS = null;
+		
+								}
+
+								$newjson = new \stdClass();
+
+								$newjson->nik = Crypt::encryptString($value->NIK);
+								$newjson->nama = $value->NAMA;
+								$newjson->email = Crypt::encryptString($value->EMAIL);
+								$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
+								$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
+								$newjson->alias = $value->ALIAS;
+
+								$newdata[] = $newjson;
+
+								$this->resultresp = 'Data has been process';
+								$this->dataresp = $newdata[0];
+								$this->messageresp = 'Success on Run';
+								$this->statusresp = 1;
+
+								$running = $this->helper->RunningResp(
+									$this->resultresp,
+									$this->dataresp,
+									$this->messageresp,
+									$this->statusresp,
+									$this->ttldataresp
+								);
+
+								return response()->json($running);
+
+							}
 						}
 					
 					} catch (\Throwable $th) {
@@ -771,61 +882,20 @@ class UtilityGateway extends Controller
 						$temp = json_decode($body);
 						$result = json_decode($temp->WorkerResult);
 						
-						$newdata = array();
-                        foreach($result as $key=>$value){
-							
-							if(isset($value->NIK)){
-							
-								// $object = json_decode(json_encode(array('nik' => $value->NIK, 'userid' => $value->NIK, 'code' => 1)));
-								
-								// $client = new Client();
-								// $response = $client->post(
-								// 	'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/get',
-								// 	[
-								// 		RequestOptions::JSON =>[
-								// 			'data' => $object
-								// 		]
-								// 	]
-								// );
-		
-								// $body = $response->getBody();
-								
-								// $temp = json_decode($body);
-									
-								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-								//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
-								$value->ALIAS = substr(base64_encode(microtime().$value->NIK),3,8);
-								
-							}else{
-								
-								$value->ALIAS = null;
-	
-							}
+						$this->resultresp = 'Data has been process';
+						$this->dataresp = $result;
+						$this->messageresp = 'Success on Run';
+						$this->statusresp = 1;
 
-							$newjson->nik = Crypt::encryptString($value->NIK);
-							$newjson->nama = $value->NAMA;
-							$newjson->email = Crypt::encryptString($value->EMAIL);
-							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
-							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
-							$newjson->alias = $value->ALIAS;
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
 
-							$newdata[] = $newjson;
-
-							$this->resultresp = 'Data has been process';
-							$this->dataresp = $newdata[0];
-							$this->messageresp = 'Success on Run';
-							$this->statusresp = 1;
-
-							$running = $this->helper->RunningResp(
-								$this->resultresp,
-								$this->dataresp,
-								$this->messageresp,
-								$this->statusresp,
-								$this->ttldataresp
-							);
-
-							return response()->json($running);
-						}
+						return response()->json($running);
 						
 					} catch (\Throwable $th) {
 						$this->resultresp = $th->getMessage();
@@ -919,7 +989,8 @@ class UtilityGateway extends Controller
 			if($type == 'decode'){
 				if($category = 'AES256CBC'){
 					$decrypt =  Crypt::decryptString($payload);
-					$decode = json_decode($decrypt);
+					$decode = $decrypt;
+					//$decode = json_decode($decrypt);
 				}else if($category = 'BASE64'){
 					$decode = base64_decode($payload);
 				}
@@ -931,7 +1002,7 @@ class UtilityGateway extends Controller
 					$encode = json_encode($payload);
 					$encrypt =  Crypt::encryptString($encode);
 				}else if($category = 'BASE64'){
-					$encode = json_encode($payload);
+					$encode = base64_encode($payload);
 				}
 	
 				return response()->json($encode);

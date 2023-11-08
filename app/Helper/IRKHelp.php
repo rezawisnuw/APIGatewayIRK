@@ -57,7 +57,7 @@ class IRKHelp
         //     $session['tokendraw'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->header($this->Segment($this->request->route('slug'))['authorize']);
         //     $session['tokenid'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->header($this->Segment($this->request->route('slug'))['authorize']);
         // }else{
-            $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->RunningResp('Identity not known',null,'Failed on Run',0,''); // $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
+            $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
             $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
         // }
 
@@ -115,15 +115,46 @@ class IRKHelp
 
     public function Identifer($datareq)
     { 
-        if(isset($datareq->all()['nik'])){
-            if($datareq->all()['userid'] ==  $datareq->all()['nik']){
-                if(isset($datareq->all()['userid']) && isset($datareq->all()['nik'])){
+        try{
+            if(isset($datareq->all()['nik'])){
+                if($datareq->all()['userid'] ==  $datareq->all()['nik']){
+                    if(isset($datareq->all()['userid']) && isset($datareq->all()['nik'])){
+                        $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
+                        $split_token = explode('.', $raw_token);
+                        $decrypt_token = base64_decode($split_token[1]);
+                        $escapestring_token = json_decode($decrypt_token);
+                       
+                        if($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik){       
+                            $response = $this->RunningResp('Match',null,'Success on Run',1,'');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }else{
+                            $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }
+                    }else{
+                        $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
+                        $encode = json_encode($response);
+                        $encrypt = Crypt::encryptString($encode);
+                        return $encrypt;
+                    }
+                }else{
+                    $response = $this->RunningResp('Data is not relevant',null,'Failed on Run',0,'');
+                    $encode = json_encode($response);
+                    $encrypt = Crypt::encryptString($encode);
+                    return $encrypt;
+                }
+            }else{
+                if(isset($datareq->all()['userid'])){
                     $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
                     $split_token = explode('.', $raw_token);
                     $decrypt_token = base64_decode($split_token[1]);
                     $escapestring_token = json_decode($decrypt_token);
                    
-                    if($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik){       
+                    if($escapestring_token == $datareq->userid){    
                         $response = $this->RunningResp('Match',null,'Success on Run',1,'');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
@@ -140,37 +171,11 @@ class IRKHelp
                     $encrypt = Crypt::encryptString($encode);
                     return $encrypt;
                 }
-            }else{
-                $response = $this->RunningResp('Data is not relevant',null,'Failed on Run',0,'');
-                $encode = json_encode($response);
-                $encrypt = Crypt::encryptString($encode);
-                return $encrypt;
             }
-        }else{
-            if(isset($datareq->all()['userid'])){
-                $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
-                $split_token = explode('.', $raw_token);
-                $decrypt_token = base64_decode($split_token[1]);
-                $escapestring_token = json_decode($decrypt_token);
-               
-                if($escapestring_token == $datareq->userid){    
-                    $response = $this->RunningResp('Match',null,'Success on Run',1,'');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
-                }else{
-                    $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
-                }
-            }else{
-                $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
-                $encode = json_encode($response);
-                $encrypt = Crypt::encryptString($encode);
-                return $encrypt;
-            }
+        }catch (\Throwable $e) {
+			return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
         }
+        
         
     }
 
