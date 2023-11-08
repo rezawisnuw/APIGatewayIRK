@@ -463,5 +463,13 @@ Route::group([
 		Route::post('delete', [IRK\ReportGateway::class, 'delete']);
 	});
 
+	//Profile Endpoint
+	Route::group(['prefix'=>'profile','middleware' => 'tokenauth'], function () {
+		Route::post('get', [IRK\ProfileGateway::class, 'get']);
+		Route::post('post', [IRK\ProfileGateway::class, 'post']);
+		Route::post('put', [IRK\ProfileGateway::class, 'put']);
+		Route::post('delete', [IRK\ProfileGateway::class, 'delete']);
+	});
+
 });
 //-----------------------END NEW SCHEME-----------------------------------------
