@@ -49,7 +49,7 @@ class LikeGateway extends Controller
 		$idkey = $helper->Environment($env);
 		$this->tokenid = $idkey['tokenid'];
 
-        $signature = $helper->Identifer($request);
+        $signature = $helper->Identifier($request);
 		$this->signature = $signature;
 
     }
