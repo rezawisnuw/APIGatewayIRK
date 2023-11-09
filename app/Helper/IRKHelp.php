@@ -113,7 +113,7 @@ class IRKHelp
         return $decode;
     }
 
-    public function Identifer($datareq)
+    public function Identifier($datareq)
     { 
         try{
             if(isset($datareq->all()['nik'])){

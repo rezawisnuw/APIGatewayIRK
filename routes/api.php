@@ -386,18 +386,18 @@ Route::group([
 ], function () {
 
 	//Utility Endpoint
-	Route::post('login', [UtilityGateway::class, 'LoginESS']);
-	Route::post('logout', [UtilityGateway::class, 'LogoutESS']);
-	Route::post('uploadFisik', [UtilityGateway::class, 'UploadFisik']);
-	Route::post('uploadBlob', [UtilityGateway::class, 'UploadBlob']);
-	Route::post('downloadFisik', [UtilityGateway::class, 'DownloadFile93']);
-	Route::post('firebase', [UtilityGateway::class, 'Firebase']);
-	Route::post('worker', [UtilityGateway::class, 'WorkerESS']);
-	Route::post('spexecutor', [UtilityGateway::class, 'SPExecutor']);
-	Route::post('security', [UtilityGateway::class, 'Security']);
-	Route::post('unitcabang', [UtilityGateway::class, 'UnitCabang']);
-	Route::post('jabatan', [UtilityGateway::class, 'Jabatan']);
-	Route::post('notification', [UtilityGateway::class, 'NotificationPortal']);
+	Route::post('login', [IRK\UtilityGateway::class, 'LoginESS']);
+	Route::post('logout', [IRK\UtilityGateway::class, 'LogoutESS']);
+	Route::post('uploadFisik', [IRK\UtilityGateway::class, 'UploadFisik']);
+	Route::post('uploadBlob', [IRK\UtilityGateway::class, 'UploadBlob']);
+	Route::post('downloadFisik', [IRK\UtilityGateway::class, 'DownloadFile93']);
+	Route::post('firebase', [IRK\UtilityGateway::class, 'Firebase']);
+	Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
+	Route::post('spexecutor', [IRK\UtilityGateway::class, 'SPExecutor']);
+	Route::post('security', [IRK\UtilityGateway::class, 'Security']);
+	Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
+	Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
+	Route::post('notification', [IRK\UtilityGateway::class, 'NotificationPortal']);
 
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {

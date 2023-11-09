@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\IRK;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -463,7 +463,21 @@ class UtilityGateway extends Controller
 				}else if(isset($request['data']['list_query']) && $request['data']['list_query'] != null){
 					$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/executev3';
 				}else{
-					$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute';
+					//$link_url = 'http://'.$this->config.'/SPExecutor/SpExecutorRest.svc/execute';
+					$this->resultresp = 'Process is not found';
+					$this->dataresp = $request['data'];
+					$this->messageresp = 'Failed on Run';
+					$this->statusresp = 0;
+
+					$running = $this->helper->RunningResp(
+						$this->resultresp,
+						$this->dataresp,
+						$this->messageresp,
+						$this->statusresp,
+						$this->ttldataresp
+					);
+
+					return $running;
 				}
 				$client = new Client(); 
 				$response = $client->post(
@@ -494,7 +508,7 @@ class UtilityGateway extends Controller
 					$this->ttldataresp
 				);
 
-				return response()->json($running);
+				return $running;
 
 			} catch (\Throwable $th){
 				$this->resultresp = $th->getMessage();
@@ -524,7 +538,7 @@ class UtilityGateway extends Controller
 				$this->ttldataresp
 			);
 
-			return response()->json($running);
+			return $running;
 		}	
 		
     }
@@ -567,35 +581,22 @@ class UtilityGateway extends Controller
 							$this->ttldataresp
 						);
 
-						return response()->json($running);
+						return $running;
 
 					}else{
 						$newdata = array();
 						foreach($result as $key=>$value){
 							
-							if(isset($value->NIK)){
-								$data = $request['data'];
-								$data['list_sp'] = array([
-									'conn'=>'POR_DUMMY',
-									'payload'=>['nik' => $value->NIK],
-									'sp_name'=>'SP_GetAccessLevel',
-									'process_name'=>'GetAccessLevelResult'
-								]);
-
-								$request['data'] = $data;
-								$response = $this->SPExecutor($request);
-								$level = $response->getData()->data->GetAccessLevelResult[0]->role;
-							
+							if(isset($value->NIK)){						
 								$object = array(
 									'nik' => $value->NIK, 
-									'userid' => $value->NIK, 
 									'code' => 1, 
 									'nohp' => $value->NOHP_ISAKU,
 									'nama' => $value->NAMA,
 									'kelamin' => $value->JENIS_KELAMIN,
 									'email' => $value->EMAIL,
 									'status' => 'Active',
-									'alias' => str_contains($level,'Admin') ? $level : base64_encode(microtime().$value->NIK)
+									'alias' => ''
 								);
 								
 								$client = new Client();
@@ -612,10 +613,10 @@ class UtilityGateway extends Controller
 								
 								$temp = json_decode($body);
 								
-								if($temp->status == 'Success'){
+								if($temp->status == 'Processing'){
 									//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-									//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
-									$value->ALIAS = str_contains($level,'Admin') ? $level : substr($object['alias'],3,8);
+
+									$value->ALIAS = str_contains($temp->data,'Admin') ? $temp->data : substr($temp->data,3,8);
 								}else{
 									$this->resultresp = $temp->message;
 									$this->dataresp = $temp->data;
@@ -630,7 +631,7 @@ class UtilityGateway extends Controller
 										$this->ttldataresp
 									);
 
-									return response()->json($running);
+									return $running;
 								}
 								
 							}else{
@@ -663,7 +664,7 @@ class UtilityGateway extends Controller
 								$this->ttldataresp
 							);
 
-							return response()->json($running);
+							return $running;
 
 						}
 					}
@@ -679,7 +680,7 @@ class UtilityGateway extends Controller
 						$this->statuscoderesp
 					);
 
-					return response()->json($error);
+					return $error;
 				}
 
 			} else {
@@ -696,7 +697,7 @@ class UtilityGateway extends Controller
 					$this->ttldataresp
 				);
 
-				return response()->json($running);
+				return $running;
 			}
 
 		} 
@@ -742,29 +743,16 @@ class UtilityGateway extends Controller
 							$newdata = array();
 							foreach($result as $key=>$value){
 								
-								if(isset($value->NIK)){
-									$data = $request['data'];
-									$data['list_sp'] = array([
-										'conn'=>'POR_DUMMY',
-										'payload'=>['nik' => $value->NIK],
-										'sp_name'=>'SP_GetAccessLevel',
-										'process_name'=>'GetAccessLevelResult'
-									]);
-
-									$request['data'] = $data;
-									$response = $this->SPExecutor($request);
-									$level = $response->getData()->data->GetAccessLevelResult[0]->role;
-								
+								if(isset($value->NIK)){								
 									$object = array(
 										'nik' => $value->NIK, 
-										'userid' => $value->NIK, 
 										'code' => 1, 
 										'nohp' => $value->NOHP_ISAKU,
 										'nama' => $value->NAMA,
 										'kelamin' => $value->JENIS_KELAMIN,
 										'email' => $value->EMAIL,
 										'status' => 'Active',
-										'alias' => str_contains($level,'Admin') ? $level : base64_encode(microtime().$value->NIK)
+										'alias' => ''
 									);
 									
 									$client = new Client();
@@ -781,10 +769,10 @@ class UtilityGateway extends Controller
 									
 									$temp = json_decode($body);
 
-									if($temp->status == 'Success'){
+									if($temp->status == 'Processing'){
 										//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-										//$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? substr(base64_encode(microtime().$value->NIK),3,8) : $temp->data[0]->Alias : 'Data Corrupt';
-										$value->ALIAS = str_contains($level,'Admin') ? $level : substr($object['alias'],3,8);
+	
+										$value->ALIAS = str_contains($temp->data,'Admin') ? $temp->data : substr($temp->data,3,8);
 									}else{
 										$this->resultresp = $temp->message;
 										$this->dataresp = $temp->data;
@@ -1020,16 +1008,14 @@ class UtilityGateway extends Controller
 		$decrypt_token = base64_decode($split_token[1]);
 		$escapestring_token = json_decode($decrypt_token);
 
-		$formbody = $request['data'];
-
-		if($escapestring_token == $formbody['nik']){ 
+		if($escapestring_token == $request['data']['nik']){ 
 			try{         
 				$client = new Client();
 				$response = $client->post(
 					'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Unit-Cabang',
 					[
 						RequestOptions::JSON => 
-						['param'=>$formbody]
+						['param'=>$request['data']]
 					],
 					['Content-Type' => 'application/json']
 				);
@@ -1105,7 +1091,7 @@ class UtilityGateway extends Controller
 
 		$request['data'] = $data;
 		$response = $this->SPExecutor($request);
-		return $response;
+		return response()->json($response);
 	}
 
 	public function NotificationPortal(Request $request){
@@ -1114,13 +1100,11 @@ class UtilityGateway extends Controller
 		$decrypt_token = base64_decode($split_token[1]);
 		$escapestring_token = json_decode($decrypt_token);
 
-		$formbody = $request['data'];
-
-		if($escapestring_token == $formbody['nikLogin']){ 
+		if($escapestring_token == $request['data']['nikLogin']){ 
 
 			$data = [
 				'code'=>'1101',
-				'parm'=>$formbody
+				'parm'=>$request['data']
 			];
 
 			try{         
