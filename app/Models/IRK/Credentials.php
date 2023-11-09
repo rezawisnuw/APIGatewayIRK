@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\IRK;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;

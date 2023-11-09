@@ -13,7 +13,7 @@ use GuzzleHttp\Psr7;
 use PDF;
 use Storage;
 use SoapClient;
-use App\Models\Credentials;
+use App\Models\IRK\Credentials;
 use App\Helper\IRKHelp;
 use DB;
 use Validator;

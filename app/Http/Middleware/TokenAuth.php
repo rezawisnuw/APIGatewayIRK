@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\Credentials;
+use App\Models\IRK\Credentials;
 use App\Helper\IRKHelp;
 
 class TokenAuth
