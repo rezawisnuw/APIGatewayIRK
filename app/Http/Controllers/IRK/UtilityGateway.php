@@ -589,14 +589,22 @@ class UtilityGateway extends Controller
 							
 							if(isset($value->NIK)){						
 								$object = array(
-									'nik' => $value->NIK, 
 									'code' => 1, 
-									'nohp' => $value->NOHP_ISAKU,
+									'nik' => $value->NIK, 
 									'nama' => $value->NAMA,
-									'kelamin' => $value->JENIS_KELAMIN,
+									'nohp' => $value->NOHP_ISAKU,
+									'alias' => '',
 									'email' => $value->EMAIL,
+									'kelamin' => $value->JENIS_KELAMIN,
 									'status' => 'Active',
-									'alias' => ''
+									'idjabatan' => $value->KODE_JABATAN,
+									'jabatan' => $value->JABATAN,
+									'idunit' => $value->ID_PT,
+									'unit' => $value->NAMA_PT,
+									'idcabang' => $value->ID_CABANG,
+									'cabang' => $value->NAMA_CABANG,
+									'iddepartemen' => $value->ID_BAGIAN,
+									'departemen' => $value->BAGIAN
 								);
 								
 								$client = new Client();
@@ -745,14 +753,22 @@ class UtilityGateway extends Controller
 								
 								if(isset($value->NIK)){								
 									$object = array(
-										'nik' => $value->NIK, 
 										'code' => 1, 
-										'nohp' => $value->NOHP_ISAKU,
+										'nik' => $value->NIK, 
 										'nama' => $value->NAMA,
-										'kelamin' => $value->JENIS_KELAMIN,
+										'nohp' => $value->NOHP_ISAKU,
+										'alias' => '',
 										'email' => $value->EMAIL,
+										'kelamin' => $value->JENIS_KELAMIN,
 										'status' => 'Active',
-										'alias' => ''
+										'idjabatan' => $value->KODE_JABATAN,
+										'jabatan' => $value->JABATAN,
+										'idunit' => $value->ID_PT,
+										'unit' => $value->NAMA_PT,
+										'idcabang' => $value->ID_CABANG,
+										'cabang' => $value->NAMA_CABANG,
+										'iddepartemen' => $value->ID_BAGIAN,
+										'departemen' => $value->BAGIAN
 									);
 									
 									$client = new Client();
