@@ -68,7 +68,7 @@ class ProfileGateway extends Controller
                 ]);
     
                 $result = json_decode($response->getBody()->getContents());
-return $result;
+
                 $this->resultresp = $result->message;
                 $this->dataresp = $result->data;
                 $this->messageresp = 'Success on Run';
