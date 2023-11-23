@@ -33,7 +33,7 @@ class VersionGateway extends Controller
         //parent::__construct();
         
         $slug = $request->route('slug');
-		$this->slug = $slug;
+		$this->slug = $slug.'-temp';
 
         $env = config('app.env');
         $this->env = $env;

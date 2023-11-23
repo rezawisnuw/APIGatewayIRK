@@ -34,7 +34,7 @@ class UtilityGateway extends Controller
         //parent::__construct();
         
         $slug = $request->route('slug');
-		$this->slug = $slug;
+		$this->slug = $slug.'-temp';
 
 		$env = config('app.env');
         $this->env = $env;
@@ -55,7 +55,7 @@ class UtilityGateway extends Controller
     }
 
     public function LoginESS(Request $request){
-
+return $_SERVER['HTTP_USER_AGENT'];
         try {
 			if (count($request->json()->all())) {
 				$postbody = $request->json(['data']);
@@ -596,7 +596,7 @@ class UtilityGateway extends Controller
 									'alias' => '',
 									'email' => $value->EMAIL,
 									'kelamin' => $value->JENIS_KELAMIN,
-									'status' => 'Active',
+									'status' => '',
 									'idjabatan' => $value->KODE_JABATAN,
 									'jabatan' => $value->JABATAN,
 									'idunit' => $value->ID_PT,
@@ -604,7 +604,8 @@ class UtilityGateway extends Controller
 									'idcabang' => $value->ID_CABANG,
 									'cabang' => $value->NAMA_CABANG,
 									'iddepartemen' => $value->ID_BAGIAN,
-									'departemen' => $value->BAGIAN
+									'departemen' => $value->BAGIAN,
+									'platform' => ''
 								);
 								
 								$client = new Client();
@@ -760,7 +761,7 @@ class UtilityGateway extends Controller
 										'alias' => '',
 										'email' => $value->EMAIL,
 										'kelamin' => $value->JENIS_KELAMIN,
-										'status' => 'Active',
+										'status' => '',
 										'idjabatan' => $value->KODE_JABATAN,
 										'jabatan' => $value->JABATAN,
 										'idunit' => $value->ID_PT,
@@ -768,7 +769,8 @@ class UtilityGateway extends Controller
 										'idcabang' => $value->ID_CABANG,
 										'cabang' => $value->NAMA_CABANG,
 										'iddepartemen' => $value->ID_BAGIAN,
-										'departemen' => $value->BAGIAN
+										'departemen' => $value->BAGIAN,
+										'platform' => ''
 									);
 									
 									$client = new Client();
