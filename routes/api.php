@@ -378,15 +378,15 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 //-----------------------START NEW SCHEME-----------------------------------------
 //IRK NEW Endpoint
 Route::group([
-	'prefix' => '{slug}', 
+	'prefix' => '{slug}-temp', 
 	'where' => [
-		'slug' => 'dev|stag'
+		'slug' => 'dev|stag|live'
 	],
 	'middleware' => 'cors'
 ], function () {
 
 	//Utility Endpoint
-	Route::post('login', [IRK\UtilityGateway::class, 'LoginESS']);
+	Route::get('login', [IRK\UtilityGateway::class, 'LoginESS']);
 	Route::post('logout', [IRK\UtilityGateway::class, 'LogoutESS']);
 	Route::post('uploadFisik', [IRK\UtilityGateway::class, 'UploadFisik']);
 	Route::post('uploadBlob', [IRK\UtilityGateway::class, 'UploadBlob']);
