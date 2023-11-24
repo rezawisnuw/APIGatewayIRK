@@ -33,7 +33,7 @@ class MotivasiGateway extends Controller
         //parent::__construct();
         
         $slug = $request->route('slug');
-		$this->slug = $slug.'-temp';
+		$this->slug = $slug.'/v1';
 
         $env = config('app.env');
         $this->env = $env;
