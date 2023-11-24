@@ -378,7 +378,7 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 //-----------------------START NEW SCHEME-----------------------------------------
 //IRK NEW Endpoint
 Route::group([
-	'prefix' => '{slug}-temp', 
+	'prefix' => '{slug}/v1', 
 	'where' => [
 		'slug' => 'dev|stag|live'
 	],
