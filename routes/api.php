@@ -386,7 +386,7 @@ Route::group([
 ], function () {
 
 	//Utility Endpoint
-	Route::get('login', [IRK\UtilityGateway::class, 'LoginESS']);
+	Route::post('login', [IRK\UtilityGateway::class, 'LoginESS']);
 	Route::post('logout', [IRK\UtilityGateway::class, 'LogoutESS']);
 	Route::post('uploadFisik', [IRK\UtilityGateway::class, 'UploadFisik']);
 	Route::post('uploadBlob', [IRK\UtilityGateway::class, 'UploadBlob']);
