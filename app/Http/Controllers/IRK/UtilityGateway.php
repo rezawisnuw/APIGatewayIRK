@@ -55,7 +55,7 @@ class UtilityGateway extends Controller
     }
 
     public function LoginESS(Request $request){
-return $_SERVER['HTTP_USER_AGENT'];
+
         try {
 			if (count($request->json()->all())) {
 				$postbody = $request->json(['data']);
@@ -64,7 +64,7 @@ return $_SERVER['HTTP_USER_AGENT'];
 				
 				if($result['wcf']['status'] == '1') {
 
-					// $param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
+					$param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
 
 					// if($this->env === 'local'){
 
@@ -99,9 +99,9 @@ return $_SERVER['HTTP_USER_AGENT'];
 						// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
 
 						$this->resultresp = 'Token has Stored in Cookie';
-						$this->dataresp = null;
-						$this->messageresp = $result['wcf']['message'];
-						$this->statusresp = $result['wcf']['status'];
+						$this->dataresp =  $this->WorkerESS($request, $param);
+						$this->messageresp = isset($this->WorkerESS($request, $param)->nik) ? $result['wcf']['message'] : 'Failed on Run';
+						$this->statusresp = isset($this->WorkerESS($request, $param)->nik) ? $result['wcf']['status'] : 0;
 
 						$running = $this->helper->RunningResp(
 							$this->resultresp,
@@ -605,7 +605,7 @@ return $_SERVER['HTTP_USER_AGENT'];
 									'cabang' => $value->NAMA_CABANG,
 									'iddepartemen' => $value->ID_BAGIAN,
 									'departemen' => $value->BAGIAN,
-									'platform' => ''
+									'platform' => 'Mobile'
 								);
 								
 								$client = new Client();
@@ -627,20 +627,8 @@ return $_SERVER['HTTP_USER_AGENT'];
 
 									$value->ALIAS = str_contains($temp->data,'Admin') ? $temp->data : substr($temp->data,3,8);
 								}else{
-									$this->resultresp = $temp->message;
-									$this->dataresp = $temp->data;
-									$this->messageresp = 'Failed on Run';
-									$this->statusresp = 0;
 
-									$running = $this->helper->RunningResp(
-										$this->resultresp,
-										$this->dataresp,
-										$this->messageresp,
-										$this->statusresp,
-										$this->ttldataresp
-									);
-
-									return $running;
+									return $temp->message.' '.$temp->data;
 								}
 								
 							}else{
@@ -660,20 +648,7 @@ return $_SERVER['HTTP_USER_AGENT'];
 
 							$newdata[] = $newjson;
 
-							$this->resultresp = 'Data has been process';
-							$this->dataresp = $newdata[0];
-							$this->messageresp = 'Success on Run';
-							$this->statusresp = 1;
-
-							$running = $this->helper->RunningResp(
-								$this->resultresp,
-								$this->dataresp,
-								$this->messageresp,
-								$this->statusresp,
-								$this->ttldataresp
-							);
-
-							return $running;
+							return $newdata[0];
 
 						}
 					}
@@ -693,20 +668,8 @@ return $_SERVER['HTTP_USER_AGENT'];
 				}
 
 			} else {
-				$this->resultresp = 'Your data is not authorized';
-				$this->dataresp = $escapestring_token;
-				$this->messageresp = 'Failed on Run';
-				$this->statusresp = 0;
 
-				$running = $this->helper->RunningResp(
-					$this->resultresp,
-					$this->dataresp,
-					$this->messageresp,
-					$this->statusresp,
-					$this->ttldataresp
-				);
-
-				return $running;
+				return 'Your data '.$escapestring_token.' is not authorized';
 			}
 
 		} 
@@ -770,7 +733,7 @@ return $_SERVER['HTTP_USER_AGENT'];
 										'cabang' => $value->NAMA_CABANG,
 										'iddepartemen' => $value->ID_BAGIAN,
 										'departemen' => $value->BAGIAN,
-										'platform' => ''
+										'platform' => 'Website'
 									);
 									
 									$client = new Client();
