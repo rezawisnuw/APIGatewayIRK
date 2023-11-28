@@ -33,7 +33,7 @@ class CurhatkuGateway extends Controller
         //parent::__construct();
         
         $slug = $request->route('slug');
-		$this->slug = $slug.'/v1';
+		$this->slug ='v1/'.$slug;
 
         $env = config('app.env');
         $this->env = $env;
