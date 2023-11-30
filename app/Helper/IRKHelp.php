@@ -2,7 +2,6 @@
 
 namespace App\Helper;
 
-use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,24 +20,25 @@ class IRKHelp
 
         $this->request = $request;
     }
+
     public function Segment($slug){
 
         $setting = [];
 
-        if($slug === 'dev'){
+        if($slug == 'dev'){
             $setting['authorize'] = 'Authorization-dev';
             $setting['config'] = config('app.URL_DEV');
             $setting['path'] = 'Dev';
-        }else if($slug === 'stag'){
+        }else if($slug == 'stag'){
             $setting['authorize'] = 'Authorization-stag';
             $setting['config'] = config('app.URL_STAG');
             $setting['path'] = 'Stag';
-        }else if($slug === 'live'){
+        }else if($slug == 'live'){
             $setting['authorize'] = 'Authorization';
             $setting['config'] = config('app.URL_LIVE');
             $setting['path'] = 'Live';
         }else{
-            $response = $this->RunningResp('Something is wrong with the path of URI segment',null,'Failed on Run',0,'');
+            $response = $this->RunningResp('Something is wrong with the path of URI segment',[],'Failed on Run',0,'');
  
             $encode = json_encode($response);
             $encrypt = Crypt::encryptString($encode);
@@ -53,27 +53,40 @@ class IRKHelp
         
         $session = [];
 
-        if($env === 'local'){
-            $session['tokendraw'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->header($this->Segment($this->request->route('slug'))['authorize']);
-            $session['tokenid'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->header($this->Segment($this->request->route('slug'))['authorize']);
-        }else{
+        // if($env === 'local'){
+        //     $session['tokendraw'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->header($this->Segment($this->request->route('slug'))['authorize']);
+        //     $session['tokenid'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->header($this->Segment($this->request->route('slug'))['authorize']);
+        // }else{
             $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
             $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
-        }
+        // }
 
         return $session;
     }
 
     public function RunningResp($resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp = Response::HTTP_OK){
-        $response = [
-            'result' => $resultresp, // hasil respond asli langsung dari program
-            'data' => $dataresp, // hasil data program, data kosong bisa null atau []
-            'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
-            'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
-            'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
-            'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
-            'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
-        ];
+        if(!empty($ttldataresp)){
+            $response = [
+                'result' => $resultresp, // hasil respond asli langsung dari program
+                'data' => $dataresp, // hasil data program, data kosong bisa null atau []
+                'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
+                'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
+                'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
+                'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
+                'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
+            ];
+        }else{
+            $response = [
+                'result' => $resultresp, // hasil respond asli langsung dari program
+                'data' => $dataresp, // hasil data program, data kosong bisa null atau []
+                'message' => $messageresp, // pesan translate lebih mudah, ex : 'Success on Run' atau 'Failed on Run'
+                'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
+                'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
+                // 'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
+                // 'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
+            ];
+        }
+        
 
         $encode = json_encode($response);
         $encrypt = Crypt::encryptString($encode);
@@ -89,7 +102,7 @@ class IRKHelp
             'data' => null,
             'message' => $messageresp, // pesan translate lebih mudah, ex : 'Error in Catch',
             'status' => 0,
-            'statuscode' => $statuscoderesp // defaultnya 400 atau bisa diganti manual
+            'statuscode' => ($statuscoderesp == 0) ? $statuscoderesp : 500 // defaultnya 400 atau bisa diganti manual
         ];
 
         $encode = json_encode($response);
@@ -100,17 +113,48 @@ class IRKHelp
         return $decode;
     }
 
-    public function Identifer($datareq)
+    public function Identifier($datareq)
     { 
-        if(isset($datareq->all()['nik'])){
-            if($datareq->all()['userid'] ==  $datareq->all()['nik']){
-                if(isset($datareq->all()['userid']) && isset($datareq->all()['nik'])){
+        try{
+            if(isset($datareq->all()['nik'])){
+                if($datareq->all()['userid'] ==  $datareq->all()['nik']){
+                    if(isset($datareq->all()['userid']) && isset($datareq->all()['nik'])){
+                        $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
+                        $split_token = explode('.', $raw_token);
+                        $decrypt_token = base64_decode($split_token[1]);
+                        $escapestring_token = json_decode($decrypt_token);
+                       
+                        if($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik){       
+                            $response = $this->RunningResp('Match',null,'Success on Run',1,'');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }else{
+                            $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }
+                    }else{
+                        $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
+                        $encode = json_encode($response);
+                        $encrypt = Crypt::encryptString($encode);
+                        return $encrypt;
+                    }
+                }else{
+                    $response = $this->RunningResp('Data is not relevant',null,'Failed on Run',0,'');
+                    $encode = json_encode($response);
+                    $encrypt = Crypt::encryptString($encode);
+                    return $encrypt;
+                }
+            }else{
+                if(isset($datareq->all()['userid'])){
                     $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
                     $split_token = explode('.', $raw_token);
                     $decrypt_token = base64_decode($split_token[1]);
                     $escapestring_token = json_decode($decrypt_token);
                    
-                    if($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik){       
+                    if($escapestring_token == $datareq->userid){    
                         $response = $this->RunningResp('Match',null,'Success on Run',1,'');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
@@ -127,37 +171,11 @@ class IRKHelp
                     $encrypt = Crypt::encryptString($encode);
                     return $encrypt;
                 }
-            }else{
-                $response = $this->RunningResp('Data is not relevant',null,'Failed on Run',0,'');
-                $encode = json_encode($response);
-                $encrypt = Crypt::encryptString($encode);
-                return $encrypt;
             }
-        }else{
-            if(isset($datareq->all()['userid'])){
-                $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
-                $split_token = explode('.', $raw_token);
-                $decrypt_token = base64_decode($split_token[1]);
-                $escapestring_token = json_decode($decrypt_token);
-               
-                if($escapestring_token == $datareq->userid){    
-                    $response = $this->RunningResp('Match',null,'Success on Run',1,'');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
-                }else{
-                    $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
-                }
-            }else{
-                $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
-                $encode = json_encode($response);
-                $encrypt = Crypt::encryptString($encode);
-                return $encrypt;
-            }
+        }catch (\Throwable $e) {
+			return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
         }
+        
         
     }
 
@@ -167,7 +185,7 @@ class IRKHelp
             if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -178,11 +196,11 @@ class IRKHelp
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ],
                         'verify' => false
                     ]
@@ -203,7 +221,7 @@ class IRKHelp
             if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -214,11 +232,11 @@ class IRKHelp
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . FacadesRequest::cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ]
                     ]
                 );

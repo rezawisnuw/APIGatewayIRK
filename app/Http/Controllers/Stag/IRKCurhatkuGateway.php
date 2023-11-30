@@ -103,7 +103,7 @@ class IRKCurhatkuGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -126,7 +126,7 @@ class IRKCurhatkuGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -161,7 +161,7 @@ class IRKCurhatkuGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -182,7 +182,7 @@ class IRKCurhatkuGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -253,7 +253,7 @@ class IRKCurhatkuGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/curhatku/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/curhatku/get',
                         [
                             RequestOptions::JSON => 
                             [
@@ -334,7 +334,7 @@ class IRKCurhatkuGateway extends Controller
                         $idticket = explode("_",$result->data);
                         $newclient = new Client();
                         $newresponse = $newclient->post(
-                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/curhatku/get',
+                            'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/curhatku/get',
                             [
                                 RequestOptions::JSON => 
                                 [
@@ -434,7 +434,7 @@ class IRKCurhatkuGateway extends Controller
                         $idticket = explode("_",$result->data);
                         $newclient = new Client();
                         $newresponse = $newclient->post(
-                            'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'stag/curhatku/get',
+                            'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'stag/curhatku/get',
                             [
                                 RequestOptions::JSON => 
                                 [

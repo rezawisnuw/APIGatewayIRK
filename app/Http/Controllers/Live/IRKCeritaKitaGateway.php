@@ -78,7 +78,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -101,7 +101,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -136,7 +136,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -157,7 +157,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -328,7 +328,7 @@ class IRKCeritaKitaGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/ceritakita/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'live/ceritakita/get',
                         [
                             RequestOptions::JSON => 
                             [

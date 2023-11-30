@@ -14,9 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class IRKCeritaKitaGateway extends Controller
 {
-
     public function successRes($data, $message, $ttldata, $statusCode = Response::HTTP_OK)
-
     {
         return response()->json([
             'result' => $message,
@@ -80,7 +78,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -103,7 +101,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -138,7 +136,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -159,7 +157,7 @@ class IRKCeritaKitaGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -333,7 +331,7 @@ class IRKCeritaKitaGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'dev/ceritakita/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'dev/ceritakita/get',
                         [
                             RequestOptions::JSON => 
                             [

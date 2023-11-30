@@ -104,7 +104,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -127,7 +127,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -162,7 +162,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json'
@@ -183,7 +183,7 @@ class IRKMotivasiGateway extends Controller
             }else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICELB'),
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
@@ -254,7 +254,7 @@ class IRKMotivasiGateway extends Controller
                     $userid = $request->userid;
                     $newclient = new Client();
                     $newresponse = $newclient->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/motivasi/get',
+                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'live/motivasi/get',
                         [
                             RequestOptions::JSON => 
                             [
@@ -335,7 +335,7 @@ class IRKMotivasiGateway extends Controller
                         // $idticket = explode("_",$result->data);
                         // $newclient = new Client();
                         // $newresponse = $newclient->post(
-                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/motivasi/get',
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'live/motivasi/get',
                         //     [
                         //         RequestOptions::JSON => 
                         //         [
@@ -438,7 +438,7 @@ class IRKMotivasiGateway extends Controller
                         // $idticket = explode("_",$result->data);
                         // $newclient = new Client();
                         // $newresponse = $newclient->post(
-                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICELB').'live/motivasi/get',
+                        //     'http://'.config('app.URL_GCP_LARAVEL_SERVICE').'live/motivasi/get',
                         //     [
                         //         RequestOptions::JSON => 
                         //         [
