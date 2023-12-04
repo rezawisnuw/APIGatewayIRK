@@ -473,26 +473,26 @@ Route::group([
 
 	//Presensi Endpoint
 	Route::group(['prefix'=>'presensi','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRKPresensiGateway::class, 'get']);
-		Route::post('post', [IRKPresensiGateway::class, 'post']);
-		Route::post('put', [IRKPresensiGateway::class, 'put']);
-		Route::post('delete', [IRKPresensiGateway::class, 'delete']);
+		Route::post('get', [IRK\PresensiGateway::class, 'get']);
+		Route::post('post', [IRK\PresensiGateway::class, 'post']);
+		Route::post('put', [IRK\PresensiGateway::class, 'put']);
+		Route::post('delete', [IRK\PresensiGateway::class, 'delete']);
 	});
 
 	//Izin Endpoint
 	Route::group(['prefix'=>'izin','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRKIzinGateway::class, 'get']);
-		Route::post('post', [IRKIzinGateway::class, 'post']);
-		Route::post('put', [IRKIzinGateway::class, 'put']);
-		Route::post('delete', [IRKIzinGateway::class, 'delete']);
+		Route::post('get', [IRK\IzinGateway::class, 'get']);
+		Route::post('post', [IRK\IzinGateway::class, 'post']);
+		Route::post('put', [IRK\IzinGateway::class, 'put']);
+		Route::post('delete', [IRK\IzinGateway::class, 'delete']);
 	});
 
 	//Cuti Endpoint
 	Route::group(['prefix'=>'cuti','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRKCutiGateway::class, 'get']);
-		Route::post('post', [IRKCutiGateway::class, 'post']);
-		Route::post('put', [IRKCutiGateway::class, 'put']);
-		Route::post('delete', [IRKCutiGateway::class, 'delete']);
+		Route::post('get', [IRK\CutiGateway::class, 'get']);
+		Route::post('post', [IRK\CutiGateway::class, 'post']);
+		Route::post('put', [IRK\CutiGateway::class, 'put']);
+		Route::post('delete', [IRK\CutiGateway::class, 'delete']);
 	});
 
 });
