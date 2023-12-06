@@ -256,6 +256,7 @@ class IRKHelp
 
     public static function executeSP($data)
     {
+
         // Membuat instance Request dengan data yang diberikan
         $request = new Request(['data' => $data]);
 

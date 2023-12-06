@@ -58,20 +58,17 @@ class PresensiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $data = $request['data'];
-                
                 $data['list_query'] = array([
                     'conn'=>'DBPRESENSI_DUMMY',
-                    'query'=>'SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = '.$request['data']['nik'],
+                    'query'=>'SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = '.$request['userid'],
                     'process_name'=>'GetDataPresensi'
                 ]);
-                
-                $SPExecutor = IRKHelp::executeSP($data);
-               
-                return $SPExecutor;
 
-                $this->resultresp = $result->message;
-                $this->dataresp = $result->data;
+                $data['nik']=$request['userid'];
+                $SPExecutor = IRKHelp::executeSP($data);
+                
+                $this->resultresp = $SPExecutor->result;
+                $this->dataresp = $SPExecutor->data->GetDataPresensi;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
@@ -125,10 +122,8 @@ class PresensiGateway extends Controller
                 
                 $SPExecutor = IRKHelp::executeSP($data);
 
-                return $SPExecutor;
-
-                $this->resultresp = $result->message;
-                $this->dataresp = $result->data;
+                $this->resultresp = $SPExecutor->result;
+                $this->dataresp = $SPExecutor->data->PostDataPresensi[0];
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
