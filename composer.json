@@ -15,11 +15,12 @@
         "barryvdh/laravel-debugbar": "^3.9",
         "barryvdh/laravel-ide-helper": "^2.13",
         "fakerphp/faker": "^1.9.1",
+        "laravel/browser-kit-testing": "^7.0",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
-        "phpunit/phpunit": "^10.0",
+        "phpunit/phpunit": "^10.4",
         "spatie/laravel-ignition": "^2.0"
     },
     "autoload": {
