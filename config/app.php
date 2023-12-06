@@ -207,6 +207,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Barryvdh\Debugbar\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -232,7 +233,8 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'ExampleClass' => App\Example\ExampleClass::class,
-        'IRKHelp' => App\Helper\IRKHelp::class
+        'IRKHelp' => App\Helper\IRKHelp::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class
     ])->toArray(),
 
 ];
