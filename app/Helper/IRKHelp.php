@@ -254,4 +254,15 @@ class IRKHelp
         
     }
 
+    public static function executeSP($data)
+    {
+
+        // Membuat instance Request dengan data yang diberikan
+        $request = new Request(['data' => $data]);
+
+        // Membuat instance UtilityGateway dan memanggil SPExecutor
+        $utilityGateway = app(\App\Http\Controllers\IRK\UtilityGateway::class);
+        return $utilityGateway->SPExecutor($request);
+    }
+
 }

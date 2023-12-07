@@ -1,6 +1,12 @@
 # Use the official Ubuntu base image
 FROM ubuntu:latest
 
+# Use an official PHP runtime as a parent image
+FROM php:7.4-fpm
+
+# Install required extensions
+RUN docker-php-ext-install dom json libxml mbstring tokenizer xml xmlwriter
+
 # Install required dependencies
 RUN apt-get update && apt-get install -y \
     curl \
