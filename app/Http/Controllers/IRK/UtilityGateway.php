@@ -645,6 +645,7 @@ class UtilityGateway extends Controller
 							$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
 							$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
 							$newjson->alias = $value->ALIAS;
+							$newjson->presensi = substr($value->ID_BAGIAN,0,6) == '100E10' ? 'Available' : 'Not Available';
 
 							$newdata[] = $newjson;
 
@@ -785,6 +786,7 @@ class UtilityGateway extends Controller
 								$newjson->nohp_isaku = Crypt::encryptString($value->NOHP_ISAKU);
 								$newjson->jenis_kelamin = $value->NIK == '000001' ? 'PRIA' : ($value->NIK == '000002' ? 'WANITA' : $value->JENIS_KELAMIN);
 								$newjson->alias = $value->ALIAS;
+								$newjson->presensi = substr($value->ID_BAGIAN,0,6) == '100E10' ? 'Available' : 'Not Available';
 
 								$newdata[] = $newjson;
 
