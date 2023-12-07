@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 use Illuminate\Support\Facades\Crypt;
 use App\Helper\IRKHelp;
 use App\Models\Credentials;
-use Carbon\Carbon;
-use App\Http\Controllers\IRK\UtilityGateway;
-use Illuminate\Support\Facades\App;
+
 class PresensiGateway extends Controller
 {
     private $resultresp;
@@ -66,10 +64,10 @@ class PresensiGateway extends Controller
                     'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tanggal_awal}' AND '{$tanggal_akhir}' ORDER BY DATE ASC",
                     'process_name'=>'GetDataPresensi'
                 ]);
-
+                
                 $data['nik']=$request['userid'];
                 $SPExecutor = IRKHelp::executeSP($data);
-
+                
                 $this->resultresp = $SPExecutor->result;
                 $this->dataresp = $SPExecutor->data->GetDataPresensi;
                 $this->messageresp = 'Success on Run';
