@@ -58,15 +58,18 @@ class PresensiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
+                $tglAwal = $request->input('tglAwal');
+                $tglAkhir = $request->input('tglAkhir');
+
                 $data['list_query'] = array([
                     'conn'=>'DBPRESENSI_DUMMY',
-                    'query'=>'SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = '.$request['userid'],
+                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tglAwal}' AND '{$tglAkhir}' ORDER BY DATE ASC",
                     'process_name'=>'GetDataPresensi'
                 ]);
 
                 $data['nik']=$request['userid'];
                 $SPExecutor = IRKHelp::executeSP($data);
-                
+
                 $this->resultresp = $SPExecutor->result;
                 $this->dataresp = $SPExecutor->data->GetDataPresensi;
                 $this->messageresp = 'Success on Run';
