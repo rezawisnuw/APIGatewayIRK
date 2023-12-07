@@ -58,12 +58,12 @@ class PresensiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $tglAwal = $request->input('tglAwal');
-                $tglAkhir = $request->input('tglAkhir');
+                $tanggal_awal = $request->input('tanggal_awal');
+                $tanggal_akhir = $request->input('tanggal_akhir');
 
                 $data['list_query'] = array([
                     'conn'=>'DBPRESENSI_DUMMY',
-                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tglAwal}' AND '{$tglAkhir}' ORDER BY DATE ASC",
+                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tanggal_awal}' AND '{$tanggal_akhir}' ORDER BY DATE ASC",
                     'process_name'=>'GetDataPresensi'
                 ]);
 
