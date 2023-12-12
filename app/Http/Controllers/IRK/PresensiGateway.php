@@ -117,7 +117,6 @@ class PresensiGateway extends Controller
                         'tglAbsen' => empty($request['data']['tglAbsen']) ? "" : $request['data']['tglAbsen'],
                         'jamAbsen' => empty($request['data']['jamAbsen']) ? "" : $request['data']['jamAbsen']
                     ],
-                    //'sp_name'=>'InputPresensiIT',
                     'sp_name'=>'InputPresensiWFH',
                     'process_name'=>'PostDataPresensi'
                 ]);
