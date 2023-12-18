@@ -385,19 +385,16 @@ Route::group([
 	'middleware' => 'cors'
 ], function () {
 
+	//Credentials Endpoint
+	Route::post('login', [IRK\CredentialsGateway::class, 'LoginESS']);
+	Route::post('logout', [IRK\CredentialsGateway::class, 'LogoutESS']);
+	Route::post('security', [IRK\CredentialsGateway::class, 'Security']);
+
 	//Utility Endpoint
-	Route::post('login', [IRK\UtilityGateway::class, 'LoginESS']);
-	Route::post('logout', [IRK\UtilityGateway::class, 'LogoutESS']);
-	Route::post('uploadFisik', [IRK\UtilityGateway::class, 'UploadFisik']);
-	Route::post('uploadBlob', [IRK\UtilityGateway::class, 'UploadBlob']);
-	Route::post('downloadFisik', [IRK\UtilityGateway::class, 'DownloadFile93']);
-	Route::post('firebase', [IRK\UtilityGateway::class, 'Firebase']);
 	Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
-	Route::post('spexecutor', [IRK\UtilityGateway::class, 'SPExecutor']);
-	Route::post('security', [IRK\UtilityGateway::class, 'Security']);
 	Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
 	Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
-	Route::post('notification', [IRK\UtilityGateway::class, 'NotificationPortal']);
+	Route::post('presensi', [IRK\UtilityGateway::class, 'PresensiWFH']);
 
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {

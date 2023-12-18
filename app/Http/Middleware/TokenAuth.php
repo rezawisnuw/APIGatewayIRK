@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\IRK\Credentials;
+use App\Models\IRK\CredentialsModel;
 use App\Helper\IRKHelp;
 
 class TokenAuth
@@ -37,7 +37,7 @@ class TokenAuth
 
             $token = $helper->Environment($env);
 			
-            if (empty($token['tokenid'])) {
+            if(empty($token['tokenid'])) {
                 $this->resultresp = 'Token is Empty';
                 $this->dataresp = [];
                 $this->messageresp = 'Failed on Run';
@@ -54,7 +54,7 @@ class TokenAuth
                 return response()->json($running);
 
             }else{
-                $model = new Credentials($request, $slug);
+                $model = new CredentialsModel($request, $slug);
                 
                 $verify = $model->ValidateTokenAuth($token['tokenid']);
 
@@ -75,6 +75,8 @@ class TokenAuth
                     return response()->json($running);
                 }
 
+                return $next($request);
+
             }
 			
 		} catch (\Throwable $th){
@@ -91,6 +93,5 @@ class TokenAuth
 			return response()->json($error);
 		}
 
-        return $next($request);
     }
 }

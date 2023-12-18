@@ -339,7 +339,7 @@ class UtilityGateway extends Controller
 				}
 
 			} else {
-				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+				return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 			}
 
 		} 
@@ -418,7 +418,7 @@ class UtilityGateway extends Controller
 						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 					}
 				} else {
-					return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+					return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 				}
 			}else{
 				if($escapestring_token == $request['data']['find']){ 
@@ -484,7 +484,7 @@ class UtilityGateway extends Controller
 						return ['result' => $th->getMessage(), 'data' => null, 'message' => 'Error in Catch' , 'status' => 0, 'statuscode' => $th->getCode()];
 					}
 				} else {
-					return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+					return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 				}
 			}
 
@@ -534,7 +534,7 @@ class UtilityGateway extends Controller
 					}
 				}
 			}else {
-				return ['result' => 'Your Data Is Not Authorized', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+				return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
 			}
 		
 		}
