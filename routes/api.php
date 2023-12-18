@@ -27,36 +27,36 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //-----------------------START OLD SCHEME-----------------------------------------
 //Utility Endpoint
-Route::group(['middleware' => 'cors'], function () {
-//WCF Services
-	// #DEV
-	// Route::post('dev/login', [Dev\UtilityGateway::class, 'LoginESS']);
-	// Route::post('dev/logout', [Dev\UtilityGateway::class, 'LogoutESS']);
-	// Route::post('dev/uploadFisik', [Dev\UtilityGateway::class, 'UploadFisik']);
-	// Route::post('dev/uploadBlob', [Dev\UtilityGateway::class, 'UploadBlob']);
-	// Route::post('dev/downloadFisik', [Dev\UtilityGateway::class, 'DownloadFile93']);
-	// Route::post('dev/firebase', [Dev\UtilityGateway::class, 'Firebase']);
-	// Route::post('dev/worker', [Dev\UtilityGateway::class, 'WorkerESS']);
+// Route::group(['middleware' => 'cors'], function () {
+// //WCF Services
+// 	// #DEV
+// 	// Route::post('dev/login', [Dev\UtilityGateway::class, 'LoginESS']);
+// 	// Route::post('dev/logout', [Dev\UtilityGateway::class, 'LogoutESS']);
+// 	// Route::post('dev/uploadFisik', [Dev\UtilityGateway::class, 'UploadFisik']);
+// 	// Route::post('dev/uploadBlob', [Dev\UtilityGateway::class, 'UploadBlob']);
+// 	// Route::post('dev/downloadFisik', [Dev\UtilityGateway::class, 'DownloadFile93']);
+// 	// Route::post('dev/firebase', [Dev\UtilityGateway::class, 'Firebase']);
+// 	// Route::post('dev/worker', [Dev\UtilityGateway::class, 'WorkerESS']);
 
-    // #STAG
-	// Route::post('stag/login', [Stag\UtilityGateway::class, 'LoginESS']);
-	// Route::post('stag/logout', [Stag\UtilityGateway::class, 'LogoutESS']);
-	// Route::post('stag/uploadFisik', [Stag\UtilityGateway::class, 'UploadFisik']);
-	// Route::post('stag/uploadBlob', [Stag\UtilityGateway::class, 'UploadBlob']);
-	// Route::post('stag/downloadFisik', [Stag\UtilityGateway::class, 'DownloadFile93']);
-	// Route::post('stag/firebase', [Stag\UtilityGateway::class, 'Firebase']);
-	// Route::post('stag/worker', [Stag\UtilityGateway::class, 'WorkerESS']);
+//     // #STAG
+// 	// Route::post('stag/login', [Stag\UtilityGateway::class, 'LoginESS']);
+// 	// Route::post('stag/logout', [Stag\UtilityGateway::class, 'LogoutESS']);
+// 	// Route::post('stag/uploadFisik', [Stag\UtilityGateway::class, 'UploadFisik']);
+// 	// Route::post('stag/uploadBlob', [Stag\UtilityGateway::class, 'UploadBlob']);
+// 	// Route::post('stag/downloadFisik', [Stag\UtilityGateway::class, 'DownloadFile93']);
+// 	// Route::post('stag/firebase', [Stag\UtilityGateway::class, 'Firebase']);
+// 	// Route::post('stag/worker', [Stag\UtilityGateway::class, 'WorkerESS']);
 
-    #LIVE
-	Route::post('live/login', [Live\UtilityGateway::class, 'LoginESS']);
-	Route::post('live/logout', [Live\UtilityGateway::class, 'LogoutESS']);
-	Route::post('live/uploadFisik', [Live\UtilityGateway::class, 'UploadFisik']);
-	Route::post('live/uploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
-	Route::post('live/downloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
-	Route::post('live/firebase', [Live\UtilityGateway::class, 'Firebase']);
-	Route::post('live/worker', [Live\UtilityGateway::class, 'WorkerESS']);
+//  // #LIVE
+// 	// Route::post('live/login', [Live\UtilityGateway::class, 'LoginESS']);
+// 	// Route::post('live/logout', [Live\UtilityGateway::class, 'LogoutESS']);
+// 	// Route::post('live/uploadFisik', [Live\UtilityGateway::class, 'UploadFisik']);
+// 	// Route::post('live/uploadBlob', [Live\UtilityGateway::class, 'UploadBlob']);
+// 	// Route::post('live/downloadFisik', [Live\UtilityGateway::class, 'DownloadFile93']);
+// 	// Route::post('live/firebase', [Live\UtilityGateway::class, 'Firebase']);
+// 	// Route::post('live/worker', [Live\UtilityGateway::class, 'WorkerESS']);
 
-});
+// });
 
 // //IRK Endpoint DEV
 // Route::group(['prefix' => 'dev', 'middleware' => ['cors']], function () {
@@ -267,109 +267,109 @@ Route::group(['middleware' => 'cors'], function () {
 // });
 
 //IRK Endpoint LIVE
-Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
+// Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 
-	//CeritaKita Endpoint
-	Route::group(['prefix' => 'ceritakita'], function () {
+// 	//CeritaKita Endpoint
+// 	Route::group(['prefix' => 'ceritakita'], function () {
 		
-		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
-			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
+// 		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
+// 			Route::post('signout', [Live\IRKCeritaKitaGateway::class, 'signout']);
 
-			Route::post('get', [Live\IRKCeritaKitaGateway::class, 'get']);
-			Route::post('post', [Live\IRKCeritaKitaGateway::class, 'post']);
-			Route::post('put', [Live\IRKCeritaKitaGateway::class, 'put']);
-			Route::post('delete', [Live\IRKCeritaKitaGateway::class, 'delete']);
-		});
+// 			Route::post('get', [Live\IRKCeritaKitaGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKCeritaKitaGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKCeritaKitaGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKCeritaKitaGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Motivasi Endpoint
-	Route::group(['prefix' => 'motivasi'], function () {
+// 	//Motivasi Endpoint
+// 	Route::group(['prefix' => 'motivasi'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKMotivasiGateway::class, 'get']);
-			Route::post('post', [Live\IRKMotivasiGateway::class, 'post']);
-			Route::post('put', [Live\IRKMotivasiGateway::class, 'put']);
-			Route::post('delete', [Live\IRKMotivasiGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKMotivasiGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKMotivasiGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKMotivasiGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKMotivasiGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Curhatku Endpoint
-	Route::group(['prefix' => 'curhatku'], function () {
+// 	//Curhatku Endpoint
+// 	Route::group(['prefix' => 'curhatku'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKCurhatkuGateway::class, 'get']);
-			Route::post('post', [Live\IRKCurhatkuGateway::class, 'post']);
-			Route::post('put', [Live\IRKCurhatkuGateway::class, 'put']);
-			Route::post('delete', [Live\IRKCurhatkuGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKCurhatkuGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKCurhatkuGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKCurhatkuGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKCurhatkuGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Comment Endpoint
-	Route::group(['prefix' => 'comment'], function () {
+// 	//Comment Endpoint
+// 	Route::group(['prefix' => 'comment'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKCommentGateway::class, 'get']);
-			Route::post('post', [Live\IRKCommentGateway::class, 'post']);
-			Route::post('put', [Live\IRKCommentGateway::class, 'put']);
-			Route::post('delete', [Live\IRKCommentGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKCommentGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKCommentGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKCommentGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKCommentGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Like Endpoint
-	Route::group(['prefix' => 'like'], function () {
+// 	//Like Endpoint
+// 	Route::group(['prefix' => 'like'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKLikeGateway::class, 'get']);
-			Route::post('post', [Live\IRKLikeGateway::class, 'post']);
-			Route::post('put', [Live\IRKLikeGateway::class, 'put']);
-			Route::post('delete', [Live\IRKLikeGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKLikeGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKLikeGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKLikeGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKLikeGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Report Endpoint
-	Route::group(['prefix' => 'report'], function () {
+// 	//Report Endpoint
+// 	Route::group(['prefix' => 'report'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKReportGateway::class, 'get']);
-			Route::post('post', [Live\IRKReportGateway::class, 'post']);
-			Route::post('put', [Live\IRKReportGateway::class, 'put']);
-			Route::post('delete', [Live\IRKReportGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKReportGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKReportGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKReportGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKReportGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Profile Endpoint
-	Route::group(['prefix' => 'profile'], function () {
+// 	//Profile Endpoint
+// 	Route::group(['prefix' => 'profile'], function () {
 
-		Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKProfileGateway::class, 'get']);
-			Route::post('post', [Live\IRKProfileGateway::class, 'post']);
-			Route::post('put', [Live\IRKProfileGateway::class, 'put']);
-			Route::post('delete', [Live\IRKProfileGateway::class, 'delete']);
-		});
+// 		Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKProfileGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKProfileGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKProfileGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKProfileGateway::class, 'delete']);
+// 		});
 
-	});
+// 	});
 
-	//Version Endpoint
-	Route::group(['prefix' => 'version'], function () {
+// 	//Version Endpoint
+// 	Route::group(['prefix' => 'version'], function () {
 
-		//Route::group(['middleware' => ['tokenverify']], function () {
-			Route::post('get', [Live\IRKVersionGateway::class, 'get']);
-			Route::post('post', [Live\IRKVersionGateway::class, 'post']);
-			Route::post('put', [Live\IRKVersionGateway::class, 'put']);
-			Route::post('delete', [Live\IRKVersionGateway::class, 'delete']);
-		//});
+// 		//Route::group(['middleware' => ['tokenverify']], function () {
+// 			Route::post('get', [Live\IRKVersionGateway::class, 'get']);
+// 			Route::post('post', [Live\IRKVersionGateway::class, 'post']);
+// 			Route::post('put', [Live\IRKVersionGateway::class, 'put']);
+// 			Route::post('delete', [Live\IRKVersionGateway::class, 'delete']);
+// 		//});
 
-	});
+// 	});
 
-});
+// });
 //-----------------------END OLD SCHEME-----------------------------------------
 
 
@@ -380,7 +380,7 @@ Route::group(['prefix' => 'live', 'middleware' => ['cors']], function () {
 Route::group([
 	'prefix' => 'v1/{slug}', 
 	'where' => [
-		'slug' => 'dev|stag'
+		'slug' => 'dev|stag|live'
 	],
 	'middleware' => 'cors'
 ], function () {
