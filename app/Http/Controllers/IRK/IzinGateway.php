@@ -56,17 +56,17 @@ class IzinGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $data['list_query'] = array([
+                $param['list_query'] = array([
                 	'conn'=>'ESS',
                 	'query'=>'SELECT TOP 10 * FROM IDM_LEAVEREQUEST_ESS WITH(NOLOCK) WHERE employeeid = '.$request['userid'],
                 	'process_name'=>'GetDataIzin'
                 ]);
                 
-                $data['nik']=$request['userid'];
-                $SPExecutor = IRKHelp::executeSP($data);
-
-                $this->resultresp = $SPExecutor->result;
-                $this->dataresp = $SPExecutor->data->GetDataIzin;
+                $param['nik']=$request['userid'];
+                $response = $this->helper->SPExecutor($param);
+                
+                $this->resultresp = 'Data has been processed successfully';
+                $this->dataresp = $response->result->GetDataIzin;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
@@ -85,10 +85,6 @@ class IzinGateway extends Controller
             }
             
         }catch (\Throwable $e) {
-            //Log the exception details for better debugging
-            \Log::error("Error in catch block: " . $e->getMessage());
-            \Log::error("Exception Trace: " . $e->getTraceAsString());
-
             $this->resultresp = $e->getMessage();
 			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $e->getCode();

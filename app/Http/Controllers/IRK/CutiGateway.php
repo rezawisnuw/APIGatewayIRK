@@ -57,9 +57,9 @@ class CutiGateway extends Controller
            
             if($decode_signature->result == 'Match'){
 
-                $data = $request->all(); // Use $request->all() to get all form data
-                $data['nik'] = $request['userid'];
-                $code = isset($data['code']) ? $data['code'] : 1; // Default to 1 if 'code' is not provided
+                $param = $request->all(); // Use $request->all() to get all form data
+                $param['nik'] = $request['userid'];
+                $code = isset($param['code']) ? $param['code'] : 1; // Default to 1 if 'code' is not provided
 
                 // Set the appropriate query based on the 'code'
                 $queries = [
@@ -80,22 +80,22 @@ class CutiGateway extends Controller
                     ],
                 ];
 
-                $data['list_query'] = [$queries[$code]]; // Use the selected query based on 'code'
-                $SPExecutor = IRKHelp::executeSP($data);
+                $param['list_query'] = [$queries[$code]]; // Use the selected query based on 'code'
+                $response = $this->helper->SPExecutor($param);
                 
                 $newData = [];
-                if ($data['code'] == 1) {
-                    $newData['GetDataCuti'] = isset($SPExecutor->data->GetDataCuti) ? $SPExecutor->data->GetDataCuti : [];
-                } elseif ($data['code'] == 2) {
-                    $newData['GetJenisCuti'] = isset($SPExecutor->data->GetJenisCuti) ? $SPExecutor->data->GetJenisCuti : [];
-                } elseif ($data['code'] == 3) {
-                    $newData['GetSaldoCuti'] = isset($SPExecutor->data->GetSaldoCuti) ? $SPExecutor->data->GetSaldoCuti : [];
+                if ($param['code'] == 1) {
+                    $newData['GetDataCuti'] = isset($response->result->GetDataCuti) ? $response->result->GetDataCuti : [];
+                } elseif ($param['code'] == 2) {
+                    $newData['GetJenisCuti'] = isset($response->result->GetJenisCuti) ? $response->result->GetJenisCuti : [];
+                } elseif ($param['code'] == 3) {
+                    $newData['GetSaldoCuti'] = isset($response->result->GetSaldoCuti) ? $response->result->GetSaldoCuti : [];
                 } else {
                     // Jika code bukan 1, 2, atau 3, maka tampilkan code 1 sebagai default
-                    $newData['GetDataCuti'] = isset($SPExecutor->data->GetDataCuti) ? $SPExecutor->data->GetDataCuti : [];
+                    $newData['GetDataCuti'] = isset($response->result->GetDataCuti) ? $response->result->GetDataCuti : [];
                 }
                 
-                $this->resultresp = $SPExecutor->result;
+                $this->resultresp = 'Data has been processed successfully';
                 $this->dataresp = reset($newData);
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
