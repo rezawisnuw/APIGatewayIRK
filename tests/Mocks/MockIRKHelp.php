@@ -2,10 +2,6 @@
 
 namespace Tests\Mocks;
 
-// MockIRKHelp.php
-
-namespace Tests\Mocks;
-
 use App\Helper\IRKHelp;
 
 class MockIRKHelp extends IRKHelp
