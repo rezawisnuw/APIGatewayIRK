@@ -9,6 +9,7 @@ use GuzzleHttp\RequestOptions;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Client;
+use Validator;
 
 class IRKHelp
 {
@@ -49,7 +50,8 @@ class IRKHelp
         return $setting;
     }
 
-    public function Environment($env){
+    public function Environment($env)
+    {
         
         $session = [];
 
@@ -64,7 +66,8 @@ class IRKHelp
         return $session;
     }
 
-    public function RunningResp($resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp = Response::HTTP_OK){
+    public function RunningResp($resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp = Response::HTTP_OK)
+    {
         if(!empty($ttldataresp)){
             $response = [
                 'result' => $resultresp, // hasil respond asli langsung dari program
@@ -96,7 +99,8 @@ class IRKHelp
         return $decode;
     }
 
-    public function ErrorResp($resultresp, $messageresp, $statuscoderesp = Response::HTTP_BAD_REQUEST){
+    public function ErrorResp($resultresp, $messageresp, $statuscoderesp = Response::HTTP_BAD_REQUEST)
+    {
         $response = [
             'result' => $resultresp, // hasil respond asli langsung dari program
             'data' => null,
@@ -130,7 +134,7 @@ class IRKHelp
                             $encrypt = Crypt::encryptString($encode);
                             return $encrypt;
                         }else{
-                            $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
+                            $response = $this->RunningResp('Your data is not identified',null,'Failed on Run',0,'');
                             $encode = json_encode($response);
                             $encrypt = Crypt::encryptString($encode);
                             return $encrypt;
@@ -160,7 +164,7 @@ class IRKHelp
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     }else{
-                        $response = $this->RunningResp('Your data is not verified',null,'Failed on Run',0,'');
+                        $response = $this->RunningResp('Your data is not identified',null,'Failed on Run',0,'');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
@@ -174,9 +178,7 @@ class IRKHelp
             }
         }catch (\Throwable $e) {
 			return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
-        }
-        
-        
+        }        
     }
 
     public function Client($param)
@@ -256,13 +258,158 @@ class IRKHelp
 
     public static function executeSP($data)
     {
-
         // Membuat instance Request dengan data yang diberikan
         $request = new Request(['data' => $data]);
 
         // Membuat instance UtilityGateway dan memanggil SPExecutor
         $utilityGateway = app(\App\Http\Controllers\IRK\UtilityGateway::class);
         return $utilityGateway->SPExecutor($request);
+    }
+
+    public function SPExecutor($param){
+
+        $client = new Client(); 
+        $response = $client->post(
+            isset($param['list_sp']) && $param['list_sp'] != null ? 
+            'http://'.$this->Segment($this->request->route('slug'))['config'].'/SPExecutor/SpExecutorRest.svc/executev2' : 
+            'http://'.$this->Segment($this->request->route('slug'))['config'].'/SPExecutor/SpExecutorRest.svc/executev3' , 
+            [
+                'headers' => [
+                    'Content-Type' => 'text/plain'
+                ],
+                'body' => json_encode([
+                    'request' => $param
+                ])
+            ]
+        );
+        
+        $body = $response->getBody();
+        $result = json_decode($body);
+
+        return $result;
+    }
+
+    public function Firebase($param){
+        $postbody = $param->json(['data']);
+
+        $response = $this->Client('other')->post(
+            'http://'.$this->Segment($this->request->route('slug'))['config'].'/RESTSecurity/RESTSecurity.svc/IDM/Firebase' , 
+            [
+                RequestOptions::JSON => 
+				['param' => $postbody]
+            ]
+        );
+        
+        $body = $response->getBody();
+        $temp = json_decode($body);
+        $result = json_decode($temp->FirebaseResult);
+
+        return $result;
+    }
+
+    public function UploadFisik($request) {
+		$filePath = $request['filepath'];
+		$namaFile = $request['namafile'];
+		$file = $request['filefisik'];
+		$extension = $file->extension();
+        $mime = $file->getClientMimeType();
+        $code =  0;
+
+		$filetypearray = array('image' => $file);
+
+		$rules = array(
+			'image' => 'required|max:40000' // max 40MB
+		);
+
+		$validator = Validator::make($filetypearray, $rules);
+
+        if ($validator->fails())
+        {
+            return $validator;
+
+        }else{
+
+            $filedata = array(
+                'stream' => curl_file_create($filePath,$mime,$namaFile),
+            );
+
+			$filefisik = ($request->has('filefisik') && $request['filefisik'] != '') ? $request->file('filefisik') : '';
+
+			$response = $this->Client('other')->post(
+                "http://".$this->Segment($this->request->route('slug'))['config']."/RESTSecurity/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",
+                [
+                    'multipart' => [
+                        [
+                            'name' => 'stream',
+                            'contents' => file_get_contents($_FILES['filefisik']['tmp_name']),
+                            'headers'  => ['Content-Type' => $filefisik->getClientMimeType()],
+                            'filename' => $filefisik->getClientOriginalName()
+                        ]
+                    ],
+                ]
+            );
+			
+			$result = json_decode($response->getBody());
+
+            return $result;
+
+        }
+    }
+
+	public function UploadBlob($request) {
+		$filePath = $request['filepath'];
+		$namaFile = $request['namafile'];
+		$file = $request['filefisik'];
+		$extension = $file->extension();
+        $mime = $file->getClientMimeType();
+        $code =  0;
+
+		$filetypearray = array('image' => $file);
+
+		$rules = array(
+			'image' => 'mimes:jpeg,jpg,png|required|max:500' // max 1MB
+		);
+
+		$validator = Validator::make($filetypearray, $rules);
+
+        if ($validator->fails())
+        {
+            return $validator;
+        }else{
+
+            $filedata = array(
+                'stream' => curl_file_create($filePath,$mime,$namaFile),
+            );
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "http://".$this->Segment($this->request->route('slug'))['config']."/RESTSecurity/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
+
+            $result = curl_exec($ch);
+
+			return $result;
+
+        }
+    }
+
+    public function DownloadFile($request) {
+
+        $postbody = $request->json(['data']);
+
+        $response = $this->Client('other')->post(
+            'http://'.$this->Segment($this->request->route('slug'))['config'].'/RESTSecurity/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+            [
+                RequestOptions::JSON =>
+                ['filePath' => $postbody['filePath']]
+            ]
+        );
+        $body = $response->getBody();
+        $temp = json_decode($body);
+        $result = json_decode($temp->DownloadFileDariInfraKe93Result);
+
+        return $result;
     }
 
 }

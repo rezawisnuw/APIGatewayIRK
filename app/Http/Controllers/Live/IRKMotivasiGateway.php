@@ -56,7 +56,7 @@ class IRKMotivasiGateway extends Controller
                     if($escapestring_token == $data->userid && $escapestring_token == $data->nik){       
                         return $this->successRes(null, 'Match', '');
                     }else{
-                        return $this->errorRes('Your data is not verified');
+                        return $this->errorRes('Your data is not identified');
                     }
                 }else{
                     return $this->errorRes('User not match');
@@ -79,7 +79,7 @@ class IRKMotivasiGateway extends Controller
                 if($escapestring_token == $data->userid){    
                     return $this->successRes(null, 'Match', '');
                 }else{
-                    return $this->errorRes('Your data is not verified');
+                    return $this->errorRes('Your data is not identified');
                 }
             }else{
                 return $this->errorRes('User not match');
