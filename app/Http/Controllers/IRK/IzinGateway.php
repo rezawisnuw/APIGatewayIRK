@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Crypt;
 use App\Helper\IRKHelp;
 use App\Models\Credentials;
 
-class PresensiGateway extends Controller
+class IzinGateway extends Controller
 {
     private $resultresp;
 	private $dataresp;
@@ -49,27 +49,24 @@ class PresensiGateway extends Controller
 		$this->signature = $signature;
 
     }
-
+    
     public function get(Request $request){
         try {
             $decrypt_signature = Crypt::decryptString($this->signature);
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $tglAwal = $request->input('tglAwal');
-                $tglAkhir = $request->input('tglAkhir');
-
                 $data['list_query'] = array([
-                    'conn'=>'DBPRESENSI_DUMMY',
-                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tglAwal}' AND '{$tglAkhir}' ORDER BY DATE ASC",
-                    'process_name'=>'GetDataPresensi'
+                	'conn'=>'ESS',
+                	'query'=>'SELECT TOP 10 * FROM IDM_LEAVEREQUEST_ESS WITH(NOLOCK) WHERE employeeid = '.$request['userid'],
+                	'process_name'=>'GetDataIzin'
                 ]);
                 
                 $data['nik']=$request['userid'];
                 $SPExecutor = IRKHelp::executeSP($data);
-                
+
                 $this->resultresp = $SPExecutor->result;
-                $this->dataresp = $SPExecutor->data->GetDataPresensi;
+                $this->dataresp = $SPExecutor->data->GetDataIzin;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
@@ -88,6 +85,10 @@ class PresensiGateway extends Controller
             }
             
         }catch (\Throwable $e) {
+            //Log the exception details for better debugging
+            \Log::error("Error in catch block: " . $e->getMessage());
+            \Log::error("Exception Trace: " . $e->getTraceAsString());
+
             $this->resultresp = $e->getMessage();
 			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $e->getCode();
@@ -99,70 +100,20 @@ class PresensiGateway extends Controller
 			);
 
 			return response()->json($error);
-        }
+}
     }
 
-    public function post(Request $request){
-        try {
-            $decrypt_signature = Crypt::decryptString($this->signature);
-            $decode_signature = json_decode($decrypt_signature);
-           
-            if($decode_signature->result == 'Match'){
-                $data = $request['data'];
-                
-                $data['list_sp'] = array([
-                    'conn'=>'DBPRESENSI_DUMMY',
-                    'payload'=>[
-                        'nik' => empty($request['data']['nik']) ? "" : $request['data']['nik'],
-                        'tglAbsen' => empty($request['data']['tglAbsen']) ? "" : $request['data']['tglAbsen'],
-                        'jamAbsen' => empty($request['data']['jamAbsen']) ? "" : $request['data']['jamAbsen']
-                    ],
-                    //'sp_name'=>'InputPresensiIT',
-                    'sp_name'=>'InputPresensiWFH',
-                    'process_name'=>'PostDataPresensi'
-                ]);
-                
-                $SPExecutor = IRKHelp::executeSP($data);
-
-                $this->resultresp = $SPExecutor->result;
-                $this->dataresp = $SPExecutor->data->PostDataPresensi;
-                $this->messageresp = 'Success on Run';
-                $this->statusresp = 1;
-
-                $running = $this->helper->RunningResp(
-                    $this->resultresp,
-                    $this->dataresp,
-                    $this->messageresp,
-                    $this->statusresp,
-                    $this->ttldataresp
-                );
-                
-                return response()->json($running);
-    
-            }else{
-                return $decode_signature;
-            }
-            
-        }catch (\Throwable $e) {
-            $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
-			$this->statuscoderesp = $e->getCode();
-
-			$error = $this->helper->ErrorResp(
-				$this->resultresp, 
-				$this->messageresp, 
-				$this->statuscoderesp
-			);
-
-			return response()->json($error);
-        }
-    }
+    public function post(Request $request)
+    {
+}
 
     public function put(Request $request)
     {
+
     }
 
     public function delete(Request $request)
     {
+
     }
 }
