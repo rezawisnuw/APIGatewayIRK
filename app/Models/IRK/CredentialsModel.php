@@ -10,7 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use App\Helper\IRKHelp;
 
-class Credentials extends Model
+class CredentialsModel extends Model
 {
     
     public function __construct(Request $request, $slug)

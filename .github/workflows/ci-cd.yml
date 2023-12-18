@@ -60,7 +60,7 @@ jobs:
             git commit -m "update"
             git fetch origin main
             git pull --no-ff origin main
-            sudo php artisan cache:clear
             php artisan config:cache
+            sudo php artisan cache:clear
             php artisan config:clear
             php artisan route:clear

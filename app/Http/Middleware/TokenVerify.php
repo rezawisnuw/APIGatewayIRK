@@ -38,7 +38,7 @@ class TokenVerify
                     return response()->json([
                         'result' => 'Token & Signature Invalid',
                         'data' => $verify,
-                        'message' => 'Failed Verified',
+                        'message' => 'Failed Authorized',
                         'status' => 0,
                         'statuscode' => 400
                     ]);
@@ -47,7 +47,7 @@ class TokenVerify
                 //     // return response()->json([
                 //     //     'result' => 'Token & Signature is Valid',
                 //     //     'data' => $verify,
-                //     //     'message' => 'Success Verified', 
+                //     //     'message' => 'Success Authorized', 
                 //     //     'status' => 0,
                 //     //     'statuscode' => 200]);
                 //     return redirect()->route('author.dashboard');
