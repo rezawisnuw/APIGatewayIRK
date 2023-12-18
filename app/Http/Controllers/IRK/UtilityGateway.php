@@ -255,13 +255,12 @@ class UtilityGateway extends Controller
                     [
                         RequestOptions::JSON => 
                         ['param' => $param['param']]
-                    ],
-                    ['Content-Type' => 'application/json']
+                    ]
                 );
                 $body = $response->getBody();
                 $temp = json_decode($body);
                 $result = json_decode($temp->WorkerResult);
-    
+                
                 if(isset($request['userid'])){
                     $this->resultresp = 'Data has been process';
                     $this->dataresp = $result;
