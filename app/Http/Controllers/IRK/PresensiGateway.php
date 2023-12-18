@@ -59,17 +59,17 @@ class PresensiGateway extends Controller
                 $tglAwal = $request->input('tglAwal');
                 $tglAkhir = $request->input('tglAkhir');
 
-                $data['list_query'] = array([
+                $param['list_query'] = array([
                     'conn'=>'DBPRESENSI_DUMMY',
-                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tglAwal}' AND '{$tglAkhir}' ORDER BY DATE ASC",
+                    'query'=>"SELECT TOP 10 * FROM PresensiIntegrationOs2 WITH(NOLOCK) WHERE personnelnumber = {$request['userid']} AND DATE BETWEEN '{$tglAwal}' AND '{$tglAkhir}' ORDER BY DATE DESC",
                     'process_name'=>'GetDataPresensi'
                 ]);
                 
-                $data['nik']=$request['userid'];
-                $SPExecutor = IRKHelp::executeSP($data);
-                
-                $this->resultresp = $SPExecutor->result;
-                $this->dataresp = $SPExecutor->data->GetDataPresensi;
+                $param['nik']=$request['userid'];
+                $response = $this->helper->SPExecutor($param);
+
+                $this->resultresp = 'Data has been processed successfully';
+                $this->dataresp = $response->result->GetDataPresensi;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
@@ -108,24 +108,23 @@ class PresensiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
            
             if($decode_signature->result == 'Match'){
-                $data = $request['data'];
+                $param = $request['data'];
                 
-                $data['list_sp'] = array([
+                $param['list_sp'] = array([
                     'conn'=>'DBPRESENSI_DUMMY',
                     'payload'=>[
                         'nik' => empty($request['data']['nik']) ? "" : $request['data']['nik'],
                         'tglAbsen' => empty($request['data']['tglAbsen']) ? "" : $request['data']['tglAbsen'],
                         'jamAbsen' => empty($request['data']['jamAbsen']) ? "" : $request['data']['jamAbsen']
                     ],
-                    //'sp_name'=>'InputPresensiIT',
                     'sp_name'=>'InputPresensiWFH',
                     'process_name'=>'PostDataPresensi'
                 ]);
                 
-                $SPExecutor = IRKHelp::executeSP($data);
-
-                $this->resultresp = $SPExecutor->result;
-                $this->dataresp = $SPExecutor->data->PostDataPresensi;
+                $response = $this->helper->SPExecutor($param);
+                
+                $this->resultresp = 'Data has been processed successfully';
+                $this->dataresp = $response->result->PostDataPresensi;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
 
