@@ -104,7 +104,7 @@ class UtilityGateway extends Controller
 
     }
 
-    public function Jabatan(Request $request){
+    public function Jabatan(Request $request, $hardcode=null){
         $datareq['userid'] = $request['data']['nik'];
         $newRequest = new Request($datareq);
         $signature = $this->helper->Identifier($newRequest);
