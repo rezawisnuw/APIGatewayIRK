@@ -47,12 +47,12 @@ class CredentialsGateway extends Controller
 
 				if ($result['wcf']['status'] == '1') {
 
-					$param['param'] = ['code' => 1, 'nik' => $request['data']['nik'], 'token' => $result['token']];
+					$hardcode['param'] = ['code' => 1,'nik' => $request['data']['nik']];
 
 					// if($this->env === 'local'){
 
 					// 	// return response()
-					// 	// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+					// 	// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $hardcode), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
 					// 	// ->header($this->authorize,'Bearer'.$result['token']);
 
 					// 	$this->resultresp = 'Token has Stored in Header';
@@ -77,14 +77,14 @@ class CredentialsGateway extends Controller
 
 					// } else{
 
-					// return response()
-					// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-					// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
+						// return response()
+						// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $hardcode), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+						// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
 
-					$this->resultresp = 'Token has Stored in Cookie';
-					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $param);
-					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['status'] : 0;
+						$this->resultresp = 'Token has Stored in Cookie';
+						$this->dataresp =  app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
+						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['status'] : 0;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
