@@ -60,14 +60,12 @@ class UtilityGateway extends Controller
 
         try{
             if($decode_signature->result == 'Match'){ 
-                $client = new Client();
-                $response = $client->post(
+                $response = $this->helper->Client('other')->post(
                     'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Unit-Cabang',
                     [
                         RequestOptions::JSON => 
                         ['param'=>$request['data']]
-                    ],
-                    ['Content-Type' => 'application/json']
+                    ]
                 );
         
                 $body = $response->getBody();
@@ -90,7 +88,7 @@ class UtilityGateway extends Controller
                 return response()->json($running);
             }else {
                 $this->resultresp = 'Your data is not identified';
-                $this->dataresp = $escapestring_token;
+                $this->dataresp = $decode_signature->result;
                 $this->messageresp = 'Failed on Run';
                 $this->statusresp = 0;
     
@@ -154,7 +152,7 @@ class UtilityGateway extends Controller
     
             }else {
                 $this->resultresp = 'Your data is not identified';
-                $this->dataresp = $escapestring_token;
+                $this->dataresp = $decode_signature->result;
                 $this->messageresp = 'Failed on Run';
                 $this->statusresp = 0;
     
@@ -215,7 +213,7 @@ class UtilityGateway extends Controller
                 return response()->json($response);
             }else {
                 $this->resultresp = 'Your data is not identified';
-                $this->dataresp = $escapestring_token;
+                $this->dataresp = $decode_signature->result;
                 $this->messageresp = 'Failed on Run';
                 $this->statusresp = 0;
     
