@@ -4,43 +4,26 @@ namespace App\Http\Controllers\IRK;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\database\QueryException;
-use Telegram;
-use GuzzleHttp;
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Psr7;
-use PDF;
-use Storage;
-use SoapClient;
 use App\Models\IRK\CredentialsModel;
 use App\Helper\IRKHelp;
-use DB;
-use Validator;
 
 class CredentialsGateway extends Controller
 {
-
-	private $resultresp;
-	private $dataresp;
-	private $messageresp;
-	private $statusresp;
-	private $ttldataresp;
-	private $statuscoderesp;
+	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug, $path, $model, $authorize;
 
 	public function __construct(Request $request)
-    {
-        // Call the parent constructor
-        //parent::__construct();
-        
-        $slug = $request->route('slug');
-		$this->slug = 'v1/'.$slug;
+	{
+		// Call the parent constructor
+		//parent::__construct();
+
+		$slug = $request->route('slug');
+		$this->slug = 'v1/' . $slug;
 
 		$env = config('app.env');
-        $this->env = $env;
+		$this->env = $env;
 
 		$model = new CredentialsModel($request, $slug);
-        $this->model = $model;
+		$this->model = $model;
 
 		$helper = new IRKHelp($request);
 		$this->helper = $helper;
@@ -52,18 +35,19 @@ class CredentialsGateway extends Controller
 		$idkey = $helper->Environment($env);
 		$this->tokendraw = $idkey['tokendraw'];
 
-    }
+	}
 
-    public function LoginESS(Request $request){
-        try {
+	public function LoginESS(Request $request)
+	{
+		try {
 			if (count($request->json()->all())) {
 				$postbody = $request->json(['data']);
-	
-				$result = $this->model->Login($postbody);
-				
-				if($result['wcf']['status'] == '1') {
 
-					$param['param'] = ['code' => 1,'nik' => $request['data']['nik'], 'token' => $result['token']];
+				$result = $this->model->Login($postbody);
+
+				if ($result['wcf']['status'] == '1') {
+
+					$param['param'] = ['code' => 1, 'nik' => $request['data']['nik'], 'token' => $result['token']];
 
 					// if($this->env === 'local'){
 
@@ -93,27 +77,27 @@ class CredentialsGateway extends Controller
 
 					// } else{
 
-						// return response()
-						// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
+					// return response()
+					// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $param), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
+					// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
 
-						$this->resultresp = 'Token has Stored in Cookie';
-						$this->dataresp =  app(UtilityGateway::class)->WorkerESS($request, $param);
-						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['status'] : 0;
+					$this->resultresp = 'Token has Stored in Cookie';
+					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $param);
+					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['message'] : 'Failed on Run';
+					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $param)->nik) ? $result['wcf']['status'] : 0;
 
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
+					$running = $this->helper->RunningResp(
+						$this->resultresp,
+						$this->dataresp,
+						$this->messageresp,
+						$this->statusresp,
+						$this->ttldataresp
+					);
 
-						return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120', '/', config('app.domain'), false, false))
+					return response()->json($running)
+						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', config('app.domain'), false, false))
 						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('app.domain'), false, false));
-						
+
 					// }
 				} else {
 
@@ -129,10 +113,10 @@ class CredentialsGateway extends Controller
 						$this->statusresp,
 						$this->ttldataresp
 					);
-					
+
 					return response()->json($running);
 				}
-				
+
 			} else {
 
 				$this->resultresp = 'Request Data is Empty';
@@ -147,36 +131,37 @@ class CredentialsGateway extends Controller
 					$this->statusresp,
 					$this->ttldataresp
 				);
-				
+
 				return response()->json($running);
-				
+
 			}
-        } catch (\Throwable $th) {
+		} catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
 			$this->messageresp = 'Error in Catch';
 			$this->statuscoderesp = $th->getCode();
 
 			$error = $this->helper->ErrorResp(
-				$this->resultresp, 
-				$this->messageresp, 
+				$this->resultresp,
+				$this->messageresp,
 				$this->statuscoderesp
 			);
 
 			return response()->json($error);
 
-        }
-    }
+		}
+	}
 
-	public function LogoutESS(Request $request){
+	public function LogoutESS(Request $request)
+	{
 
-        try {
+		try {
 			if (count($request->json()->all())) {
 				$postbody = $request->json(['data']);
 
 				$result = $this->model->Logout($postbody);
 
-				if($result['status'] == '1'){
+				if ($result['status'] == '1') {
 
 					// if($this->env === 'local'){
 
@@ -194,27 +179,27 @@ class CredentialsGateway extends Controller
 					// 	);
 
 					// 	return response()->json($running);
-						
+
 					// } else{
 
-						$this->resultresp = 'Token has Revoked on Cookie';
-						$this->dataresp = null;
-						$this->messageresp = $result['message'];
-						$this->statusresp = $result['status'];
+					$this->resultresp = 'Token has Revoked on Cookie';
+					$this->dataresp = null;
+					$this->messageresp = $result['message'];
+					$this->statusresp = $result['status'];
 
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
+					$running = $this->helper->RunningResp(
+						$this->resultresp,
+						$this->dataresp,
+						$this->messageresp,
+						$this->statusresp,
+						$this->ttldataresp
+					);
 
-						return response()->json($running);
-						
+					return response()->json($running);
+
 					// }
 
-				}else{
+				} else {
 
 					$this->resultresp = $result['result'];
 					$this->dataresp = null;
@@ -228,7 +213,7 @@ class CredentialsGateway extends Controller
 						$this->statusresp,
 						$this->ttldataresp
 					);
-					
+
 					return response()->json($running);
 				}
 
@@ -245,11 +230,11 @@ class CredentialsGateway extends Controller
 					$this->statusresp,
 					$this->ttldataresp
 				);
-				
+
 				return response()->json($running);
 
 			}
-        } catch (\Throwable $th) {
+		} catch (\Throwable $th) {
 
 			$this->resultresp = $th->getMessage();
 			$this->messageresp = 'Error in Catch';
@@ -262,14 +247,15 @@ class CredentialsGateway extends Controller
 			);
 
 			return response()->json($error);
-	
-        }
-    }
 
-	public function EncodeString(Request $request, $str) { //this function is cannot be recover to the original
+		}
+	}
+
+	public function EncodeString(Request $request, $str)
+	{ //this function is cannot be recover to the original
 		$encoded_text = '';
 
-		if(empty($request->all()) && $str != null){
+		if (empty($request->all()) && $str != null) {
 			for ($i = 0; $i < strlen($str); $i++) {
 				$ascii_code = ord(substr($str, $i, 1));
 				if (ctype_upper(substr($str, $i, 1))) {
@@ -283,13 +269,13 @@ class CredentialsGateway extends Controller
 					$encoded_text .= rand(0, 9);
 				}
 			}
-		}else {
+		} else {
 			$raw_token = $this->$this->tokendraw;
 			$split_token = explode('.', $raw_token);
 			$decrypt_token = base64_decode($split_token[1]);
 			$escapestring_token = json_decode($decrypt_token);
 
-			if($escapestring_token == $request['nik']){ 
+			if ($escapestring_token == $request['nik']) {
 				for ($i = 0; $i < strlen($str); $i++) {
 					$ascii_code = ord(substr($str, $i, 1));
 					if (ctype_upper(substr($str, $i, 1))) {
@@ -303,49 +289,50 @@ class CredentialsGateway extends Controller
 						$encoded_text .= rand(0, 9);
 					}
 				}
-			}else {
-				return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request' , 'status' => 0, 'statuscode' => 400];
+			} else {
+				return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request', 'status' => 0, 'statuscode' => 400];
 			}
-		
+
 		}
 
 		return substr(str_shuffle($encoded_text), 0, 8);
 	}
 
-	public function Security(Request $request){
+	public function Security(Request $request)
+	{
 		$type = $request['data']['type'];
 		$category = $request['data']['category'];
 		$signkey = $request['data']['signkey'];
 		$payload = $request['data']['payload'];
 
-		if($signkey == explode(':', config('app.key'))[1]){
+		if ($signkey == explode(':', config('app.key'))[1]) {
 
-			if($type == 'decode'){
-				if($category = 'AES256CBC'){
-					$decrypt =  Crypt::decryptString($payload);
+			if ($type == 'decode') {
+				if ($category = 'AES256CBC') {
+					$decrypt = Crypt::decryptString($payload);
 					$decode = $decrypt;
 					//$decode = json_decode($decrypt);
-				}else if($category = 'BASE64'){
+				} else if ($category = 'BASE64') {
 					$decode = base64_decode($payload);
 				}
-	
+
 				return response()->json($decode);
-	
-			}else if($type == 'encode'){
-				if($category = 'AES256CBC'){
+
+			} else if ($type == 'encode') {
+				if ($category = 'AES256CBC') {
 					$encode = json_encode($payload);
-					$encrypt =  Crypt::encryptString($encode);
-				}else if($category = 'BASE64'){
+					$encrypt = Crypt::encryptString($encode);
+				} else if ($category = 'BASE64') {
 					$encode = base64_encode($payload);
 				}
-	
+
 				return response()->json($encode);
 			}
 
-		}else{
+		} else {
 			return response()->json(['result' => 'Sign Key not Verified', 'data' => null, 'message' => 'Failed on Run', 'status' => 0, 'statuscode' => 400]);
 		}
-		
+
 	}
 
 }
