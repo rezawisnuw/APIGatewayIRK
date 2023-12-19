@@ -35,8 +35,9 @@ class UtilityGateway extends Controller
 
     }
 
-    public function UnitCabang(Request $request, $hardcode=null){
-		$datareq['userid'] = $request['data']['nik'];
+    public function UnitCabang(Request $request, $hardcode = null)
+    {
+        $datareq['userid'] = $request['data']['nik'];
         $newRequest = new Request($datareq);
         $signature = $this->helper->Identifier($newRequest);
         $decrypt_signature = Crypt::decryptString($signature);
@@ -104,7 +105,8 @@ class UtilityGateway extends Controller
 
     }
 
-    public function Jabatan(Request $request, $hardcode=null){
+    public function Jabatan(Request $request, $hardcode = null)
+    {
         $datareq['userid'] = $request['data']['nik'];
         $newRequest = new Request($datareq);
         $signature = $this->helper->Identifier($newRequest);
@@ -166,30 +168,31 @@ class UtilityGateway extends Controller
 
     }
 
-    public function PresensiWFH(Request $request, $hardcode=null){
-        if(!isset($request['data']['tanggal']) && $hardcode != null){
-            try{
+    public function PresensiWFH(Request $request, $hardcode = null)
+    {
+        if (!isset($request['data']['tanggal']) && $hardcode != null) {
+            try {
                 $param = $hardcode['param'];
 
                 $nik = $param['nik'];
 
                 $tanggal = $param['tanggal'];
-    
+
                 $param['list_sp'] = array([
-                    'conn'=>'PRESENSISHIFT_DMY',
-                    'payload'=>[
-                        'nik'=>$nik,
-                        'tanggal'=>$tanggal,
+                    'conn' => 'PRESENSISHIFT_DMY',
+                    'payload' => [
+                        'nik' => $nik,
+                        'tanggal' => $tanggal,
                     ],
-                    'sp_name'=>'SP_GetShiftWFH',
-                    'process_name'=>'GetShiftWFHResult'
+                    'sp_name' => 'SP_GetShiftWFH',
+                    'process_name' => 'GetShiftWFHResult'
                 ]);
 
                 $response = $this->helper->SPExecutor($param);
 
                 return response()->json($response);
 
-            }catch(\Throwable $th){ 
+            } catch (\Throwable $th) {
                 $this->resultresp = $th->getMessage();
                 $this->messageresp = 'Error in Catch';
                 $this->statuscoderesp = $th->getCode();
@@ -203,40 +206,40 @@ class UtilityGateway extends Controller
                 return response()->json($error);
 
             }
-        }else{
+        } else {
             $datareq['userid'] = $request['data']['nik'];
             $newRequest = new Request($datareq);
             $signature = $this->helper->Identifier($newRequest);
             $decrypt_signature = Crypt::decryptString($signature);
             $decode_signature = json_decode($decrypt_signature);
 
-            try{
-                if($decode_signature->result == 'Match'){
+            try {
+                if ($decode_signature->result == 'Match') {
                     $param = $request['data'];
 
                     $nik = $param['nik'];
 
-                $tanggal = Carbon::now()->toDateString();
-	
-                $param['list_sp'] = array([
-                    'conn'=>'PRESENSISHIFT_DMY',
-                    'payload'=>[
-                        'nik'=>$nik,
-                        'tanggal'=>$tanggal,
-                    ],
-                    'sp_name'=>'SP_GetShiftWFH',
-                    'process_name'=>'GetShiftWFHResult'
-                ]);
+                    $tanggal = Carbon::now()->toDateString();
+
+                    $param['list_sp'] = array([
+                        'conn' => 'PRESENSISHIFT_DMY',
+                        'payload' => [
+                            'nik' => $nik,
+                            'tanggal' => $tanggal,
+                        ],
+                        'sp_name' => 'SP_GetShiftWFH',
+                        'process_name' => 'GetShiftWFHResult'
+                    ]);
 
                     $response = $this->helper->SPExecutor($param);
 
                     return response()->json($response);
-                }else {
+                } else {
                     $this->resultresp = 'Your data is not identified';
                     $this->dataresp = $decode_signature->result;
                     $this->messageresp = 'Failed on Run';
                     $this->statusresp = 0;
-        
+
                     $running = $this->helper->RunningResp(
                         $this->resultresp,
                         $this->dataresp,
@@ -244,14 +247,14 @@ class UtilityGateway extends Controller
                         $this->statusresp,
                         $this->ttldataresp
                     );
-        
+
                     return response()->json($running);
                 }
 
-        }catch(\Throwable $th){ 
-            $this->resultresp = $th->getMessage();
-            $this->messageresp = 'Error in Catch';
-            $this->statuscoderesp = $th->getCode();
+            } catch (\Throwable $th) {
+                $this->resultresp = $th->getMessage();
+                $this->messageresp = 'Error in Catch';
+                $this->statuscoderesp = $th->getCode();
 
                 $error = $this->helper->ErrorResp(
                     $this->resultresp,
@@ -266,15 +269,16 @@ class UtilityGateway extends Controller
 
     }
 
-    public function WorkerESS(Request $request, $hardcode=null){
+    public function WorkerESS(Request $request, $hardcode = null)
+    {
 
-		if(!isset($request['data']['code']) && $hardcode != null){
-			try {
+        if (!isset($request['data']['code']) && $hardcode != null) {
+            try {
                 $response = $this->helper->Client('other')->post(
                     'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
                     [
-                        RequestOptions::JSON => 
-                        ['param' => $hardcode['param']]
+                        RequestOptions::JSON =>
+                            ['param' => $hardcode['param']]
                     ]
                 );
                 $body = $response->getBody();
@@ -297,7 +301,7 @@ class UtilityGateway extends Controller
 
                     return $running;
 
-                }else{
+                } else {
                     $hardcode['param'] = ['nik' => $result[0]->NIK, 'tanggal' => Carbon::now()->toDateString()];
 
                     $shift = $this->PresensiWFH($request, $hardcode)->getData()->result->GetShiftWFHResult[0];
@@ -385,8 +389,7 @@ class UtilityGateway extends Controller
                             [
                                 RequestOptions::JSON =>
                                     ['param' => $request['data']]
-                            ],
-                            ['Content-Type' => 'application/json']
+                            ]
                         );
                         $body = $response->getBody();
                         $temp = json_decode($body);
@@ -518,8 +521,7 @@ class UtilityGateway extends Controller
                             [
                                 RequestOptions::JSON =>
                                     ['param' => $request['data']]
-                            ],
-                            ['Content-Type' => 'application/json']
+                            ]
                         );
                         $body = $response->getBody();
                         $temp = json_decode($body);

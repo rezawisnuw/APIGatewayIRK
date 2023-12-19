@@ -15,29 +15,22 @@ class TokenAuth
      * @param  \Closure  $next
      * @return mixed
      */
-    private $resultresp;
-	private $dataresp;
-	private $messageresp;
-	private $statusresp;
-	private $ttldataresp;
-	private $statuscoderesp;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp;
 
     public function handle($request, Closure $next)
     {
-		
-		try{
-            
+
+        try {
+
             $slug = $request->route('slug');
 
             $helper = new IRKHelp($request);
 
-            $segment = $helper->Segment($slug);
-
             $env = config('app.env');
 
             $token = $helper->Environment($env);
-			
-            if(empty($token['tokenid'])) {
+
+            if (empty($token['tokenid'])) {
                 $this->resultresp = 'Token is Empty';
                 $this->dataresp = [];
                 $this->messageresp = 'Failed on Run';
@@ -53,12 +46,12 @@ class TokenAuth
 
                 return response()->json($running);
 
-            }else{
+            } else {
                 $model = new CredentialsModel($request, $slug);
-                
+
                 $verify = $model->ValidateTokenAuth($token['tokenid']);
 
-                if($verify->DecodeResult != 'Cocok'){
+                if ($verify->DecodeResult != 'Cocok') {
                     $this->resultresp = 'Token & Signature Invalid';
                     $this->dataresp = $verify;
                     $this->messageresp = 'Failed on Run';
@@ -78,20 +71,20 @@ class TokenAuth
                 return $next($request);
 
             }
-			
-		} catch (\Throwable $th){
+
+        } catch (\Throwable $th) {
             $this->resultresp = $th->getMessage();
-			$this->messageresp = 'Error in Catch';
-			$this->statuscoderesp = $th->getCode();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $th->getCode();
 
-			$error = $helper->ErrorResp(
-				$this->resultresp,
-				$this->messageresp,
-				$this->statuscoderesp
-			);
+            $error = $helper->ErrorResp(
+                $this->resultresp,
+                $this->messageresp,
+                $this->statuscoderesp
+            );
 
-			return response()->json($error);
-		}
+            return response()->json($error);
+        }
 
     }
 }

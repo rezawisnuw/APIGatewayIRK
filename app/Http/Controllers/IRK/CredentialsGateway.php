@@ -9,7 +9,8 @@ use App\Helper\IRKHelp;
 
 class CredentialsGateway extends Controller
 {
-	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug, $path, $model, $authorize;
+
+	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature, $authorize, $model;
 
 	public function __construct(Request $request)
 	{
@@ -41,50 +42,18 @@ class CredentialsGateway extends Controller
 	{
 		try {
 			if (count($request->json()->all())) {
-				$postbody = $request->json(['data']);
+				$postbody = $request['data'];
 
 				$result = $this->model->Login($postbody);
 
 				if ($result['wcf']['status'] == '1') {
 
-					$hardcode['param'] = ['code' => 1,'nik' => $request['data']['nik']];
+					$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
 
-					// if($this->env === 'local'){
-
-					// 	// return response()
-					// 	// ->json(['result' => 'Token has Stored in Header', 'data' => $this->WorkerESS($request, $hardcode), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-					// 	// ->header($this->authorize,'Bearer'.$result['token']);
-
-					// 	$this->resultresp = 'Token has Stored in Header';
-					// 	$this->dataresp = null;
-					// 	$this->messageresp = $result['wcf']['message'];
-					// 	$this->statusresp = $result['wcf']['status'];
-
-					// 	$running = $this->helper->RunningResp(
-					// 		$this->resultresp,
-					// 		$this->dataresp,
-					// 		$this->messageresp,
-					// 		$this->statusresp,
-					// 		$this->ttldataresp
-					// 	);
-
-					// 	return response()->json($running)
-					// 	->withHeaders([
-					// 		$this->authorize => 'Bearer'.$result['token'],
-					// 		'Cache-Control' => 'max-age=7200, public',
-					// 		'Expires' => now()->addHours(2)->format('D, d M Y H:i:s \G\M\T'),
-					// 	]);
-
-					// } else{
-
-						// return response()
-						// ->json(['result' => 'Token has Stored in Cookie', 'data' => $this->WorkerESS($request, $hardcode), 'message' => $result['wcf']['message'], 'status' => $result['wcf']['status'], 'statuscode' => 200])
-						// ->withCookie(cookie($this->authorize, 'Bearer'.$result['token'], '120'));
-
-						$this->resultresp = 'Token has Stored in Cookie';
-						$this->dataresp =  app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+					$this->resultresp = 'Token has Stored in Cookie';
+					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
+					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
@@ -98,7 +67,6 @@ class CredentialsGateway extends Controller
 						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', config('app.domain'), false, false))
 						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('app.domain'), false, false));
 
-					// }
 				} else {
 
 					$this->resultresp = $result['wcf']['result'];
@@ -157,35 +125,16 @@ class CredentialsGateway extends Controller
 
 		try {
 			if (count($request->json()->all())) {
-				$postbody = $request->json(['data']);
+				$postbody = $request['data'];
 
 				$result = $this->model->Logout($postbody);
 
 				if ($result['status'] == '1') {
 
-					// if($this->env === 'local'){
-
-					// 	$this->resultresp = 'Token has Revoked on Header';
-					// 	$this->dataresp = null;
-					// 	$this->messageresp = $result['message'];
-					// 	$this->statusresp = $result['status'];
-
-					// 	$running = $this->helper->RunningResp(
-					// 		$this->resultresp,
-					// 		$this->dataresp,
-					// 		$this->messageresp,
-					// 		$this->statusresp,
-					// 		$this->ttldataresp
-					// 	);
-
-					// 	return response()->json($running);
-
-					// } else{
-
-						$this->resultresp = 'Token has Revoked on Cookie';
-						$this->dataresp = null;
-						$this->messageresp = $result['message'];
-						$this->statusresp = 1;
+					$this->resultresp = 'Token has Revoked on Cookie';
+					$this->dataresp = null;
+					$this->messageresp = $result['message'];
+					$this->statusresp = 1;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
@@ -196,8 +145,6 @@ class CredentialsGateway extends Controller
 					);
 
 					return response()->json($running);
-
-					// }
 
 				} else {
 

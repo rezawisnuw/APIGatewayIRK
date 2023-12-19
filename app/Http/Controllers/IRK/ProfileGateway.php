@@ -4,12 +4,11 @@ namespace App\Http\Controllers\IRK;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-
 use App\Helper\IRKHelp;
 
 class ProfileGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug, $path;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {

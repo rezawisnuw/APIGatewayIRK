@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class MotivasiGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug, $path;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -105,56 +105,38 @@ class MotivasiGateway extends Controller
                             $newdata[] = $value;
                         }
 
-                        $this->resultresp = $result->message;
-                        $this->dataresp = $newdata;
-                        $this->messageresp = 'Success on Run';
-                        $this->statusresp = 1;
-                        $this->ttldataresp = $newtemp->data;
-
-                        $running = $this->helper->RunningResp(
-                            $this->resultresp,
-                            $this->dataresp,
-                            $this->messageresp,
-                            $this->statusresp,
-                            $this->ttldataresp
-                        );
-
-                        return response()->json($running);
-
-                    } else {
-                        $this->resultresp = $result->message;
-                        $this->dataresp = $result->data;
-                        $this->messageresp = 'Success on Run';
-                        $this->statusresp = 1;
-                        $this->ttldataresp = $newtemp->data;
-
-                        $running = $this->helper->RunningResp(
-                            $this->resultresp,
-                            $this->dataresp,
-                            $this->messageresp,
-                            $this->statusresp,
-                            $this->ttldataresp
-                        );
-
-                        return response()->json($running);
                     }
 
-                } else {
                     $this->resultresp = $result->message;
-                    $this->dataresp = [];
-                    $this->messageresp = 'Failed on Run';
-                    $this->statusresp = 0;
+                    $this->dataresp = $newdata;
+                    $this->messageresp = 'Success on Run';
+                    $this->statusresp = 1;
+                    $this->ttldataresp = $newtemp->data;
 
-                    $running = $this->helper->RunningResp(
-                        $this->resultresp,
-                        $this->dataresp,
-                        $this->messageresp,
-                        $this->statusresp,
-                        $this->ttldataresp
-                    );
-
-                    return response()->json($running);
+                } else {
+                    if (count($result->data) < 1) {
+                        $this->resultresp = $result->message;
+                        $this->dataresp = [];
+                        $this->messageresp = 'Success on Run';
+                        $this->statusresp = 1;
+                    } else {
+                        $this->resultresp = $result->message;
+                        $this->dataresp = null;
+                        $this->messageresp = 'Failed on Run';
+                        $this->statusresp = 0;
+                    }
                 }
+
+                $running = $this->helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+
+                return response()->json($running);
+
             } else {
                 return $decode_signature;
             }

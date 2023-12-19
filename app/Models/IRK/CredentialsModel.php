@@ -2,9 +2,8 @@
 
 namespace App\Models\IRK;
 
+use ErrorException;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -34,8 +33,7 @@ class CredentialsModel extends Model
                 [
                     RequestOptions::JSON =>
                         ['token' => $token]
-                ],
-                ['Content-Type' => 'application/json']
+                ]
             );
 
             $body = $response->getBody();
@@ -43,7 +41,7 @@ class CredentialsModel extends Model
 
             return $temp;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request');
+            throw new ErrorException('Bad Request');
         }
     }
 
@@ -57,8 +55,7 @@ class CredentialsModel extends Model
                 [
                     RequestOptions::JSON =>
                         ['user' => $postbody]
-                ],
-                ['Content-Type' => 'application/json']
+                ]
             );
 
             $body = $response->getBody();
@@ -71,7 +68,7 @@ class CredentialsModel extends Model
             }
             return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request');
+            throw new ErrorException('Bad Request');
         }
     }
 
@@ -85,7 +82,7 @@ class CredentialsModel extends Model
             else
                 return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request');
+            throw new ErrorException('Bad Request');
         }
     }
 
@@ -99,15 +96,14 @@ class CredentialsModel extends Model
                 [
                     RequestOptions::JSON =>
                         ['nik' => $nik]
-                ],
-                ['Content-Type' => 'application/json']
+                ]
             );
 
             $responseBody = json_decode($response->getBody(), true);
 
             return $responseBody;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request');
+            throw new ErrorException('Bad Request');
         }
     }
 
@@ -121,9 +117,7 @@ class CredentialsModel extends Model
                 [
                     RequestOptions::JSON =>
                         ['token' => $token]
-                ],
-
-                ['Content-Type' => 'application/json']
+                ]
             );
 
             $body = $response->getBody();
@@ -131,7 +125,7 @@ class CredentialsModel extends Model
 
             return $temp;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request');
+            throw new ErrorException('Bad Request');
         }
     }
 }
