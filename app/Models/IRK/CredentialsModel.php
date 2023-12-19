@@ -12,28 +12,28 @@ use App\Helper\IRKHelp;
 
 class CredentialsModel extends Model
 {
-    
+
     public function __construct(Request $request, $slug)
     {
         // Call the parent constructor
         //parent::__construct();
 
         $helper = new IRKHelp($request);
-        
+
         $segment = $helper->Segment($slug);
         $this->config = $segment['config'];
     }
-	
+
     public function IsTokenSignatureValid($token)
     {
         try {
             $client = new Client();
-            
+
             $response = $client->post(
-                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
+                'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/Decode',
                 [
-                    RequestOptions::JSON => 
-                    ['token'=>$token]
+                    RequestOptions::JSON =>
+                        ['token' => $token]
                 ],
                 ['Content-Type' => 'application/json']
             );
@@ -43,20 +43,20 @@ class CredentialsModel extends Model
 
             return $temp;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
+            throw new Exception('Bad Request');
         }
     }
 
-	public function Login($postbody)
+    public function Login($postbody)
     {
         try {
             $client = new Client();
 
             $response = $client->post(
-                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/LoginESSV2',
+                'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/LoginESSV2',
                 [
-                    RequestOptions::JSON => 
-                    ['user'=>$postbody]
+                    RequestOptions::JSON =>
+                        ['user' => $postbody]
                 ],
                 ['Content-Type' => 'application/json']
             );
@@ -65,51 +65,51 @@ class CredentialsModel extends Model
             $temp = json_decode($body);
             $result = $temp->LoginESSV2Result;
 
-            if($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default' ){
+            if ($temp->LoginESSV2Result == 'Success' || $temp->LoginESSV2Result == 'Default') {
                 $token = $this->GetTokenAuth($postbody['nik']);
                 return ['wcf' => ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Login', 'status' => '1', 'statuscode' => 200], 'token' => $token['GetTokenForResult']];
             }
             return ['wcf' => ['result' => $result, 'data' => [], 'message' => 'Failed Login', 'status' => '0', 'statuscode' => 400]];
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
+            throw new Exception('Bad Request');
         }
     }
 
     public function Logout($postbody)
     {
-        try{
+        try {
             $token = $this->GetTokenAuth($postbody['nik']);
 
-            if($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
+            if ($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
                 return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
-            else 
+            else
                 return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
+            throw new Exception('Bad Request');
         }
     }
 
     public function GetTokenAuth($nik)
     {
-        try{
-            $client = new Client(); 
+        try {
+            $client = new Client();
 
             $response = $client->post(
-                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/GetTokenFor',
+                'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/GetTokenFor',
                 [
-                    RequestOptions::JSON => 
-                    ['nik' => $nik]
+                    RequestOptions::JSON =>
+                        ['nik' => $nik]
                 ],
                 ['Content-Type' => 'application/json']
             );
 
             $responseBody = json_decode($response->getBody(), true);
-            
+
             return $responseBody;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
+            throw new Exception('Bad Request');
         }
-	}
+    }
 
     public function ValidateTokenAuth($token)
     {
@@ -117,21 +117,21 @@ class CredentialsModel extends Model
             $client = new Client();
 
             $response = $client->post(
-                'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/Decode',
+                'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/Decode',
                 [
-                    RequestOptions::JSON => 
-                    ['token'=>$token]
+                    RequestOptions::JSON =>
+                        ['token' => $token]
                 ],
-                    
+
                 ['Content-Type' => 'application/json']
             );
 
             $body = $response->getBody();
             $temp = json_decode($body);
-            
+
             return $temp;
         } catch (\Throwable $th) {
-            throw new Exception('Bad Request'); 
+            throw new Exception('Bad Request');
         }
     }
 }
