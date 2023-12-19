@@ -391,10 +391,12 @@ Route::group([
 	Route::post('security', [IRK\CredentialsGateway::class, 'Security']);
 
 	//Utility Endpoint
-	Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
-	Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
-	Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
-	Route::post('presensi', [IRK\UtilityGateway::class, 'PresensiWFH']);
+	Route::group(['middleware' => ['tokenauth']], function () {
+		Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
+		Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
+		Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
+		Route::post('presensi', [IRK\UtilityGateway::class, 'PresensiWFH']);
+	});
 
 	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
