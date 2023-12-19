@@ -100,7 +100,7 @@ class CredentialsGateway extends Controller
 						$this->resultresp = 'Token has Stored in Cookie';
 						$this->dataresp =  app(UtilityGateway::class)->WorkerESS($request, $hardcode);
 						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['status'] : 0;
+						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
 
 						$running = $this->helper->RunningResp(
 							$this->resultresp,
@@ -120,7 +120,7 @@ class CredentialsGateway extends Controller
 					$this->resultresp = $result['wcf']['result'];
 					$this->dataresp = null;
 					$this->messageresp = $result['wcf']['message'];
-					$this->statusresp = $result['wcf']['status'];
+					$this->statusresp = 0;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
@@ -200,7 +200,7 @@ class CredentialsGateway extends Controller
 						$this->resultresp = 'Token has Revoked on Cookie';
 						$this->dataresp = null;
 						$this->messageresp = $result['message'];
-						$this->statusresp = $result['status'];
+						$this->statusresp = 1;
 
 						$running = $this->helper->RunningResp(
 							$this->resultresp,
@@ -219,7 +219,7 @@ class CredentialsGateway extends Controller
 					$this->resultresp = $result['result'];
 					$this->dataresp = null;
 					$this->messageresp = $result['message'];
-					$this->statusresp = $result['status'];
+					$this->statusresp = 0;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
