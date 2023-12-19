@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\IRK;
 
-
 use Illuminate\Http\Request;
-
 use App\Helper\IRKHelp;
 
 class VersionGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {

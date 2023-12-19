@@ -6,14 +6,13 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\Client;
 use Validator;
 
 class IRKHelp
 {
 
+    private $request;
     public function __construct(Request $request)
     {
         // Call the parent constructor
@@ -22,45 +21,46 @@ class IRKHelp
         $this->request = $request;
     }
 
-    public function Segment($slug){
+    public function Segment($slug)
+    {
 
         $setting = [];
 
-        if($slug == 'dev'){
+        if ($slug == 'dev') {
             $setting['authorize'] = 'Authorization-dev';
             $setting['config'] = config('app.URL_DEV');
             $setting['path'] = 'Dev';
-        }else if($slug == 'stag'){
+        } else if ($slug == 'stag') {
             $setting['authorize'] = 'Authorization-stag';
             $setting['config'] = config('app.URL_STAG');
             $setting['path'] = 'Stag';
-        }else if($slug == 'live'){
+        } else if ($slug == 'live') {
             $setting['authorize'] = 'Authorization';
             $setting['config'] = config('app.URL_LIVE');
             $setting['path'] = 'Live';
-        }else{
-            $response = $this->RunningResp('Something is wrong with the path of URI segment',[],'Failed on Run',0,'');
- 
+        } else {
+            $response = $this->RunningResp('Something is wrong with the path of URI segment', [], 'Failed on Run', 0, '');
+
             $encode = json_encode($response);
             $encrypt = Crypt::encryptString($encode);
 
             return $encrypt;
         }
-        
+
         return $setting;
     }
 
     public function Environment($env)
     {
-        
+
         $session = [];
 
         // if($env === 'local'){
         //     $session['tokendraw'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->header($this->Segment($this->request->route('slug'))['authorize']);
         //     $session['tokenid'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->header($this->Segment($this->request->route('slug'))['authorize']);
         // }else{
-            $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
-            $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
+        $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
+        $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
         // }
 
         return $session;
@@ -68,7 +68,7 @@ class IRKHelp
 
     public function RunningResp($resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp = Response::HTTP_OK)
     {
-        if(!empty($ttldataresp)){
+        if (!empty($ttldataresp)) {
             $response = [
                 'result' => $resultresp, // hasil respond asli langsung dari program
                 'data' => $dataresp, // hasil data program, data kosong bisa null atau []
@@ -76,9 +76,9 @@ class IRKHelp
                 'status' => $statusresp, // 0 atau 1 (0 gagal, 1 berhasil)
                 'statuscode' => $statuscoderesp, // defaultnya 200 atau bisa diganti manual
                 'ttldata' => !empty($ttldataresp) ? $ttldataresp : 0,
-                'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
+                'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp, 10) > 0 ? (($ttldataresp - fmod($ttldataresp, 10)) / 10) + 1 : ($ttldataresp / 10) + 0 : 0
             ];
-        }else{
+        } else {
             $response = [
                 'result' => $resultresp, // hasil respond asli langsung dari program
                 'data' => $dataresp, // hasil data program, data kosong bisa null atau []
@@ -89,11 +89,11 @@ class IRKHelp
                 // 'ttlpage' => !empty($ttldataresp) ? fmod($ttldataresp,10) > 0 ? (($ttldataresp-fmod($ttldataresp,10))/10) + 1 : ($ttldataresp/10) + 0 : 0
             ];
         }
-        
+
 
         $encode = json_encode($response);
         $encrypt = Crypt::encryptString($encode);
-        $decrypt =  Crypt::decryptString($encrypt);
+        $decrypt = Crypt::decryptString($encrypt);
         $decode = json_decode($decrypt);
 
         return $decode;
@@ -111,79 +111,79 @@ class IRKHelp
 
         $encode = json_encode($response);
         $encrypt = Crypt::encryptString($encode);
-        $decrypt =  Crypt::decryptString($encrypt);
+        $decrypt = Crypt::decryptString($encrypt);
         $decode = json_decode($decrypt);
 
         return $decode;
     }
 
     public function Identifier($datareq)
-    { 
-        try{
-            if(isset($datareq->all()['nik'])){
-                if($datareq->all()['userid'] ==  $datareq->all()['nik']){
-                    if(isset($datareq->all()['userid']) && isset($datareq->all()['nik'])){
+    {
+        try {
+            if (isset($datareq->all()['nik'])) {
+                if ($datareq->all()['userid'] == $datareq->all()['nik']) {
+                    if (isset($datareq->all()['userid']) && isset($datareq->all()['nik'])) {
                         $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
                         $split_token = explode('.', $raw_token);
                         $decrypt_token = base64_decode($split_token[1]);
                         $escapestring_token = json_decode($decrypt_token);
-                       
-                        if($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik){       
-                            $response = $this->RunningResp('Match',null,'Success on Run',1,'');
+
+                        if ($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik) {
+                            $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                             $encode = json_encode($response);
                             $encrypt = Crypt::encryptString($encode);
                             return $encrypt;
-                        }else{
-                            $response = $this->RunningResp('Your data is not identified',null,'Failed on Run',0,'');
+                        } else {
+                            $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
                             $encode = json_encode($response);
                             $encrypt = Crypt::encryptString($encode);
                             return $encrypt;
                         }
-                    }else{
-                        $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
+                    } else {
+                        $response = $this->RunningResp('User is not match', null, 'Failed on Run', 0, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     }
-                }else{
-                    $response = $this->RunningResp('Data is not relevant',null,'Failed on Run',0,'');
+                } else {
+                    $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
                     $encode = json_encode($response);
                     $encrypt = Crypt::encryptString($encode);
                     return $encrypt;
                 }
-            }else{
-                if(isset($datareq->all()['userid'])){
+            } else {
+                if (isset($datareq->all()['userid'])) {
                     $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
                     $split_token = explode('.', $raw_token);
                     $decrypt_token = base64_decode($split_token[1]);
                     $escapestring_token = json_decode($decrypt_token);
-                   
-                    if($escapestring_token == $datareq->userid){    
-                        $response = $this->RunningResp('Match',null,'Success on Run',1,'');
+
+                    if ($escapestring_token == $datareq->userid) {
+                        $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
-                    }else{
-                        $response = $this->RunningResp('Your data is not identified',null,'Failed on Run',0,'');
+                    } else {
+                        $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     }
-                }else{
-                    $response = $this->RunningResp('User is not match',null,'Failed on Run',0,'');
+                } else {
+                    $response = $this->RunningResp('User is not match', null, 'Failed on Run', 0, '');
                     $encode = json_encode($response);
                     $encrypt = Crypt::encryptString($encode);
                     return $encrypt;
                 }
             }
-        }catch (\Throwable $e) {
-			return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
-        }        
+        } catch (\Throwable $e) {
+            return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
+        }
     }
 
     public function Client($param)
     {
-        if(env('APP_ENV') === 'local'){
+        if (env('APP_ENV') === 'local') {
             if ($param == 'gcp') {
                 return new Client(
                     [
@@ -195,19 +195,19 @@ class IRKHelp
                         'verify' => false
                     ]
                 );
-            }else if ($param == 'toverify_gcp') {
+            } else if ($param == 'toverify_gcp') {
                 return new Client(
                     [
                         'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
                         'headers' => [
                             'Accept' => 'application/json',
                             'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'] . '=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
                         ],
                         'verify' => false
                     ]
                 );
-            }else{
+            } else {
                 return new Client(
                     [
                         'headers' => [
@@ -215,64 +215,54 @@ class IRKHelp
                             'Content-type' => 'application/json'
                         ],
                         'verify' => false
+                    ]
+                );
+            }
+        } else {
+            if ($param == 'gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
+                    ]
+                );
+
+            } else if ($param == 'toverify_gcp') {
+                return new Client(
+                    [
+                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json',
+                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'] . '=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
+                        ]
+                    ]
+                );
+            } else {
+                return new Client(
+                    [
+                        'headers' => [
+                            'Accept' => 'application/json',
+                            'Content-type' => 'application/json'
+                        ]
                     ]
                 );
             }
         }
-        else{
-            if ($param == 'gcp') {
-                return new Client(
-                    [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Content-type' => 'application/json'
-                        ]
-                    ]
-                );
-            
-            }else if ($param == 'toverify_gcp') {
-                return new Client(
-                    [
-                        'base_uri' => config('app.URL_GCP_LARAVEL_SERVICE'),
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Content-type' => 'application/json',
-                            'Cookie' => $this->Segment($this->request->route('slug'))['authorize'].'=' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize'])
-                        ]
-                    ]
-                );
-            }else{
-                return new Client(
-                    [
-                        'headers' => [
-                            'Accept' => 'application/json',
-                            'Content-type' => 'application/json'
-                        ]
-                    ]
-                );
-            }
-        }   
-        
+
     }
 
-    public static function executeSP($data)
+    public function SPExecutor($param)
     {
-        // Membuat instance Request dengan data yang diberikan
-        $request = new Request(['data' => $data]);
 
-        // Membuat instance UtilityGateway dan memanggil SPExecutor
-        $utilityGateway = app(\App\Http\Controllers\IRK\UtilityGateway::class);
-        return $utilityGateway->SPExecutor($request);
-    }
-
-    public function SPExecutor($param){
-
-        $client = new Client(); 
+        $client = new Client();
         $response = $client->post(
-            isset($param['list_sp']) && $param['list_sp'] != null ? 
-            'http://'.$this->Segment($this->request->route('slug'))['config'].'/SPExecutor/SpExecutorRest.svc/executev2' : 
-            'http://'.$this->Segment($this->request->route('slug'))['config'].'/SPExecutor/SpExecutorRest.svc/executev3' , 
+            isset($param['list_sp']) && $param['list_sp'] != null ?
+            'http://' . $this->Segment($this->request->route('slug'))['config'] . '/SPExecutor/SpExecutorRest.svc/executev2' :
+            'http://' . $this->Segment($this->request->route('slug'))['config'] . '/SPExecutor/SpExecutorRest.svc/executev3',
             [
                 'headers' => [
                     'Content-Type' => 'text/plain'
@@ -282,24 +272,25 @@ class IRKHelp
                 ])
             ]
         );
-        
+
         $body = $response->getBody();
         $result = json_decode($body);
 
         return $result;
     }
 
-    public function Firebase($param){
+    public function Firebase($param)
+    {
         $postbody = $param->json(['data']);
 
         $response = $this->Client('other')->post(
-            'http://'.$this->Segment($this->request->route('slug'))['config'].'/RESTSecurity/RESTSecurity.svc/IDM/Firebase' , 
+            'http://' . $this->Segment($this->request->route('slug'))['config'] . '/RESTSecurity/RESTSecurity.svc/IDM/Firebase',
             [
-                RequestOptions::JSON => 
-				['param' => $postbody]
+                RequestOptions::JSON =>
+                    ['param' => $postbody]
             ]
         );
-        
+
         $body = $response->getBody();
         $temp = json_decode($body);
         $result = json_decode($temp->FirebaseResult);
@@ -307,102 +298,103 @@ class IRKHelp
         return $result;
     }
 
-    public function UploadFisik($request) {
-		$filePath = $request['filepath'];
-		$namaFile = $request['namafile'];
-		$file = $request['filefisik'];
-		$extension = $file->extension();
+    public function UploadFisik($request)
+    {
+        $filePath = $request['filepath'];
+        $namaFile = $request['namafile'];
+        $file = $request['filefisik'];
+        $extension = $file->extension();
         $mime = $file->getClientMimeType();
-        $code =  0;
+        $code = 0;
 
-		$filetypearray = array('image' => $file);
+        $filetypearray = array('image' => $file);
 
-		$rules = array(
-			'image' => 'required|max:40000' // max 40MB
-		);
+        $rules = array(
+            'image' => 'required|max:40000' // max 40MB
+        );
 
-		$validator = Validator::make($filetypearray, $rules);
+        $validator = Validator::make($filetypearray, $rules);
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return $validator;
 
-        }else{
+        } else {
 
             $filedata = array(
-                'stream' => curl_file_create($filePath,$mime,$namaFile),
+                'stream' => curl_file_create($filePath, $mime, $namaFile),
             );
 
-			$filefisik = ($request->has('filefisik') && $request['filefisik'] != '') ? $request->file('filefisik') : '';
+            $filefisik = ($request->has('filefisik') && $request['filefisik'] != '') ? $request->file('filefisik') : '';
 
-			$response = $this->Client('other')->post(
-                "http://".$this->Segment($this->request->route('slug'))['config']."/RESTSecurity/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",
+            $response = $this->Client('other')->post(
+                "http://" . $this->Segment($this->request->route('slug'))['config'] . "/RESTSecurity/RESTSecurity.svc/UploadFileDariInfraKe93?filePath={$filePath}\\{$namaFile}.{$extension}",
                 [
                     'multipart' => [
                         [
                             'name' => 'stream',
                             'contents' => file_get_contents($_FILES['filefisik']['tmp_name']),
-                            'headers'  => ['Content-Type' => $filefisik->getClientMimeType()],
+                            'headers' => ['Content-Type' => $filefisik->getClientMimeType()],
                             'filename' => $filefisik->getClientOriginalName()
                         ]
                     ],
                 ]
             );
-			
-			$result = json_decode($response->getBody());
+
+            $result = json_decode($response->getBody());
 
             return $result;
 
         }
     }
 
-	public function UploadBlob($request) {
-		$filePath = $request['filepath'];
-		$namaFile = $request['namafile'];
-		$file = $request['filefisik'];
-		$extension = $file->extension();
+    public function UploadBlob($request)
+    {
+        $filePath = $request['filepath'];
+        $namaFile = $request['namafile'];
+        $file = $request['filefisik'];
+        $extension = $file->extension();
         $mime = $file->getClientMimeType();
-        $code =  0;
+        $code = 0;
 
-		$filetypearray = array('image' => $file);
+        $filetypearray = array('image' => $file);
 
-		$rules = array(
-			'image' => 'mimes:jpeg,jpg,png|required|max:500' // max 1MB
-		);
+        $rules = array(
+            'image' => 'mimes:jpeg,jpg,png|required|max:500' // max 1MB
+        );
 
-		$validator = Validator::make($filetypearray, $rules);
+        $validator = Validator::make($filetypearray, $rules);
 
-        if ($validator->fails())
-        {
+        if ($validator->fails()) {
             return $validator;
-        }else{
+        } else {
 
             $filedata = array(
-                'stream' => curl_file_create($filePath,$mime,$namaFile),
+                'stream' => curl_file_create($filePath, $mime, $namaFile),
             );
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://".$this->Segment($this->request->route('slug'))['config']."/RESTSecurity/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
+            curl_setopt($ch, CURLOPT_URL, "http://" . $this->Segment($this->request->route('slug'))['config'] . "/RESTSecurity/RESTSecurity.svc/UploadFileBLOBDariInfraKe93?filePath={$filePath}.{$namaFile}.{$extension}");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $filedata);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:'.$mime));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:' . $mime));
 
             $result = curl_exec($ch);
 
-			return $result;
+            return $result;
 
         }
     }
 
-    public function DownloadFile($request) {
+    public function DownloadFile($request)
+    {
 
         $postbody = $request->json(['data']);
 
         $response = $this->Client('other')->post(
-            'http://'.$this->Segment($this->request->route('slug'))['config'].'/RESTSecurity/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
+            'http://' . $this->Segment($this->request->route('slug'))['config'] . '/RESTSecurity/RESTSecurity.svc/IDM/Public/DownloadFileInfra',
             [
                 RequestOptions::JSON =>
-                ['filePath' => $postbody['filePath']]
+                    ['filePath' => $postbody['filePath']]
             ]
         );
         $body = $response->getBody();
