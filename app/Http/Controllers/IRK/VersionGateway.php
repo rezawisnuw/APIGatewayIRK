@@ -3,62 +3,47 @@
 namespace App\Http\Controllers\IRK;
 
 
-
-use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ServerException;
-use GuzzleHttp\Client;
-
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Request as FacadesRequest;
-use Illuminate\Support\Facades\Crypt;
-
-use Maatwebsite\Excel\Facades\Excel;
 
 use App\Helper\IRKHelp;
 
 class VersionGateway extends Controller
 {
-    private $resultresp;
-	private $dataresp;
-	private $messageresp;
-	private $statusresp;
-	private $ttldataresp;
-	private $statuscoderesp;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug;
 
     public function __construct(Request $request)
     {
         // Call the parent constructor
         //parent::__construct();
-        
+
         $slug = $request->route('slug');
-		$this->slug = 'v1/'.$slug;
+        $this->slug = 'v1/' . $slug;
 
         $env = config('app.env');
         $this->env = $env;
 
         $helper = new IRKHelp($request);
-		$this->helper = $helper;
+        $this->helper = $helper;
 
-		$segment = $helper->Segment($slug);
-		$this->authorize = $segment['authorize'];
-		$this->config = $segment['config'];
+        $segment = $helper->Segment($slug);
+        $this->authorize = $segment['authorize'];
+        $this->config = $segment['config'];
         $this->path = $segment['path'];
 
-		$idkey = $helper->Environment($env);
-		$this->tokenid = $idkey['tokenid'];
+        $idkey = $helper->Environment($env);
+        $this->tokenid = $idkey['tokenid'];
 
         $signature = $helper->Identifier($request);
-		$this->signature = $signature;
+        $this->signature = $signature;
 
     }
 
 
-    public function get(Request $request){
+    public function get(Request $request)
+    {
         try {
-            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/version/get', [
-                'json'=>[
+            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/version/get', [
+                'json' => [
                     'data' => $request->all()
                 ]
             ]);
@@ -77,28 +62,29 @@ class VersionGateway extends Controller
                 $this->statusresp,
                 $this->ttldataresp
             );
-            
+
             return response()->json($running);
-            
-        }catch (\Throwable $e) {
+
+        } catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
-			$this->statuscoderesp = $e->getCode();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $e->getCode();
 
-			$error = $this->helper->ErrorResp(
-				$this->resultresp, 
-				$this->messageresp, 
-				$this->statuscoderesp
-			);
+            $error = $this->helper->ErrorResp(
+                $this->resultresp,
+                $this->messageresp,
+                $this->statuscoderesp
+            );
 
-			return response()->json($error);
+            return response()->json($error);
         }
     }
 
-    public function post(Request $request){
+    public function post(Request $request)
+    {
         try {
-            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug.'/version/post', [
-                'json'=>[
+            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/version/post', [
+                'json' => [
                     'data' => $request->all()
                 ]
             ]);
@@ -117,30 +103,32 @@ class VersionGateway extends Controller
                 $this->statusresp,
                 $this->ttldataresp
             );
-            
+
             return response()->json($running);
-            
-        }catch (\Throwable $e) {
+
+        } catch (\Throwable $e) {
             $this->resultresp = $e->getMessage();
-			$this->messageresp = 'Error in Catch';
-			$this->statuscoderesp = $e->getCode();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $e->getCode();
 
-			$error = $this->helper->ErrorResp(
-				$this->resultresp, 
-				$this->messageresp, 
-				$this->statuscoderesp
-			);
+            $error = $this->helper->ErrorResp(
+                $this->resultresp,
+                $this->messageresp,
+                $this->statuscoderesp
+            );
 
-			return response()->json($error);
+            return response()->json($error);
         }
     }
 
-    public function put(Request $request){
-        
+    public function put(Request $request)
+    {
+
     }
 
-    public function delete(Request $request){
-        
+    public function delete(Request $request)
+    {
+
     }
 
 }

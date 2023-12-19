@@ -5,49 +5,33 @@ namespace App\Http\Controllers\IRK;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Carbon;
-use Illuminate\database\QueryException;
-use Telegram;
-use GuzzleHttp;
-use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
-use GuzzleHttp\Psr7;
-use PDF;
-use Storage;
-use SoapClient;
 use App\Helper\IRKHelp;
-use DB;
-use Validator;
 
 class UtilityGateway extends Controller
 {
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $slug, $path, $config;
 
-	private $resultresp;
-	private $dataresp;
-	private $messageresp;
-	private $statusresp;
-	private $ttldataresp;
-	private $statuscoderesp;
-
-	public function __construct(Request $request)
+    public function __construct(Request $request)
     {
         // Call the parent constructor
         //parent::__construct();
-        
-        $slug = $request->route('slug');
-		$this->slug = 'v1/'.$slug;
 
-		$env = config('app.env');
+        $slug = $request->route('slug');
+        $this->slug = 'v1/' . $slug;
+
+        $env = config('app.env');
         $this->env = $env;
 
-		$helper = new IRKHelp($request);
-		$this->helper = $helper;
+        $helper = new IRKHelp($request);
+        $this->helper = $helper;
 
-		$segment = $helper->Segment($slug);
-		$this->authorize = $segment['authorize'];
-		$this->config = $segment['config'];
+        $segment = $helper->Segment($slug);
+        $this->authorize = $segment['authorize'];
+        $this->config = $segment['config'];
 
-		$idkey = $helper->Environment($env);
-		$this->tokendraw = $idkey['tokendraw'];
+        $idkey = $helper->Environment($env);
+        $this->tokendraw = $idkey['tokendraw'];
 
     }
 
@@ -58,25 +42,25 @@ class UtilityGateway extends Controller
         $decrypt_signature = Crypt::decryptString($signature);
         $decode_signature = json_decode($decrypt_signature);
 
-        try{
-            if($decode_signature->result == 'Match'){ 
+        try {
+            if ($decode_signature->result == 'Match') {
                 $response = $this->helper->Client('other')->post(
-                    'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Unit-Cabang',
+                    'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Unit-Cabang',
                     [
-                        RequestOptions::JSON => 
-                        ['param'=>$request['data']]
+                        RequestOptions::JSON =>
+                            ['param' => $request['data']]
                     ]
                 );
-        
+
                 $body = $response->getBody();
                 $temp = json_decode($body);
                 $result = json_decode($temp->UnitCabangResult);
-    
+
                 $this->resultresp = 'Data has been process';
                 $this->dataresp = $result;
                 $this->messageresp = 'Success on Run';
                 $this->statusresp = 1;
-    
+
                 $running = $this->helper->RunningResp(
                     $this->resultresp,
                     $this->dataresp,
@@ -84,14 +68,14 @@ class UtilityGateway extends Controller
                     $this->statusresp,
                     $this->ttldataresp
                 );
-    
+
                 return response()->json($running);
-            }else {
+            } else {
                 $this->resultresp = 'Your data is not identified';
                 $this->dataresp = $decode_signature->result;
                 $this->messageresp = 'Failed on Run';
                 $this->statusresp = 0;
-    
+
                 $running = $this->helper->RunningResp(
                     $this->resultresp,
                     $this->dataresp,
@@ -99,12 +83,11 @@ class UtilityGateway extends Controller
                     $this->statusresp,
                     $this->ttldataresp
                 );
-    
+
                 return response()->json($running);
             }
-                
-        }
-        catch(\Throwable $th){ 
+
+        } catch (\Throwable $th) {
             $this->resultresp = $th->getMessage();
             $this->messageresp = 'Error in Catch';
             $this->statuscoderesp = $th->getCode();
@@ -118,44 +101,44 @@ class UtilityGateway extends Controller
             return response()->json($error);
 
         }
-		
-	}
 
-    public function Jabatan(Request $request, $hardcode=null){
+    }
+
+    public function Jabatan(Request $request){
         $datareq['userid'] = $request['data']['nik'];
         $newRequest = new Request($datareq);
         $signature = $this->helper->Identifier($newRequest);
         $decrypt_signature = Crypt::decryptString($signature);
         $decode_signature = json_decode($decrypt_signature);
 
-        try{
-            if($decode_signature->result == 'Match'){
+        try {
+            if ($decode_signature->result == 'Match') {
 
                 $param = $request['data'];
-    
+
                 // $param['list_query'] = array([
                 // 	'conn'=>'DBPRESENSI',
                 // 	'query'=>'SELECT TOP 10 * FROM DaftarKaryawanPresensi WITH(NOLOCK);',
                 // 	'process_name'=>'GetJabatanResult'
                 // ]);
-    
+
                 $param['list_sp'] = array([
-                    'conn'=>'HRD_OPR',
-                    'payload'=>['idjabatan'=>empty($param['idjabatan']) ? "" : $param['idjabatan']],
-                    'sp_name'=>'SP_GetJabatan',
-                    'process_name'=>'GetJabatanResult'
+                    'conn' => 'HRD_OPR',
+                    'payload' => ['idjabatan' => empty($param['idjabatan']) ? "" : $param['idjabatan']],
+                    'sp_name' => 'SP_GetJabatan',
+                    'process_name' => 'GetJabatanResult'
                 ]);
-        
+
                 $response = $this->helper->SPExecutor($param);
-    
+
                 return response()->json($response);
-    
-            }else {
+
+            } else {
                 $this->resultresp = 'Your data is not identified';
                 $this->dataresp = $decode_signature->result;
                 $this->messageresp = 'Failed on Run';
                 $this->statusresp = 0;
-    
+
                 $running = $this->helper->RunningResp(
                     $this->resultresp,
                     $this->dataresp,
@@ -163,10 +146,10 @@ class UtilityGateway extends Controller
                     $this->statusresp,
                     $this->ttldataresp
                 );
-    
+
                 return response()->json($running);
             }
-        }catch(\Throwable $th){ 
+        } catch (\Throwable $th) {
             $this->resultresp = $th->getMessage();
             $this->messageresp = 'Error in Catch';
             $this->statuscoderesp = $th->getCode();
@@ -181,7 +164,7 @@ class UtilityGateway extends Controller
 
         }
 
-	}
+    }
 
     public function PresensiWFH(Request $request, $hardcode=null){
         if(!isset($request['data']['tanggal']) && $hardcode != null){
@@ -233,17 +216,17 @@ class UtilityGateway extends Controller
 
                     $nik = $param['nik'];
 
-                    $tanggal = $param['tanggal'];
-        
-                    $param['list_sp'] = array([
-                        'conn'=>'PRESENSISHIFT_DMY',
-                        'payload'=>[
-                            'nik'=>$nik,
-                            'tanggal'=>$tanggal,
-                        ],
-                        'sp_name'=>'SP_GetShiftWFH',
-                        'process_name'=>'GetShiftWFHResult'
-                    ]);
+                $tanggal = Carbon::now()->toDateString();
+	
+                $param['list_sp'] = array([
+                    'conn'=>'PRESENSISHIFT_DMY',
+                    'payload'=>[
+                        'nik'=>$nik,
+                        'tanggal'=>$tanggal,
+                    ],
+                    'sp_name'=>'SP_GetShiftWFH',
+                    'process_name'=>'GetShiftWFHResult'
+                ]);
 
                     $response = $this->helper->SPExecutor($param);
 
@@ -265,10 +248,10 @@ class UtilityGateway extends Controller
                     return response()->json($running);
                 }
 
-            }catch(\Throwable $th){ 
-                $this->resultresp = $th->getMessage();
-                $this->messageresp = 'Error in Catch';
-                $this->statuscoderesp = $th->getCode();
+        }catch(\Throwable $th){ 
+            $this->resultresp = $th->getMessage();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $th->getCode();
 
                 $error = $this->helper->ErrorResp(
                     $this->resultresp,
@@ -280,15 +263,15 @@ class UtilityGateway extends Controller
 
             }
         }
-		
-	}
+
+    }
 
     public function WorkerESS(Request $request, $hardcode=null){
 
 		if(!isset($request['data']['code']) && $hardcode != null){
 			try {
                 $response = $this->helper->Client('other')->post(
-                    'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
+                    'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
                     [
                         RequestOptions::JSON => 
                         ['param' => $hardcode['param']]
@@ -297,8 +280,8 @@ class UtilityGateway extends Controller
                 $body = $response->getBody();
                 $temp = json_decode($body);
                 $result = json_decode($temp->WorkerResult);
-                
-                if(isset($request['userid'])){
+
+                if (isset($request['userid'])) {
                     $this->resultresp = 'Data has been process';
                     $this->dataresp = $result;
                     $this->messageresp = 'Success on Run';
@@ -320,8 +303,8 @@ class UtilityGateway extends Controller
                     $shift = $this->PresensiWFH($request, $hardcode)->getData()->result->GetShiftWFHResult[0];
 
                     $newdata = array();
-                    $newdata['code'] = 1; 
-                    $newdata['nik'] = $result[0]->NIK; 
+                    $newdata['code'] = 1;
+                    $newdata['nik'] = $result[0]->NIK;
                     $newdata['nama'] = $result[0]->NAMA;
                     $newdata['nohp'] = $result[0]->NOHP_ISAKU;
                     $newdata['alias'] = '';
@@ -339,26 +322,26 @@ class UtilityGateway extends Controller
                     $newdata['platform'] = 'Mobile';
 
                     $response = $this->helper->Client('toverify_gcp')->post(
-                        'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/post',
+                        'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->slug . '/profile/post',
                         [
-                            RequestOptions::JSON =>[
+                            RequestOptions::JSON => [
                                 'data' => $newdata
                             ]
                         ]
                     );
 
                     $body = $response->getBody();
-                    
+
                     $temp = json_decode($body);
-                    
-                    if($temp->status == 'Processing'){
+
+                    if ($temp->status == 'Processing') {
                         //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 
-                        $newdata['alias'] = str_contains($temp->data,'Admin') ? $temp->data : substr($temp->data,3,8);
+                        $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
-                    }else{
+                    } else {
 
-                        return $temp->message.' '.$temp->data;
+                        return $temp->message . ' ' . $temp->data;
                     }
 
                     $newjson = new \stdClass();
@@ -387,54 +370,53 @@ class UtilityGateway extends Controller
 
                 return $error;
             }
-		} 
-		else {
+        } else {
             $datareq['userid'] = $request['data']['nik'];
             $newRequest = new Request($datareq);
             $signature = $this->helper->Identifier($newRequest);
-			$decrypt_signature = Crypt::decryptString($signature);
+            $decrypt_signature = Crypt::decryptString($signature);
             $decode_signature = json_decode($decrypt_signature);
 
-			if($request['data']['code'] == '1'){
-				if($decode_signature->result == 'Match'){ 
-					try {
-						$response = $this->helper->Client('other')->post(
-							'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
-							[
-								RequestOptions::JSON => 
-								['param' => $request['data']]
-							],
-							['Content-Type' => 'application/json']
-						);
-						$body = $response->getBody();
-						$temp = json_decode($body);
-						$result = json_decode($temp->WorkerResult);
-						
-						if(isset($request['userid'])){
-							$this->resultresp = 'Data has been process';
-							$this->dataresp = $result;
-							$this->messageresp = 'Success on Run';
-							$this->statusresp = 1;
+            if ($request['data']['code'] == '1') {
+                if ($decode_signature->result == 'Match') {
+                    try {
+                        $response = $this->helper->Client('other')->post(
+                            'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
+                            [
+                                RequestOptions::JSON =>
+                                    ['param' => $request['data']]
+                            ],
+                            ['Content-Type' => 'application/json']
+                        );
+                        $body = $response->getBody();
+                        $temp = json_decode($body);
+                        $result = json_decode($temp->WorkerResult);
 
-							$running = $this->helper->RunningResp(
-								$this->resultresp,
-								$this->dataresp,
-								$this->messageresp,
-								$this->statusresp,
-								$this->ttldataresp
-							);
+                        if (isset($request['userid'])) {
+                            $this->resultresp = 'Data has been process';
+                            $this->dataresp = $result;
+                            $this->messageresp = 'Success on Run';
+                            $this->statusresp = 1;
 
-							return response()->json($running);
+                            $running = $this->helper->RunningResp(
+                                $this->resultresp,
+                                $this->dataresp,
+                                $this->messageresp,
+                                $this->statusresp,
+                                $this->ttldataresp
+                            );
 
-						}else{
+                            return response()->json($running);
+
+                        } else {
 
 							$hardcode['param'] = ['nik' => $result[0]->NIK, 'tanggal' => Carbon::now()->toDateString()];
 
                             $shift = $this->PresensiWFH($request, $hardcode)->getData()->result->GetShiftWFHResult[0];
 
                             $newdata = array();
-                            $newdata['code'] = 1; 
-                            $newdata['nik'] = $result[0]->NIK; 
+                            $newdata['code'] = 1;
+                            $newdata['nik'] = $result[0]->NIK;
                             $newdata['nama'] = $result[0]->NAMA;
                             $newdata['nohp'] = $result[0]->NOHP_ISAKU;
                             $newdata['alias'] = '';
@@ -452,24 +434,24 @@ class UtilityGateway extends Controller
                             $newdata['platform'] = 'Mobile';
 
                             $response = $this->helper->Client('toverify_gcp')->post(
-                                'http://'.config('app.URL_GCP_LARAVEL_SERVICE').$this->slug.'/profile/post',
+                                'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->slug . '/profile/post',
                                 [
-                                    RequestOptions::JSON =>[
+                                    RequestOptions::JSON => [
                                         'data' => $newdata
                                     ]
                                 ]
                             );
 
                             $body = $response->getBody();
-                            
+
                             $temp = json_decode($body);
-                            
-                            if($temp->status == 'Processing'){
+
+                            if ($temp->status == 'Processing') {
                                 //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 
-                                $newdata['alias'] = str_contains($temp->data,'Admin') ? $temp->data : substr($temp->data,3,8);
+                                $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
-                            }else{
+                            } else {
 
                                 $this->resultresp = $temp->message;
                                 $this->dataresp = $temp->data;
@@ -512,85 +494,85 @@ class UtilityGateway extends Controller
 
                             return response()->json($running);
 
-						}
-					
-					} catch (\Throwable $th) {
-						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catch';
-						$this->statuscoderesp = $th->getCode();
+                        }
 
-						$error = $this->helper->ErrorResp(
-							$this->resultresp,
-							$this->messageresp,
-							$this->statuscoderesp
-						);
+                    } catch (\Throwable $th) {
+                        $this->resultresp = $th->getMessage();
+                        $this->messageresp = 'Error in Catch';
+                        $this->statuscoderesp = $th->getCode();
 
-						return response()->json($error);
-					}
-				} else {
-					return $decode_signature;
-				}
-			}else if($request['data']['code'] == '2'){
-				if(isset($request['data']['find'])){ 
-					try {
-						$response = $this->helper->Client('other')->post(
-							'http://'.$this->config.'/RESTSecurity/RESTSecurity.svc/IDM/Worker',
-							[
-								RequestOptions::JSON => 
-								['param' => $request['data']]
-							],
-							['Content-Type' => 'application/json']
-						);
-						$body = $response->getBody();
-						$temp = json_decode($body);
-						$result = json_decode($temp->WorkerResult);
-						
-						$this->resultresp = 'Data has been process';
-						$this->dataresp = $result;
-						$this->messageresp = 'Success on Run';
-						$this->statusresp = 1;
+                        $error = $this->helper->ErrorResp(
+                            $this->resultresp,
+                            $this->messageresp,
+                            $this->statuscoderesp
+                        );
 
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
+                        return response()->json($error);
+                    }
+                } else {
+                    return $decode_signature;
+                }
+            } else if ($request['data']['code'] == '2') {
+                if (isset($request['data']['find'])) {
+                    try {
+                        $response = $this->helper->Client('other')->post(
+                            'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
+                            [
+                                RequestOptions::JSON =>
+                                    ['param' => $request['data']]
+                            ],
+                            ['Content-Type' => 'application/json']
+                        );
+                        $body = $response->getBody();
+                        $temp = json_decode($body);
+                        $result = json_decode($temp->WorkerResult);
 
-						return response()->json($running);
-						
-					} catch (\Throwable $th) {
-						$this->resultresp = $th->getMessage();
-						$this->messageresp = 'Error in Catch';
-						$this->statuscoderesp = $th->getCode();
+                        $this->resultresp = 'Data has been process';
+                        $this->dataresp = $result;
+                        $this->messageresp = 'Success on Run';
+                        $this->statusresp = 1;
 
-						$error = $this->helper->ErrorResp(
-							$this->resultresp,
-							$this->messageresp,
-							$this->statuscoderesp
-						);
+                        $running = $this->helper->RunningResp(
+                            $this->resultresp,
+                            $this->dataresp,
+                            $this->messageresp,
+                            $this->statusresp,
+                            $this->ttldataresp
+                        );
 
-						return response()->json($error);
+                        return response()->json($running);
 
-					}
-				} else {
-					$this->resultresp = 'Your data is not verified';
-					$this->dataresp = $request['data'];
-					$this->messageresp = 'Failed on Run';
-					$this->statusresp = 0;
+                    } catch (\Throwable $th) {
+                        $this->resultresp = $th->getMessage();
+                        $this->messageresp = 'Error in Catch';
+                        $this->statuscoderesp = $th->getCode();
 
-					$running = $this->helper->RunningResp(
-						$this->resultresp,
-						$this->dataresp,
-						$this->messageresp,
-						$this->statusresp,
-						$this->ttldataresp
-					);
+                        $error = $this->helper->ErrorResp(
+                            $this->resultresp,
+                            $this->messageresp,
+                            $this->statuscoderesp
+                        );
 
-					return response()->json($running);
-				}
-			}else{
+                        return response()->json($error);
+
+                    }
+                } else {
+                    $this->resultresp = 'Your data is not verified';
+                    $this->dataresp = $request['data'];
+                    $this->messageresp = 'Failed on Run';
+                    $this->statusresp = 0;
+
+                    $running = $this->helper->RunningResp(
+                        $this->resultresp,
+                        $this->dataresp,
+                        $this->messageresp,
+                        $this->statusresp,
+                        $this->ttldataresp
+                    );
+
+                    return response()->json($running);
+                }
+            } else {
                 $this->resultresp = 'Process is not found';
                 $this->dataresp = $request['data'];
                 $this->messageresp = 'Failed on Run';
@@ -607,7 +589,7 @@ class UtilityGateway extends Controller
                 return response()->json($running);
             }
 
-		}  
+        }
     }
 
 }
