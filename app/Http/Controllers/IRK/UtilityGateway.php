@@ -331,7 +331,7 @@ class UtilityGateway extends Controller
                     $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
                     $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
                     $newjson->alias = $newdata['alias'];
-                    $newjson->presensi_wfh = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
+                    $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
 
                     return $newjson;
                 }
@@ -455,7 +455,7 @@ class UtilityGateway extends Controller
                             $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
                             $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
                             $newjson->alias = $newdata['alias'];
-                            $newjson->presensi_wfh = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
+                            $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
 
                             $this->resultresp = 'Data has been process';
                             $this->dataresp = $newjson;
