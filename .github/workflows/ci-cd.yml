@@ -2,9 +2,9 @@ name: IRK GATEWAY CI/CD
 
 on:
   push:
-    branches: [main, reza, bayu, kalis]
+    branches: [main, reza, bayu, kalis, andy]
   pull_request:
-    branches: [main, reza, bayu, kalis]
+    branches: [main, reza, bayu, kalis, andy]
     
 jobs:
   tests:
