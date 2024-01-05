@@ -54,14 +54,32 @@ class IRKHelp
     {
 
         $session = [];
+        $url = $_SERVER['HTTP_HOST'];
+        $info = parse_url($url);
 
-        // if($env === 'local'){
-        //     $session['tokendraw'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->Segment($this->request->route('slug'))['authorize'].'=Bearer'.$this->request->header($this->Segment($this->request->route('slug'))['authorize']);
-        //     $session['tokenid'] = str_contains($this->request->header($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->header($this->Segment($this->request->route('slug'))['authorize']),6) : $this->request->header($this->Segment($this->request->route('slug'))['authorize']);
-        // }else{
+        if ($env === 'local') {
+
+            $host = $info['host'];
+            $port = $info['port'];
+            $domain = $host;
+            $subdomain = $port;
+
+        } else {
+
+            $path = explode(".", $info['path']);
+            $domain = $path[1] . "." . $path[2];
+            $subdomain = $path[0];
+
+        }
+
+        config(['app.domain' => $domain]);
+        config(['app.subdomain' => $subdomain]);
+
+        $session['domain'] = config('app.domain');
+        $session['subdomain'] = config('app.subdomain');
+
         $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
         $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
-        // }
 
         return $session;
     }
