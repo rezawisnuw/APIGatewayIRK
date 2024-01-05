@@ -47,69 +47,87 @@ class CredentialsGateway extends Controller
 			if (count($request->json()->all())) {
 				$postbody = $request['data'];
 
-				$result = $this->model->Login($postbody);
+				if (!empty($this->tokenid)) {
+					$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
 
-				if ($result['wcf']['status'] == '1') {
+					if ($verify == 'Cocok') {
+						$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
 
-					$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
+						$this->resultresp = 'Token has Stored in Cookie';
+						$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 'Success on Run' : 'Failed on Run';
+						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
 
-					$this->resultresp = 'Token has Stored in Cookie';
-					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
 
-					$running = $this->helper->RunningResp(
-						$this->resultresp,
-						$this->dataresp,
-						$this->messageresp,
-						$this->statusresp,
-						$this->ttldataresp
-					);
-
-					if (!empty($this->tokenid)) {
-						$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
-
-						if ($verify == 'Cocok') {
-							return response()->json($running);
-						} else {
-							$this->resultresp = 'Token Stored not Verified';
-							$this->dataresp = $verify;
-							$this->messageresp = 'Failed on Run';
-							$this->statusresp = 0;
-
-							$running = $this->helper->RunningResp(
-								$this->resultresp,
-								$this->dataresp,
-								$this->messageresp,
-								$this->statusresp,
-								$this->ttldataresp
-							);
-
-							return response()->json($running);
-						}
-
-					} else {
 						return response()->json($running)
-							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+							->withCookie(cookie($this->authorize, 'Bearer' . $this->tokenid, '120', '/', $this->domain, false, false))
 							->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+					} else {
+						$this->resultresp = 'Token Stored not Verified';
+						$this->dataresp = $verify;
+						$this->messageresp = 'Failed on Run';
+						$this->statusresp = 0;
+
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
+
+						return response()->json($running);
 					}
 
 				} else {
+					$result = $this->model->Login($postbody);
 
-					$this->resultresp = $result['wcf']['result'];
-					$this->dataresp = null;
-					$this->messageresp = $result['wcf']['message'];
-					$this->statusresp = 0;
+					if ($result['wcf']['status'] == '1') {
 
-					$running = $this->helper->RunningResp(
-						$this->resultresp,
-						$this->dataresp,
-						$this->messageresp,
-						$this->statusresp,
-						$this->ttldataresp
-					);
+						$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
 
-					return response()->json($running);
+						$this->resultresp = 'Token has Stored in Cookie';
+						$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
+						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
+
+						return response()->json($running)
+							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+							->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+
+					} else {
+
+						$this->resultresp = $result['wcf']['result'];
+						$this->dataresp = null;
+						$this->messageresp = $result['wcf']['message'];
+						$this->statusresp = 0;
+
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
+
+						return response()->json($running);
+					}
+
 				}
 
 			} else {
@@ -244,12 +262,14 @@ class CredentialsGateway extends Controller
 				}
 			}
 		} else {
-			$raw_token = $this->tokendraw;
-			$split_token = explode('.', $raw_token);
-			$decrypt_token = base64_decode($split_token[1]);
-			$escapestring_token = json_decode($decrypt_token);
 
-			if ($escapestring_token == $request['nik']) {
+			$datareq['userid'] = $request['nik'];
+			$newRequest = new Request($datareq);
+			$signature = $this->helper->Identifier($newRequest);
+			$decrypt_signature = Crypt::decryptString($signature);
+			$decode_signature = json_decode($decrypt_signature);
+
+			if ($decode_signature->result == 'Match') {
 				for ($i = 0; $i < strlen($str); $i++) {
 					$ascii_code = ord(substr($str, $i, 1));
 					if (ctype_upper(substr($str, $i, 1))) {
@@ -264,7 +284,7 @@ class CredentialsGateway extends Controller
 					}
 				}
 			} else {
-				return ['result' => 'Your Data Is Not Identified', 'data' => $escapestring_token, 'message' => 'Bad Request', 'status' => 0, 'statuscode' => 400];
+				return ['result' => 'Your Data Is Not Identified', 'data' => $decode_signature->result, 'message' => 'Bad Request', 'status' => 0, 'statuscode' => 400];
 			}
 
 		}
