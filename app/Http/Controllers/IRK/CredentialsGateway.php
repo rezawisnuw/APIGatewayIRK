@@ -10,7 +10,7 @@ use App\Helper\IRKHelp;
 class CredentialsGateway extends Controller
 {
 
-	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature, $authorize, $model;
+	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature, $authorize, $model, $tokendraw, $tokenid, $domain;
 
 	public function __construct(Request $request)
 	{
@@ -35,11 +35,14 @@ class CredentialsGateway extends Controller
 
 		$idkey = $helper->Environment($env);
 		$this->tokendraw = $idkey['tokendraw'];
+		$this->tokenid = $idkey['tokenid'];
+		$this->domain = $idkey['domain'];
 
 	}
 
 	public function LoginESS(Request $request)
 	{
+
 		try {
 			if (count($request->json()->all())) {
 				$postbody = $request['data'];
@@ -63,19 +66,33 @@ class CredentialsGateway extends Controller
 						$this->ttldataresp
 					);
 
-					$url = $_SERVER['HTTP_HOST'];
-					$info = parse_url($url);
-					$path = $info[array_key_first($info)];
-					$host_names = explode(".", $path);
-					$domain = $host_names[1] . "." . $host_names[2];
-					$subdomain = $host_names[0];
+					if (!empty($this->tokenid)) {
+						$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
 
-					$set_domain = config(['app.domain' => $domain]);
-					$set_subdomain = config(['app.subdomain' => $subdomain]);
+						if ($verify == 'Cocok') {
+							return response()->json($running);
+						} else {
+							$this->resultresp = 'Token Stored not Verified';
+							$this->dataresp = $verify;
+							$this->messageresp = 'Failed on Run';
+							$this->statusresp = 0;
 
-					return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', config('app.domain'), false, false))
-						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('app.domain'), false, false));
+							$running = $this->helper->RunningResp(
+								$this->resultresp,
+								$this->dataresp,
+								$this->messageresp,
+								$this->statusresp,
+								$this->ttldataresp
+							);
+
+							return response()->json($running);
+						}
+
+					} else {
+						return response()->json($running)
+							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+							->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+					}
 
 				} else {
 
@@ -227,7 +244,7 @@ class CredentialsGateway extends Controller
 				}
 			}
 		} else {
-			$raw_token = $this->$this->tokendraw;
+			$raw_token = $this->tokendraw;
 			$split_token = explode('.', $raw_token);
 			$decrypt_token = base64_decode($split_token[1]);
 			$escapestring_token = json_decode($decrypt_token);
@@ -265,21 +282,21 @@ class CredentialsGateway extends Controller
 		if ($signkey == explode(':', config('app.key'))[1]) {
 
 			if ($type == 'decode') {
-				if ($category = 'AES256CBC') {
+				if ($category == 'AES256CBC') {
 					$decrypt = Crypt::decryptString($payload);
 					$decode = $decrypt;
 					//$decode = json_decode($decrypt);
-				} else if ($category = 'BASE64') {
+				} else if ($category == 'BASE64') {
 					$decode = base64_decode($payload);
 				}
 
 				return response()->json($decode);
 
 			} else if ($type == 'encode') {
-				if ($category = 'AES256CBC') {
+				if ($category == 'AES256CBC') {
 					$encode = json_encode($payload);
 					$encrypt = Crypt::encryptString($encode);
-				} else if ($category = 'BASE64') {
+				} else if ($category == 'BASE64') {
 					$encode = base64_encode($payload);
 				}
 
