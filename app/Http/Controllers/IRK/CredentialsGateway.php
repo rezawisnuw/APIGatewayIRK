@@ -65,8 +65,8 @@ class CredentialsGateway extends Controller
 
 					$url = $_SERVER['HTTP_HOST'];
 					$info = parse_url($url);
-					$host = $info['host'];
-					$host_names = explode(".", $host);
+					$path = $info[array_key_first($info)];
+					$host_names = explode(".", $path);
 					$domain = $host_names[1] . "." . $host_names[2];
 					$subdomain = $host_names[0];
 
