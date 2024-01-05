@@ -63,6 +63,16 @@ class CredentialsGateway extends Controller
 						$this->ttldataresp
 					);
 
+					$url = $_SERVER['HTTP_HOST'];
+					$info = parse_url($url);
+					$host = $info['host'];
+					$host_names = explode(".", $host);
+					$domain = $host_names[1] . "." . $host_names[2];
+					$subdomain = $host_names[0];
+
+					$set_domain = config(['app.domain' => $domain]);
+					$set_subdomain = config(['app.subdomain' => $subdomain]);
+
 					return response()->json($running)
 						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', config('app.domain'), false, false))
 						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', config('app.domain'), false, false));
