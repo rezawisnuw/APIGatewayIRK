@@ -67,7 +67,7 @@ class IRKHelp
         } else {
 
             $path = explode(".", $info['path']);
-            $domain = $path[1] . "." . $path[2];
+            $domain = "." . $path[1] . "." . $path[2];
             $subdomain = $path[0];
 
         }
