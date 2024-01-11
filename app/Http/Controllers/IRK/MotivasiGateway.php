@@ -105,10 +105,16 @@ class MotivasiGateway extends Controller
                             $newdata[] = $value;
                         }
 
+                        $this->resultresp = $result->message;
+                        $this->dataresp = $newdata;
+                        $this->messageresp = 'Success on Run';
+                        $this->statusresp = 1;
+                        $this->ttldataresp = $newtemp->data;
+
                     }
 
                     $this->resultresp = $result->message;
-                    $this->dataresp = $newdata;
+                    $this->dataresp = $result->data;
                     $this->messageresp = 'Success on Run';
                     $this->statusresp = 1;
                     $this->ttldataresp = $newtemp->data;
