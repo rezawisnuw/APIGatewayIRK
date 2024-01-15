@@ -49,12 +49,65 @@ class CredentialsGateway extends Controller
 
 				$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
 
-				if (!empty($this->tokenid)) {
-					$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
+				// if (!empty($this->tokenid)) {
+				// 	$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
+
+				// 	$this->resultresp = 'Token has Stored in Cookie';
+				// 	$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+				// 	$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 'Success on Run' : 'Failed on Run';
+				// 	$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+
+				// 	$running = $this->helper->RunningResp(
+				// 		$this->resultresp,
+				// 		$this->dataresp,
+				// 		$this->messageresp,
+				// 		$this->statusresp,
+				// 		$this->ttldataresp
+				// 	);
+
+				// 	if ($verify != 'Cocok') {
+
+				// 		$datareq['userid'] = $request['nik'];
+				// 		$newRequest = new Request($datareq);
+				// 		$signature = $this->helper->Identifier($newRequest);
+				// 		$decrypt_signature = Crypt::decryptString($signature);
+				// 		$decode_signature = json_decode($decrypt_signature);
+
+				// 		if ($decode_signature->result != 'Match') {
+
+				// 			$this->resultresp = 'Token Stored not Verified';
+				// 			$this->dataresp = $verify;
+				// 			$this->messageresp = 'Failed on Run';
+				// 			$this->statusresp = 0;
+
+				// 			$running = $this->helper->RunningResp(
+				// 				$this->resultresp,
+				// 				$this->dataresp,
+				// 				$this->messageresp,
+				// 				$this->statusresp,
+				// 				$this->ttldataresp
+				// 			);
+
+				// 			return response()->json($running);
+
+				// 		}
+
+				// 	} else {
+
+				// 		return response()->json($running)
+				// 			->withCookie(cookie($this->authorize, 'Bearer' . $this->tokenid, '120', '/', $this->domain, false, false))
+				// 			->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+
+				// 	}
+
+				// } else {
+				$result = $this->model->Login($postbody);
+
+				if ($result['wcf']['status'] == '1') {
 
 					$this->resultresp = 'Token has Stored in Cookie';
 					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 'Success on Run' : 'Failed on Run';
+					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
 					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
 
 					$running = $this->helper->RunningResp(
@@ -65,81 +118,28 @@ class CredentialsGateway extends Controller
 						$this->ttldataresp
 					);
 
-					if ($verify != 'Cocok') {
-
-						$datareq['userid'] = $request['nik'];
-						$newRequest = new Request($datareq);
-						$signature = $this->helper->Identifier($newRequest);
-						$decrypt_signature = Crypt::decryptString($signature);
-						$decode_signature = json_decode($decrypt_signature);
-
-						if ($decode_signature->result != 'Match') {
-
-							$this->resultresp = 'Token Stored not Verified';
-							$this->dataresp = $verify;
-							$this->messageresp = 'Failed on Run';
-							$this->statusresp = 0;
-
-							$running = $this->helper->RunningResp(
-								$this->resultresp,
-								$this->dataresp,
-								$this->messageresp,
-								$this->statusresp,
-								$this->ttldataresp
-							);
-
-							return response()->json($running);
-
-						}
-
-					} else {
-
-						return response()->json($running)
-							->withCookie(cookie($this->authorize, 'Bearer' . $this->tokenid, '120', '/', $this->domain, false, false))
-							->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
-
-					}
-
-				} else {
-					$result = $this->model->Login($postbody);
-
-					if ($result['wcf']['status'] == '1') {
-
-						$this->resultresp = 'Token has Stored in Cookie';
-						$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
-
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
-
-						return response()->json($running)
-							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-							->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
-
-					}
-
-					$this->resultresp = $result['wcf']['result'];
-					$this->dataresp = null;
-					$this->messageresp = $result['wcf']['message'];
-					$this->statusresp = 0;
-
-					$running = $this->helper->RunningResp(
-						$this->resultresp,
-						$this->dataresp,
-						$this->messageresp,
-						$this->statusresp,
-						$this->ttldataresp
-					);
-
-					return response()->json($running);
+					return response()->json($running)
+						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
 
 				}
+
+				$this->resultresp = $result['wcf']['result'];
+				$this->dataresp = null;
+				$this->messageresp = $result['wcf']['message'];
+				$this->statusresp = 0;
+
+				$running = $this->helper->RunningResp(
+					$this->resultresp,
+					$this->dataresp,
+					$this->messageresp,
+					$this->statusresp,
+					$this->ttldataresp
+				);
+
+				return response()->json($running);
+
+				// }
 
 			} else {
 
