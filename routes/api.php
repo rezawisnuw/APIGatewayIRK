@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dev;
 use App\Http\Controllers\Stag;
 use App\Http\Controllers\Live;
-use App\Http\Controllers\IRK;
 
 
 
@@ -22,7 +21,7 @@ use App\Http\Controllers\IRK;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
 
 //-----------------------START OLD SCHEME-----------------------------------------
@@ -97,7 +96,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // 	// 		Route::post('put', [Dev\IRKCurhatkuGateway::class, 'put']);
 // 	// 		Route::post('delete', [Dev\IRKCurhatkuGateway::class, 'delete']);
 // 	// 	});
-		
+
 // 	// });
 
 // 	//Comment Endpoint
@@ -271,7 +270,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // 	//CeritaKita Endpoint
 // 	Route::group(['prefix' => 'ceritakita'], function () {
-		
+
 // 		Route::post('signin', [Live\IRKCeritaKitaGateway::class, 'signin']);
 // 		Route::group(['middleware' => ['tokenverify']], function () {
 // 			Route::post('auth', [Live\IRKCeritaKitaGateway::class, 'auth']);
@@ -377,98 +376,121 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 //-----------------------START NEW SCHEME-----------------------------------------
 //IRK NEW Endpoint
+// Route::group([
+// 	'prefix' => 'v1/{slug}',
+// 	'where' => [
+// 		'slug' => 'dev|stag|live'
+// 	],
+// 	'middleware' => 'cors'
+// ], function () {
+
+// 	//Credentials Endpoint
+// 	Route::post('login', [IRK\CredentialsGateway::class, 'LoginESS']);
+// 	Route::post('logout', [IRK\CredentialsGateway::class, 'LogoutESS']);
+// 	Route::post('security', [IRK\CredentialsGateway::class, 'Security']);
+
+// 	//Utility Endpoint
+// 	Route::group(['middleware' => ['tokenauth']], function () {
+// 		Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
+// 		Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
+// 		Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
+// 		Route::post('presensi', [IRK\UtilityGateway::class, 'PresensiWFH']);
+// 	});
+
+// 	// //Version Endpoint
+// 	// Route::group(['prefix' => 'version'], function () {
+// 	// 	Route::post('get', [IRK\VersionGateway::class, 'get']);
+// 	// 	Route::post('post', [IRK\VersionGateway::class, 'post']);
+// 	// 	Route::post('put', [IRK\VersionGateway::class, 'put']);
+// 	// 	Route::post('delete', [IRK\VersionGateway::class, 'delete']);
+// 	// });
+
+// 	//Ceritakita Endpoint
+// 	Route::group(['prefix' => 'ceritakita', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\CeritakitaGateway::class, 'get']);
+// 		Route::post('post', [IRK\CeritakitaGateway::class, 'post']);
+// 		Route::post('put', [IRK\CeritakitaGateway::class, 'put']);
+// 		Route::post('delete', [IRK\CeritakitaGateway::class, 'delete']);
+// 	});
+
+// 	//Curhatku Endpoint
+// 	Route::group(['prefix' => 'curhatku', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\CurhatkuGateway::class, 'get']);
+// 		Route::post('post', [IRK\CurhatkuGateway::class, 'post']);
+// 		Route::post('put', [IRK\CurhatkuGateway::class, 'put']);
+// 		Route::post('delete', [IRK\CurhatkuGateway::class, 'delete']);
+// 	});
+
+// 	//Motivasi Endpoint
+// 	Route::group(['prefix' => 'motivasi', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\MotivasiGateway::class, 'get']);
+// 		Route::post('post', [IRK\MotivasiGateway::class, 'post']);
+// 		Route::post('put', [IRK\MotivasiGateway::class, 'put']);
+// 		Route::post('delete', [IRK\MotivasiGateway::class, 'delete']);
+// 	});
+
+// 	//Ideaku Endpoint
+// 	Route::group(['prefix' => 'ideaku', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\IdeakuGateway::class, 'get']);
+// 		Route::post('post', [IRK\IdeakuGateway::class, 'post']);
+// 		Route::post('put', [IRK\IdeakuGateway::class, 'put']);
+// 		Route::post('delete', [IRK\IdeakuGateway::class, 'delete']);
+// 	});
+
+// 	//Comment Endpoint
+// 	Route::group(['prefix' => 'comment', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\CommentGateway::class, 'get']);
+// 		Route::post('post', [IRK\CommentGateway::class, 'post']);
+// 		Route::post('put', [IRK\CommentGateway::class, 'put']);
+// 		Route::post('delete', [IRK\CommentGateway::class, 'delete']);
+// 	});
+
+// 	//Like Endpoint
+// 	Route::group(['prefix' => 'like', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\LikeGateway::class, 'get']);
+// 		Route::post('post', [IRK\LikeGateway::class, 'post']);
+// 		Route::post('put', [IRK\LikeGateway::class, 'put']);
+// 		Route::post('delete', [IRK\LikeGateway::class, 'delete']);
+// 	});
+
+// 	//Report Endpoint
+// 	Route::group(['prefix' => 'report', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\ReportGateway::class, 'get']);
+// 		Route::post('post', [IRK\ReportGateway::class, 'post']);
+// 		Route::post('put', [IRK\ReportGateway::class, 'put']);
+// 		Route::post('delete', [IRK\ReportGateway::class, 'delete']);
+// 	});
+
+// 	//Profile Endpoint
+// 	Route::group(['prefix' => 'profile', 'middleware' => 'tokenauth'], function () {
+// 		Route::post('get', [IRK\ProfileGateway::class, 'get']);
+// 		Route::post('post', [IRK\ProfileGateway::class, 'post']);
+// 		Route::post('put', [IRK\ProfileGateway::class, 'put']);
+// 		Route::post('delete', [IRK\ProfileGateway::class, 'delete']);
+// 	});
+
+// });
+//-----------------------END NEW SCHEME-----------------------------------------
+
+
+
+
+
+
 Route::group([
-	'prefix' => 'v1/{slug}', 
+	'prefix' => 'v{x}/{slug}',
 	'where' => [
-		'slug' => 'dev|stag|live'
+		'slug' => 'dev|stag|live',
+		'x' => '[1-9]+'
 	],
 	'middleware' => 'cors'
 ], function () {
-
-	//Credentials Endpoint
-	Route::post('login', [IRK\CredentialsGateway::class, 'LoginESS']);
-	Route::post('logout', [IRK\CredentialsGateway::class, 'LogoutESS']);
-	Route::post('security', [IRK\CredentialsGateway::class, 'Security']);
-
-	//Utility Endpoint
-	Route::group(['middleware' => ['tokenauth']], function () {
-		Route::post('worker', [IRK\UtilityGateway::class, 'WorkerESS']);
-		Route::post('unitcabang', [IRK\UtilityGateway::class, 'UnitCabang']);
-		Route::post('jabatan', [IRK\UtilityGateway::class, 'Jabatan']);
-		Route::post('presensi', [IRK\UtilityGateway::class, 'PresensiWFH']);
-	});
-
-	//Version Endpoint
 	Route::group(['prefix' => 'version'], function () {
-		Route::post('get', [IRK\VersionGateway::class, 'get']);
-		Route::post('post', [IRK\VersionGateway::class, 'post']);
-		Route::post('put', [IRK\VersionGateway::class, 'put']);
-		Route::post('delete', [IRK\VersionGateway::class, 'delete']);
-	});
+		Route::post('get', function ($x) {
+			$namespace = "App\\Http\\Controllers\\IRK_v{$x}";
+			$controllerClass = "{$namespace}\\VersionGateway";
 
-	//Ceritakita Endpoint
-	Route::group(['prefix'=>'ceritakita','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\CeritakitaGateway::class, 'get']);
-		Route::post('post', [IRK\CeritakitaGateway::class, 'post']);
-		Route::post('put', [IRK\CeritakitaGateway::class, 'put']);
-		Route::post('delete', [IRK\CeritakitaGateway::class, 'delete']);
+			return app($controllerClass)->get(request());
+		});
 	});
-
-	//Curhatku Endpoint
-	Route::group(['prefix'=>'curhatku','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\CurhatkuGateway::class, 'get']);
-		Route::post('post', [IRK\CurhatkuGateway::class, 'post']);
-		Route::post('put', [IRK\CurhatkuGateway::class, 'put']);
-		Route::post('delete', [IRK\CurhatkuGateway::class, 'delete']);
-	});
-
-	//Motivasi Endpoint
-	Route::group(['prefix'=>'motivasi','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\MotivasiGateway::class, 'get']);
-		Route::post('post', [IRK\MotivasiGateway::class, 'post']);
-		Route::post('put', [IRK\MotivasiGateway::class, 'put']);
-		Route::post('delete', [IRK\MotivasiGateway::class, 'delete']);
-	});
-	
-	//Ideaku Endpoint
-	Route::group(['prefix'=>'ideaku','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\IdeakuGateway::class, 'get']);
-		Route::post('post', [IRK\IdeakuGateway::class, 'post']);
-		Route::post('put', [IRK\IdeakuGateway::class, 'put']);
-		Route::post('delete', [IRK\IdeakuGateway::class, 'delete']);
-	});
-
-	//Comment Endpoint
-	Route::group(['prefix'=>'comment','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\CommentGateway::class, 'get']);
-		Route::post('post', [IRK\CommentGateway::class, 'post']);
-		Route::post('put', [IRK\CommentGateway::class, 'put']);
-		Route::post('delete', [IRK\CommentGateway::class, 'delete']);
-	});
-
-	//Like Endpoint
-	Route::group(['prefix'=>'like','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\LikeGateway::class, 'get']);
-		Route::post('post', [IRK\LikeGateway::class, 'post']);
-		Route::post('put', [IRK\LikeGateway::class, 'put']);
-		Route::post('delete', [IRK\LikeGateway::class, 'delete']);
-	});
-
-	//Report Endpoint
-	Route::group(['prefix'=>'report','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\ReportGateway::class, 'get']);
-		Route::post('post', [IRK\ReportGateway::class, 'post']);
-		Route::post('put', [IRK\ReportGateway::class, 'put']);
-		Route::post('delete', [IRK\ReportGateway::class, 'delete']);
-	});
-
-	//Profile Endpoint
-	Route::group(['prefix'=>'profile','middleware' => 'tokenauth'], function () {
-		Route::post('get', [IRK\ProfileGateway::class, 'get']);
-		Route::post('post', [IRK\ProfileGateway::class, 'post']);
-		Route::post('put', [IRK\ProfileGateway::class, 'put']);
-		Route::post('delete', [IRK\ProfileGateway::class, 'delete']);
-	});
-
 });
-//-----------------------END NEW SCHEME-----------------------------------------
