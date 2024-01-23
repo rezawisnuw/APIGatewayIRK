@@ -53,8 +53,6 @@ class TokenAuth
 
                 $verify = $model->ValidateTokenAuth($token['tokenid']);
 
-                return response()->json($verify);
-
                 if ($verify->DecodeResult != 'Cocok') {
                     $this->resultresp = 'Token & Signature Invalid';
                     $this->dataresp = $verify;
