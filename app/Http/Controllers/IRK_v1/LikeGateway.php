@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class LikeGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -17,7 +17,8 @@ class LikeGateway extends Controller
         //parent::__construct();
 
         $slug = $request->route('slug');
-        $this->slug = 'v1/' . $slug;
+        $x = $request->route('x');
+        $this->base = 'v' . $x . '/' . $slug;
 
         $env = config('app.env');
         $this->env = $env;
@@ -46,7 +47,7 @@ class LikeGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/like/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/like/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -95,7 +96,7 @@ class LikeGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/like/post', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/like/post', [
                     'json' => [
                         'data' => $request->all()
                     ]

@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class MotivasiGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -17,7 +17,8 @@ class MotivasiGateway extends Controller
         //parent::__construct();
 
         $slug = $request->route('slug');
-        $this->slug = 'v1/' . $slug;
+        $x = $request->route('x');
+        $this->base = 'v' . $x . '/' . $slug;
 
         $env = config('app.env');
         $this->env = $env;
@@ -46,7 +47,7 @@ class MotivasiGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/motivasi/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/motivasi/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -56,7 +57,7 @@ class MotivasiGateway extends Controller
 
                 if (!empty($result->data)) {
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/motivasi/get', [
+                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/motivasi/get', [
                         'json' => [
                             'data' => [
                                 'userid' => $userid,
@@ -170,7 +171,7 @@ class MotivasiGateway extends Controller
 
             if ($decode_signature->result == 'Match') {
                 if (count($request->file()) > 0) {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/motivasi/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/motivasi/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',
@@ -236,7 +237,7 @@ class MotivasiGateway extends Controller
                     }
 
                 } else {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/motivasi/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/motivasi/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',

@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\IRK_v1;
+namespace App\Http\Controllers\IRK_v2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use App\Helper\IRKHelp;
 
-class ProfileGateway extends Controller
+class ReportGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $env;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -47,7 +47,7 @@ class ProfileGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/report/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -96,7 +96,7 @@ class ProfileGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/post', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/report/post', [
                     'json' => [
                         'data' => $request->all()
                     ]

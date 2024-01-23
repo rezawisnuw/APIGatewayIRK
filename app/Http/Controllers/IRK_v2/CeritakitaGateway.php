@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\IRK_v1;
+namespace App\Http\Controllers\IRK_v2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use App\Helper\IRKHelp;
 
-class IdeakuGateway extends Controller
+class CeritakitaGateway extends Controller
 {
     private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
@@ -47,7 +47,7 @@ class IdeakuGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -56,13 +56,12 @@ class IdeakuGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
 
                 if (!empty($result->data)) {
-
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/get', [
+                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/get', [
                         'json' => [
                             'data' => [
                                 'userid' => $userid,
-                                'code' => '3'
+                                'code' => '2'
                             ]
                         ]
                     ]
@@ -76,7 +75,7 @@ class IdeakuGateway extends Controller
                         $format = array("jpeg", "jpg", "png");
                         foreach ($result->data as $key => $value) {
 
-                            if (!empty($value->picture) && str_contains($value->picture, $this->path . '/Ceritakita/Ideaku/') && in_array(explode('.', $value->picture)[1], $format)) {
+                            if (!empty($value->picture) && str_contains($value->picture, $this->path . '/Ceritakita/') && in_array(explode('.', $value->picture)[1], $format)) {
                                 $cloud = $this->helper->Client('other')->request('POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
@@ -119,6 +118,7 @@ class IdeakuGateway extends Controller
                     $this->statusresp = 1;
                     $this->ttldataresp = $newtemp->data;
 
+
                 } else {
                     if (count($result->data) < 1) {
                         $this->resultresp = $result->message;
@@ -159,7 +159,6 @@ class IdeakuGateway extends Controller
             );
 
             return response()->json($error);
-
         }
     }
 
@@ -170,8 +169,8 @@ class IdeakuGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                if (!empty($request->gambar)) {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/post', [
+                if (count($request->file()) > 0) {
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',
@@ -238,7 +237,7 @@ class IdeakuGateway extends Controller
                     }
 
                 } else {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',
@@ -306,7 +305,51 @@ class IdeakuGateway extends Controller
 
     public function put(Request $request)
     {
+        try {
+            $decrypt_signature = Crypt::decryptString($this->signature);
+            $decode_signature = json_decode($decrypt_signature);
 
+            if ($decode_signature->result == 'Match') {
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/put', [
+                    'json' => [
+                        'data' => $request->all()
+                    ]
+                ]);
+
+                $result = json_decode($response->getBody()->getContents());
+
+                $this->resultresp = $result->message;
+                $this->dataresp = $result->data;
+                $this->messageresp = 'Success on Run';
+                $this->statusresp = 1;
+
+                $running = $this->helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+
+                return response()->json($running);
+
+            } else {
+                return $decode_signature;
+            }
+
+        } catch (\Throwable $e) {
+            $this->resultresp = $e->getMessage();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $e->getCode();
+
+            $error = $this->helper->ErrorResp(
+                $this->resultresp,
+                $this->messageresp,
+                $this->statuscoderesp
+            );
+
+            return response()->json($error);
+        }
     }
 
     public function delete(Request $request)

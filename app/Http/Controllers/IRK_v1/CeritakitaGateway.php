@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class CeritakitaGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -17,7 +17,8 @@ class CeritakitaGateway extends Controller
         //parent::__construct();
 
         $slug = $request->route('slug');
-        $this->slug = 'v1/' . $slug;
+        $x = $request->route('x');
+        $this->base = 'v' . $x . '/' . $slug;
 
         $env = config('app.env');
         $this->env = $env;
@@ -46,7 +47,7 @@ class CeritakitaGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/ceritakita/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -56,7 +57,7 @@ class CeritakitaGateway extends Controller
 
                 if (!empty($result->data)) {
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/ceritakita/get', [
+                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/get', [
                         'json' => [
                             'data' => [
                                 'userid' => $userid,
@@ -169,7 +170,7 @@ class CeritakitaGateway extends Controller
 
             if ($decode_signature->result == 'Match') {
                 if (count($request->file()) > 0) {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/ceritakita/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',
@@ -236,7 +237,7 @@ class CeritakitaGateway extends Controller
                     }
 
                 } else {
-                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/ceritakita/post', [
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/post', [
                         'multipart' => [
                             [
                                 'name' => 'data',
@@ -309,7 +310,7 @@ class CeritakitaGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/ceritakita/put', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritakita/put', [
                     'json' => [
                         'data' => $request->all()
                     ]

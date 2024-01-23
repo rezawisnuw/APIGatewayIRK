@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Models\IRK\CredentialsModel;
 use App\Helper\IRKHelp;
 
 class TokenAuth
@@ -23,6 +22,8 @@ class TokenAuth
         try {
 
             $slug = $request->route('slug');
+
+            $x = $request->route('x');
 
             $helper = new IRKHelp($request);
 
@@ -47,9 +48,12 @@ class TokenAuth
                 return response()->json($running);
 
             } else {
-                $model = new CredentialsModel($request, $slug);
+                $modelClass = "App\\Models\\IRK_v{$x}\\CredentialsModel";
+                $model = new $modelClass($request, $slug);
 
                 $verify = $model->ValidateTokenAuth($token['tokenid']);
+
+                return response()->json($verify);
 
                 if ($verify->DecodeResult != 'Cocok') {
                     $this->resultresp = 'Token & Signature Invalid';

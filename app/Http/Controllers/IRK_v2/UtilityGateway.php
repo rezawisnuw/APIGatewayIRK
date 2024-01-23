@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\IRK_v1;
+namespace App\Http\Controllers\IRK_v2;
 
 use App\Http\Controllers\Controller;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\IRK;
+namespace App\Models\IRK_v1;
 
 use ErrorException;
 use Illuminate\Database\Eloquent\Model;
@@ -78,7 +78,7 @@ class CredentialsModel extends Model
             $token = $this->GetTokenAuth($postbody['nik']);
 
             if ($token['GetTokenForResult'] == 'Login failed, No gain access for entry !!!')
-                return ['result' => 'Unauthorized Request', 'data' => null, 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
+                return ['result' => 'Unauthorized Request', 'data' => [], 'message' => 'Bad Request', 'status' => '0', 'statuscode' => 400];
             else
                 return ['result' => $postbody['nik'], 'data' => null, 'message' => 'Success Logout', 'status' => '1', 'statuscode' => 200];
         } catch (\Throwable $th) {

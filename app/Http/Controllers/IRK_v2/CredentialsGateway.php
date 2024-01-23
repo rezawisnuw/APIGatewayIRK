@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\IRK_v1;
+namespace App\Http\Controllers\IRK_v2;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
-use App\Models\IRK_v1\CredentialsModel;
+use App\Models\IRK_v2\CredentialsModel;
 use App\Helper\IRKHelp;
 
 class CredentialsGateway extends Controller

@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class CommentGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $slug, $path, $helper, $signature;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
 
     public function __construct(Request $request)
     {
@@ -17,7 +17,8 @@ class CommentGateway extends Controller
         //parent::__construct();
 
         $slug = $request->route('slug');
-        $this->slug = 'v1/' . $slug;
+        $x = $request->route('x');
+        $this->base = 'v' . $x . '/' . $slug;
 
         $env = config('app.env');
         $this->env = $env;
@@ -46,7 +47,7 @@ class CommentGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/comment/get', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/comment/get', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -95,7 +96,7 @@ class CommentGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/comment/post', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/comment/post', [
                     'json' => [
                         'data' => $request->all()
                     ]
@@ -144,7 +145,7 @@ class CommentGateway extends Controller
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->slug . '/comment/put', [
+                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/comment/put', [
                     'json' => [
                         'data' => $request->all()
                     ]
