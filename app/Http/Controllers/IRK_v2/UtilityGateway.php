@@ -346,6 +346,21 @@ class UtilityGateway extends Controller
 
                         $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
+                        $newdata['userid'] = $newdata['nik'];
+                        $response = $this->helper->Client('toverify_gcp')->post(
+                            'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
+                            [
+                                RequestOptions::JSON => [
+                                    'data' => $newdata
+                                ]
+                            ]
+                        );
+                        $body = $response->getBody();
+
+                        $temp = json_decode($body);
+
+                        $newdata['status'] = $temp->data[0]->is_active;
+
                     } else {
 
                         return $temp->message . ' ' . $temp->data;
@@ -359,6 +374,7 @@ class UtilityGateway extends Controller
                     $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
                     $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
                     $newjson->alias = $newdata['alias'];
+                    $newjson->user_irk = $newdata['status'];
                     $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
 
                     return $newjson;
@@ -378,13 +394,14 @@ class UtilityGateway extends Controller
                 return $error;
             }
         } else {
-            $datareq['userid'] = $request['data']['nik'];
-            $newRequest = new Request($datareq);
-            $signature = $this->helper->Identifier($newRequest);
-            $decrypt_signature = Crypt::decryptString($signature);
-            $decode_signature = json_decode($decrypt_signature);
-
             if ($request['data']['code'] == '1') {
+
+                $datareq['userid'] = $request['data']['nik'];
+                $newRequest = new Request($datareq);
+                $signature = $this->helper->Identifier($newRequest);
+                $decrypt_signature = Crypt::decryptString($signature);
+                $decode_signature = json_decode($decrypt_signature);
+
                 if ($decode_signature->result == 'Match') {
                     try {
                         $response = $this->helper->Client('other')->post(
