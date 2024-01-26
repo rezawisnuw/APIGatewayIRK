@@ -374,7 +374,7 @@ class UtilityGateway extends Controller
                     $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
                     $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
                     $newjson->alias = $newdata['alias'];
-                    $newjson->user_irk = $newdata['status'];
+                    $newjson->user_irk = $newdata['status'] == 'Active' ? true : false;
                     $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
 
                     return $newjson;
@@ -472,6 +472,21 @@ class UtilityGateway extends Controller
 
                                 $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
+                                $newdata['userid'] = $newdata['nik'];
+                                $response = $this->helper->Client('toverify_gcp')->post(
+                                    'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
+                                    [
+                                        RequestOptions::JSON => [
+                                            'data' => $newdata
+                                        ]
+                                    ]
+                                );
+                                $body = $response->getBody();
+
+                                $temp = json_decode($body);
+
+                                $newdata['status'] = $temp->data[0]->is_active;
+
                             } else {
 
                                 $this->resultresp = $temp->message;
@@ -498,6 +513,7 @@ class UtilityGateway extends Controller
                             $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
                             $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
                             $newjson->alias = $newdata['alias'];
+                            $newjson->user_irk = $newdata['status'] == 'Active' ? true : false;
                             $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
 
                             $this->resultresp = 'Data has been process';
