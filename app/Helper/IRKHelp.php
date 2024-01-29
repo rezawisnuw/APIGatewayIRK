@@ -138,15 +138,27 @@ class IRKHelp
     public function Identifier($datareq)
     {
         try {
-            if (isset($datareq->all()['nik'])) {
-                if ($datareq->all()['userid'] == $datareq->all()['nik']) {
-                    if (isset($datareq->all()['userid']) && isset($datareq->all()['nik'])) {
-                        $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
-                        $split_token = explode('.', $raw_token);
-                        $decrypt_token = base64_decode($split_token[1]);
-                        $escapestring_token = json_decode($decrypt_token);
+            $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
+            $split_token = explode('.', $raw_token);
+            $decrypt_token = base64_decode($split_token[1]);
+            $escapestring_token = json_decode($decrypt_token);
 
-                        if ($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik) {
+            if (isset($datareq->all()['userid']) && isset($datareq->all()['nik'])) {
+                if ($datareq->all()['userid'] == $datareq->all()['nik']) {
+                    if ($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik) {
+                        $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
+                        $encode = json_encode($response);
+                        $encrypt = Crypt::encryptString($encode);
+                        return $encrypt;
+                    } else {
+                        $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
+                        $encode = json_encode($response);
+                        $encrypt = Crypt::encryptString($encode);
+                        return $encrypt;
+                    }
+                } else {
+                    if (isset($datareq->all()['userid'])) {
+                        if ($escapestring_token == $datareq->userid) {
                             $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                             $encode = json_encode($response);
                             $encrypt = Crypt::encryptString($encode);
@@ -158,24 +170,15 @@ class IRKHelp
                             return $encrypt;
                         }
                     } else {
-                        $response = $this->RunningResp('User is not match', null, 'Failed on Run', 0, '');
+                        $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     }
-                } else {
-                    $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
+
                 }
             } else {
                 if (isset($datareq->all()['userid'])) {
-                    $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
-                    $split_token = explode('.', $raw_token);
-                    $decrypt_token = base64_decode($split_token[1]);
-                    $escapestring_token = json_decode($decrypt_token);
-
                     if ($escapestring_token == $datareq->userid) {
                         $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                         $encode = json_encode($response);
@@ -188,7 +191,7 @@ class IRKHelp
                         return $encrypt;
                     }
                 } else {
-                    $response = $this->RunningResp('User is not match', null, 'Failed on Run', 0, '');
+                    $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
                     $encode = json_encode($response);
                     $encrypt = Crypt::encryptString($encode);
                     return $encrypt;
