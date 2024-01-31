@@ -452,7 +452,7 @@ class UtilityGateway extends Controller
                             $newdata['cabang'] = $result[0]->NAMA_CABANG;
                             $newdata['iddepartemen'] = $result[0]->ID_BAGIAN;
                             $newdata['departemen'] = $result[0]->BAGIAN;
-                            $newdata['platform'] = 'Mobile';
+                            $newdata['platform'] = 'Website';
 
                             $response = $this->helper->Client('toverify_gcp')->post(
                                 'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/post',
