@@ -318,8 +318,7 @@ class CredentialsGateway extends Controller
 			if ($type == 'decode') {
 				if ($category == 'AES256CBC') {
 					$decrypt = Crypt::decryptString($payload);
-					$decode = $decrypt;
-					//$decode = json_decode($decrypt);
+					$decode = json_decode($decrypt);
 				} else if ($category == 'BASE64') {
 					$decode = base64_decode($payload);
 				}
@@ -331,10 +330,10 @@ class CredentialsGateway extends Controller
 					$encode = json_encode($payload);
 					$encrypt = Crypt::encryptString($encode);
 				} else if ($category == 'BASE64') {
-					$encode = base64_encode($payload);
+					$encrypt = base64_encode($payload);
 				}
 
-				return response()->json($encode);
+				return response()->json($encrypt);
 			}
 
 		} else {
