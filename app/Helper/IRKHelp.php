@@ -132,7 +132,7 @@ class IRKHelp
         $decrypt = Crypt::decryptString($encrypt);
         $decode = json_decode($decrypt);
 
-        return $decode;
+        return $decrypt;
     }
 
     public function Identifier($datareq)

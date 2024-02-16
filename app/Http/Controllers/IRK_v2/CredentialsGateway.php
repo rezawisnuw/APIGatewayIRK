@@ -318,7 +318,7 @@ class CredentialsGateway extends Controller
 			if ($type == 'decode') {
 				if ($category == 'AES256CBC') {
 					$decrypt = Crypt::decryptString($payload);
-					$decode = json_decode($decrypt);
+					$decode = $decrypt;
 				} else if ($category == 'BASE64') {
 					$decode = base64_decode($payload);
 				}
