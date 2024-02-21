@@ -595,6 +595,22 @@ Route::group([
 		});
 	});
 
+	//Ceritaku Endpoint
+	Route::group(['prefix' => 'ceritaku', 'middleware' => 'tokenauth'], function () {
+		Route::post('get', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakuGateway")->get(request());
+		});
+		Route::post('post', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakuGateway")->post(request());
+		});
+		Route::post('put', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakuGateway")->put(request());
+		});
+		Route::post('delete', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakuGateway")->delete(request());
+		});
+	});
+
 	//Comment Endpoint
 	Route::group(['prefix' => 'comment', 'middleware' => 'tokenauth'], function () {
 		Route::post('get', function ($x) {
@@ -656,6 +672,22 @@ Route::group([
 		});
 		Route::post('delete', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\ProfileGateway")->delete(request());
+		});
+	});
+
+	//Faq Endpoint
+	Route::group(['prefix' => 'faq', 'middleware' => 'tokenauth'], function () {
+		Route::post('get', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->get(request());
+		});
+		Route::post('post', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->post(request());
+		});
+		Route::post('put', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->put(request());
+		});
+		Route::post('delete', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->delete(request());
 		});
 	});
 });
