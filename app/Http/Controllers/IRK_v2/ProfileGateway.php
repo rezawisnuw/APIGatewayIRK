@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class ProfileGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $env;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $env, $idkey;
 
     public function __construct(Request $request)
     {
