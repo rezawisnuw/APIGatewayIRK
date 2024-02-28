@@ -54,7 +54,7 @@ class CeritakitaGateway extends Controller
                 ]);
 
                 $result = json_decode($response->getBody()->getContents());
-
+                return $result;
                 if (!empty($result->data)) {
                     $userid = $request->userid;
                     $newresponse = $this->helper->Client('toverify_gcp')->request(

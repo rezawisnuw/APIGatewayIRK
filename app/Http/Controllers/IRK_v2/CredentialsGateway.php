@@ -11,7 +11,7 @@ use App\Helper\IRKHelp;
 class CredentialsGateway extends Controller
 {
 
-	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $authorize, $model, $tokendraw, $tokenid, $domain;
+	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $authorize, $model, $tokendraw, $tokenid, $domain, $env;
 
 	public function __construct(Request $request)
 	{

@@ -127,12 +127,14 @@ class UtilityGateway extends Controller
                 // 	'process_name'=>'GetJabatanResult'
                 // ]);
 
-                $param['list_sp'] = array([
-                    'conn' => 'HRD_OPR',
-                    'payload' => ['idjabatan' => empty($param['idjabatan']) ? "" : $param['idjabatan']],
-                    'sp_name' => 'SP_GetJabatan',
-                    'process_name' => 'GetJabatanResult'
-                ]);
+                $param['list_sp'] = array(
+                    [
+                        'conn' => 'HRD_OPR',
+                        'payload' => ['idjabatan' => empty($param['idjabatan']) ? "" : $param['idjabatan']],
+                        'sp_name' => 'SP_GetJabatan',
+                        'process_name' => 'GetJabatanResult'
+                    ]
+                );
 
                 $response = $this->helper->SPExecutor($param);
 
@@ -181,15 +183,17 @@ class UtilityGateway extends Controller
 
                 $tanggal = $param['tanggal'];
 
-                $param['list_sp'] = array([
-                    'conn' => 'PRESENSISHIFT_DMY',
-                    'payload' => [
-                        'nik' => $nik,
-                        'tanggal' => $tanggal,
-                    ],
-                    'sp_name' => 'SP_GetShiftWFH',
-                    'process_name' => 'GetShiftWFHResult'
-                ]);
+                $param['list_sp'] = array(
+                    [
+                        'conn' => 'PRESENSISHIFT_DMY',
+                        'payload' => [
+                            'nik' => $nik,
+                            'tanggal' => $tanggal,
+                        ],
+                        'sp_name' => 'SP_GetShiftWFH',
+                        'process_name' => 'GetShiftWFHResult'
+                    ]
+                );
 
                 $response = $this->helper->SPExecutor($param);
 
@@ -224,15 +228,17 @@ class UtilityGateway extends Controller
 
                     $tanggal = Carbon::now()->toDateString();
 
-                    $param['list_sp'] = array([
-                        'conn' => 'PRESENSISHIFT_DMY',
-                        'payload' => [
-                            'nik' => $nik,
-                            'tanggal' => $tanggal,
-                        ],
-                        'sp_name' => 'SP_GetShiftWFH',
-                        'process_name' => 'GetShiftWFHResult'
-                    ]);
+                    $param['list_sp'] = array(
+                        [
+                            'conn' => 'PRESENSISHIFT_DMY',
+                            'payload' => [
+                                'nik' => $nik,
+                                'tanggal' => $tanggal,
+                            ],
+                            'sp_name' => 'SP_GetShiftWFH',
+                            'process_name' => 'GetShiftWFHResult'
+                        ]
+                    );
 
                     $response = $this->helper->SPExecutor($param);
 
