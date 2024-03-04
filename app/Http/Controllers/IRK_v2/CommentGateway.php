@@ -9,7 +9,7 @@ use App\Helper\IRKHelp;
 
 class CommentGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $env;
 
     public function __construct(Request $request)
     {
