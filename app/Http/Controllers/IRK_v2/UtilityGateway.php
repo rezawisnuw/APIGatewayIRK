@@ -282,6 +282,7 @@ class UtilityGateway extends Controller
     {
 
         if (!isset($request['data']['code']) && $hardcode != null) {
+
             try {
                 $response = $this->helper->Client('other')->post(
                     'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
@@ -295,6 +296,23 @@ class UtilityGateway extends Controller
                 $result = json_decode($temp->WorkerResult);
 
                 if (isset($request['userid'])) {
+
+                    $response = $this->helper->Client('toverify_gcp')->post(
+                        'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
+                        [
+                            RequestOptions::JSON => [
+                                'data' => ['code' => $hardcode['param']['code'], 'userid' => $request['userid']]
+
+                            ]
+                        ]
+                    );
+
+                    $body = $response->getBody();
+
+                    $temp = json_decode($body);
+
+                    $result[0]->isUserIRK = $temp->data[0]->is_active;
+
                     $this->resultresp = 'Data has been process';
                     $this->dataresp = $result;
                     $this->messageresp = 'Success on Run';
@@ -409,6 +427,7 @@ class UtilityGateway extends Controller
                 $decode_signature = json_decode($decrypt_signature);
 
                 if ($decode_signature->result == 'Match') {
+
                     try {
                         $response = $this->helper->Client('other')->post(
                             'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
@@ -421,7 +440,23 @@ class UtilityGateway extends Controller
                         $temp = json_decode($body);
                         $result = json_decode($temp->WorkerResult);
 
-                        if (isset($request['userid'])) {
+                        if (!empty($hardcode)) {
+                            $response = $this->helper->Client('toverify_gcp')->post(
+                                'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
+                                [
+                                    RequestOptions::JSON => [
+                                        'data' => ['code' => $hardcode['param']['code'], 'userid' => $hardcode['param']['nik']]
+
+                                    ]
+                                ]
+                            );
+
+                            $body = $response->getBody();
+
+                            $temp = json_decode($body);
+
+                            $result[0]->isUserIRK = $temp->data[0]->is_active;
+
                             $this->resultresp = 'Data has been process';
                             $this->dataresp = $result;
                             $this->messageresp = 'Success on Run';

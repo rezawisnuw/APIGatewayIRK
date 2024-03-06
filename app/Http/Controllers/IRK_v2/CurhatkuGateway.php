@@ -57,14 +57,17 @@ class CurhatkuGateway extends Controller
 
                 if (!empty($result->data)) {
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/curhatku/get', [
-                        'json' => [
-                            'data' => [
-                                'userid' => $userid,
-                                'code' => '3'
+                    $newresponse = $this->helper->Client('toverify_gcp')->request(
+                        'POST',
+                        $this->base . '/curhatku/get',
+                        [
+                            'json' => [
+                                'data' => [
+                                    'userid' => $userid,
+                                    'code' => '3'
+                                ]
                             ]
                         ]
-                    ]
                     );
 
                     $newbody = $newresponse->getBody();
@@ -76,7 +79,8 @@ class CurhatkuGateway extends Controller
                         foreach ($result->data as $key => $value) {
 
                             if (!empty($value->picture) && str_contains($value->picture, $this->path . '/Ceritakita/Curhatku/') && in_array(explode('.', $value->picture)[1], $format)) {
-                                $cloud = $this->helper->Client('other')->request('POST',
+                                $cloud = $this->helper->Client('other')->request(
+                                    'POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
