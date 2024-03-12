@@ -63,10 +63,18 @@ class TokenAuth
                 }
 
                 if ($verifyUser->DecodeResult == 'Cocok') {
-                    if ($verifyUser_IRK == 'Active') {
+                    $uri_path = $_SERVER['REQUEST_URI'];
+                    $uri_parts = explode('/', $uri_path);
+                    $request_url = end($uri_parts);
+
+                    if ($request_url == 'get') {
                         return $next($request);
                     } else {
-                        $dataresp = 'User ' . $verifyUser_IRK;
+                        if ($verifyUser_IRK == 'Active') {
+                            return $next($request);
+                        } else {
+                            $dataresp = 'User ' . $verifyUser_IRK;
+                        }
                     }
                 } else {
                     $dataresp = 'User ' . $verifyUser;

@@ -58,14 +58,17 @@ class IdeakuGateway extends Controller
                 if (!empty($result->data)) {
 
                     $userid = $request->userid;
-                    $newresponse = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/get', [
-                        'json' => [
-                            'data' => [
-                                'userid' => $userid,
-                                'code' => '3'
+                    $newresponse = $this->helper->Client('toverify_gcp')->request(
+                        'POST',
+                        $this->base . '/ideaku/get',
+                        [
+                            'json' => [
+                                'data' => [
+                                    'userid' => $userid,
+                                    'code' => '3'
+                                ]
                             ]
                         ]
-                    ]
                     );
 
                     $newbody = $newresponse->getBody();
@@ -77,7 +80,8 @@ class IdeakuGateway extends Controller
                         foreach ($result->data as $key => $value) {
 
                             if (!empty($value->picture) && str_contains($value->picture, $this->path . '/Ceritakita/Ideaku/') && in_array(explode('.', $value->picture)[1], $format)) {
-                                $cloud = $this->helper->Client('other')->request('POST',
+                                $cloud = $this->helper->Client('other')->request(
+                                    'POST',
                                     'https://cloud.hrindomaret.com/api/irk/generateurl',
                                     [
                                         'json' => [
@@ -165,12 +169,16 @@ class IdeakuGateway extends Controller
 
     public function post(Request $request)
     {
+
         try {
             $decrypt_signature = Crypt::decryptString($this->signature);
             $decode_signature = json_decode($decrypt_signature);
 
             if ($decode_signature->result == 'Match') {
-                if (!empty($request->gambar)) {
+                if (count($request->gambar) > 0) {
+                    foreach ($request->gambar as $key => $value) {
+                        $filegambar[] = ['filegambar' => base64_encode(file_get_contents($value))];
+                    }
                     $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ideaku/post', [
                         'multipart' => [
                             [
@@ -179,13 +187,13 @@ class IdeakuGateway extends Controller
                             ],
                             [
                                 'name' => 'file',
-                                'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
+                                'contents' => json_encode($filegambar)
                             ]
                         ]
                     ]);
 
                     $result = json_decode($response->getBody()->getContents());
-
+                    return $result;
                     if (!empty($result->data)) {
                         $cloud = $this->helper->Client('other')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
                             'multipart' => [
