@@ -500,7 +500,7 @@ Route::group([
 	});
 
 	//Utility Endpoint
-	Route::group(['middleware' => ['tokenauth']], function () {
+	Route::group(['middleware' => 'tokenauth'], function () {
 		Route::post('worker', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->WorkerESS(request());
 		});
@@ -532,7 +532,7 @@ Route::group([
 	});
 
 	//Ceritakita Endpoint
-	Route::group(['prefix' => 'ceritakita', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'ceritakita', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakitaGateway")->get(request());
 		});
@@ -548,7 +548,7 @@ Route::group([
 	});
 
 	//Curhatku Endpoint
-	Route::group(['prefix' => 'curhatku', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'curhatku', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\CurhatkuGateway")->get(request());
 		});
@@ -564,7 +564,7 @@ Route::group([
 	});
 
 	//Motivasi Endpoint
-	Route::group(['prefix' => 'motivasi', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'motivasi', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\MotivasiGateway")->get(request());
 		});
@@ -580,7 +580,7 @@ Route::group([
 	});
 
 	//Ideaku Endpoint
-	Route::group(['prefix' => 'ideaku', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'ideaku', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\IdeakuGateway")->get(request());
 		});
@@ -596,7 +596,7 @@ Route::group([
 	});
 
 	//Ceritaku Endpoint
-	Route::group(['prefix' => 'ceritaku', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'ceritaku', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\CeritakuGateway")->get(request());
 		});
@@ -612,7 +612,7 @@ Route::group([
 	});
 
 	//Comment Endpoint
-	Route::group(['prefix' => 'comment', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'comment', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\CommentGateway")->get(request());
 		});
@@ -628,7 +628,7 @@ Route::group([
 	});
 
 	//Like Endpoint
-	Route::group(['prefix' => 'like', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'like', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\LikeGateway")->get(request());
 		});
@@ -644,7 +644,7 @@ Route::group([
 	});
 
 	//Report Endpoint
-	Route::group(['prefix' => 'report', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'report', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\ReportGateway")->get(request());
 		});
@@ -660,7 +660,7 @@ Route::group([
 	});
 
 	//Profile Endpoint
-	Route::group(['prefix' => 'profile', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'profile', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\ProfileGateway")->get(request());
 		});
@@ -676,7 +676,7 @@ Route::group([
 	});
 
 	//Faq Endpoint
-	Route::group(['prefix' => 'faq', 'middleware' => 'tokenauth'], function () {
+	Route::group(['prefix' => 'faq', 'middleware' => ['tokenauth', 'irkauth']], function () {
 		Route::post('get', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->get(request());
 		});

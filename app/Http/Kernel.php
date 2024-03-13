@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'tokenverify' => \App\Http\Middleware\TokenVerify::class,
         'tokenverifystag' => \App\Http\Middleware\TokenVerifyStag::class,
         'tokenverifydev' => \App\Http\Middleware\TokenVerifyDev::class,
-        'tokenauth' => \App\Http\Middleware\TokenAuth::class, // <-- add this line
+        'tokenauth' => \App\Http\Middleware\TokenAuth::class,
+        'irkauth' => \App\Http\Middleware\IRKAuth::class, // <-- add this line
     ];
 }

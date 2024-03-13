@@ -52,48 +52,48 @@ class TokenAuth
                 $model = new $modelClass($request, $slug);
                 $verifyUser = $model->ValidateTokenAuth($token['tokenid']);
 
-                $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";
-                $utility = new $utilClass($request);
-                if (isset($request['userid'])) {
-                    $hardcode['param'] = ['code' => 1, 'nik' => $request['userid']];
-                    $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->data[0]->isUserIRK;
-                } else {
-                    $hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
-                    $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->getData()->data[0]->isUserIRK;
-                }
+                // $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";
+                // $utility = new $utilClass($request);
+                // if (isset($request['userid'])) {
+                //     $hardcode['param'] = ['code' => 1, 'nik' => $request['userid']];
+                //     $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->data[0]->isUserIRK;
+                // } else {
+                //     $hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
+                //     $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->getData()->data[0]->isUserIRK;
+                // }
 
                 if ($verifyUser->DecodeResult == 'Cocok') {
-                    $uri_path = $_SERVER['REQUEST_URI'];
-                    $uri_parts = explode('/', $uri_path);
-                    $request_url = end($uri_parts);
+                    // $uri_path = $_SERVER['REQUEST_URI'];
+                    // $uri_parts = explode('/', $uri_path);
+                    // $request_url = end($uri_parts);
 
-                    if ($request_url == 'get') {
-                        return $next($request);
-                    } else {
-                        if ($verifyUser_IRK == 'Active') {
-                            return $next($request);
-                        } else {
-                            $dataresp = 'User ' . $verifyUser_IRK;
-                        }
-                    }
+                    // if ($request_url == 'get') {
+                    return $next($request);
+                    // } else {
+                    //     if ($verifyUser_IRK == 'Active') {
+                    //         return $next($request);
+                    //     } else {
+                    //         $dataresp = 'User ' . $verifyUser_IRK;
+                    //     }
+                    // }
                 } else {
-                    $dataresp = 'User ' . $verifyUser;
+                    // $dataresp = 'User ' . $verifyUser->DecodeResult;
+
+                    $this->resultresp = 'Token & Signature Invalid';
+                    $this->dataresp = $verifyUser; //$dataresp;
+                    $this->messageresp = 'Failed on Run';
+                    $this->statusresp = 0;
+
+                    $running = $helper->RunningResp(
+                        $this->resultresp,
+                        $this->dataresp,
+                        $this->messageresp,
+                        $this->statusresp,
+                        $this->ttldataresp
+                    );
+
+                    return response()->json($running);
                 }
-
-                $this->resultresp = 'Token & Signature Invalid';
-                $this->dataresp = $dataresp;
-                $this->messageresp = 'Failed on Run';
-                $this->statusresp = 0;
-
-                $running = $helper->RunningResp(
-                    $this->resultresp,
-                    $this->dataresp,
-                    $this->messageresp,
-                    $this->statusresp,
-                    $this->ttldataresp
-                );
-
-                return response()->json($running);
 
             }
 
