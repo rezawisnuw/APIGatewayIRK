@@ -81,7 +81,6 @@ class CurhatkuGateway extends Controller
                             $string_array = trim($value->picture, '{}');
                             $array_elements = explode(',', $string_array);
                             $arrayofimage = array_map('trim', $array_elements);
-                            $picture_cloud = [];
                             foreach ($arrayofimage as $key => $image) {
                                 if (!empty($image) && str_contains($image, $this->path . '/Ceritakita/Curhatku/') && in_array(explode('.', $image)[1], $format)) {
                                     $cloud = $this->helper->Client('other')->request(
@@ -99,15 +98,14 @@ class CurhatkuGateway extends Controller
 
                                     $temp = json_decode($body);
 
-                                    $imageurl[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
+                                    $picture_cloud[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
 
                                 } else {
 
-                                    $imageurl[$key] = 'File not found';
+                                    $picture_cloud = ['File not found'];
 
                                 }
 
-                                $picture_cloud = $imageurl;
                             }
 
 
