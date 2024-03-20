@@ -296,16 +296,11 @@ class UtilityGateway extends Controller
                 $result = json_decode($temp->WorkerResult);
 
                 if (isset($request['userid'])) {
-
-                    $response = $this->helper->Client('toverify_gcp')->post(
-                        'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
-                        [
-                            RequestOptions::JSON => [
-                                'data' => ['code' => $hardcode['param']['code'], 'userid' => $request['userid']]
-
-                            ]
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                        'json' => [
+                            'data' => ['code' => $hardcode['param']['code'], 'userid' => $request['userid']]
                         ]
-                    );
+                    ]);
 
                     $body = $response->getBody();
 
@@ -352,14 +347,11 @@ class UtilityGateway extends Controller
                     $newdata['departemen'] = $result[0]->BAGIAN;
                     $newdata['platform'] = 'Mobile';
 
-                    $response = $this->helper->Client('toverify_gcp')->post(
-                        'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/post',
-                        [
-                            RequestOptions::JSON => [
-                                'data' => $newdata
-                            ]
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/post', [
+                        'json' => [
+                            'data' => $newdata
                         ]
-                    );
+                    ]);
 
                     $body = $response->getBody();
 
@@ -371,14 +363,13 @@ class UtilityGateway extends Controller
                         $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
                         $newdata['userid'] = $newdata['nik'];
-                        $response = $this->helper->Client('toverify_gcp')->post(
-                            'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
-                            [
-                                RequestOptions::JSON => [
-                                    'data' => $newdata
-                                ]
+
+                        $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                            'json' => [
+                                'data' => $newdata
                             ]
-                        );
+                        ]);
+
                         $body = $response->getBody();
 
                         $temp = json_decode($body);
@@ -441,15 +432,12 @@ class UtilityGateway extends Controller
                         $result = json_decode($temp->WorkerResult);
 
                         if (!empty($hardcode)) {
-                            $response = $this->helper->Client('toverify_gcp')->post(
-                                'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
-                                [
-                                    RequestOptions::JSON => [
-                                        'data' => ['code' => $hardcode['param']['code'], 'userid' => $hardcode['param']['nik']]
 
-                                    ]
+                            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                                'json' => [
+                                    'data' => ['code' => $hardcode['param']['code'], 'userid' => $hardcode['param']['nik']]
                                 ]
-                            );
+                            ]);
 
                             $body = $response->getBody();
 
@@ -495,14 +483,11 @@ class UtilityGateway extends Controller
                             $newdata['departemen'] = $result[0]->BAGIAN;
                             $newdata['platform'] = 'Website';
 
-                            $response = $this->helper->Client('toverify_gcp')->post(
-                                'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/post',
-                                [
-                                    RequestOptions::JSON => [
-                                        'data' => $newdata
-                                    ]
+                            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/post', [
+                                'json' => [
+                                    'data' => $newdata
                                 ]
-                            );
+                            ]);
 
                             $body = $response->getBody();
 
@@ -514,14 +499,13 @@ class UtilityGateway extends Controller
                                 $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
                                 $newdata['userid'] = $newdata['nik'];
-                                $response = $this->helper->Client('toverify_gcp')->post(
-                                    'http://' . config('app.URL_GCP_LARAVEL_SERVICE') . $this->base . '/profile/get',
-                                    [
-                                        RequestOptions::JSON => [
-                                            'data' => $newdata
-                                        ]
+
+                                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                                    'json' => [
+                                        'data' => $newdata
                                     ]
-                                );
+                                ]);
+
                                 $body = $response->getBody();
 
                                 $temp = json_decode($body);
@@ -667,6 +651,91 @@ class UtilityGateway extends Controller
             }
 
         }
+    }
+
+    public function FileManager(Request $request)
+    {
+        $datareq['userid'] = isset($request['userid']) ? $request['userid'] : $request['nik'];
+        $newRequest = new Request($datareq);
+        $signature = $this->helper->Identifier($newRequest);
+        $decrypt_signature = Crypt::decryptString($signature);
+        $decode_signature = json_decode($decrypt_signature);
+
+        try {
+            if ($decode_signature->result == 'Match') {
+                $uri_path = $_SERVER['REQUEST_URI'];
+                $uri_parts = explode('/', $uri_path);
+                $request_url = end($uri_parts);
+
+                if ($request_url == 'export') {
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/filemanager/get', [
+                        'json' => [
+                            'data' => $request->all()
+                        ]
+                    ]);
+
+                    $body = $response->getBody();
+                    $temp = json_decode($body);
+                    return $temp;
+                    $result = $temp->data;
+                } else if ($request_url == 'import') {
+                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/filemanager/post', [
+                        'json' => [
+                            'data' => $request->all()
+                        ]
+                    ]);
+
+                    $body = $response->getBody();
+                    $temp = json_decode($body);
+                    $result = $temp->data;
+                }
+
+                $this->resultresp = 'Data has been process';
+                $this->dataresp = $result;
+                $this->messageresp = 'Success on Run';
+                $this->statusresp = 1;
+
+                $running = $this->helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+
+                return response()->json($running);
+            } else {
+                $this->resultresp = 'Your data is not identified';
+                $this->dataresp = $decode_signature->result;
+                $this->messageresp = 'Failed on Run';
+                $this->statusresp = 0;
+
+                $running = $this->helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+
+                return response()->json($running);
+            }
+
+        } catch (\Throwable $th) {
+            $this->resultresp = $th->getMessage();
+            $this->messageresp = 'Error in Catch';
+            $this->statuscoderesp = $th->getCode();
+
+            $error = $this->helper->ErrorResp(
+                $this->resultresp,
+                $this->messageresp,
+                $this->statuscoderesp
+            );
+
+            return response()->json($error);
+
+        }
+
     }
 
 }

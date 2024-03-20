@@ -513,6 +513,12 @@ Route::group([
 		Route::post('presensi', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->PresensiWFH(request());
 		});
+		Route::post('export', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->FileManager(request());
+		})->middleware('irkauth');
+		Route::post('import', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->FileManager(request());
+		})->middleware('irkauth');
 	});
 
 	//Version Endpoint
@@ -690,5 +696,6 @@ Route::group([
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\FaqGateway")->delete(request());
 		});
 	});
+
 });
 //-----------------------END SCHEME VERSE-----------------------------------------

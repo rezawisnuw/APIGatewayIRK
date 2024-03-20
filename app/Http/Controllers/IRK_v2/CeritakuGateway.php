@@ -56,7 +56,6 @@ class CeritakuGateway extends Controller
                 $result = json_decode($response->getBody()->getContents());
 
                 if (!empty($result->data)) {
-
                     $userid = $request->userid;
                     $newresponse = $this->helper->Client('toverify_gcp')->request(
                         'POST',
@@ -98,11 +97,11 @@ class CeritakuGateway extends Controller
 
                                     $temp = json_decode($body);
 
-                                    $picture_cloud[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
+                                    $picture_cloud[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : '';
 
                                 } else {
 
-                                    $picture_cloud = ['File not found'];
+                                    $picture_cloud = [];
 
                                 }
 
@@ -183,7 +182,6 @@ class CeritakuGateway extends Controller
                     foreach ($request->file('gambar') as $key => $value) {
                         $filegambar[] = ['filegambar' => base64_encode(file_get_contents($value))];
                     }
-
                     $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/ceritaku/post', [
                         'multipart' => [
                             [

@@ -74,39 +74,41 @@ class MotivasiGateway extends Controller
                     $newtemp = json_decode($newbody);
 
                     if ($result->status == 'Processing') {
-
                         $newdata = array();
                         $format = array("jpeg", "jpg", "png");
-
-                        foreach ($result->data as $key => $value) {
-
-                            if (!empty($value->picture) && str_contains($value->picture, $this->path . '/Ceritakita/Motivasi/') && in_array(explode('.', $value->picture)[1], $format)) {
-                                $cloud = $this->helper->Client('other')->request(
-                                    'POST',
-                                    'https://cloud.hrindomaret.com/api/irk/generateurl',
-                                    [
-                                        'json' => [
-                                            'file_name' => $value->picture,
-                                            'expired' => 30
+                        foreach ($result->data as $value) {
+                            $string_array = trim($value->picture, '{}');
+                            $array_elements = explode(',', $string_array);
+                            $images = array_map('trim', $array_elements);
+                            foreach ($images as $key => $image) {
+                                if (!empty($image) && str_contains($image, $this->path . '/Ceritakita/Motivasi/') && in_array(explode('.', $image)[1], $format)) {
+                                    $cloud = $this->helper->Client('other')->request(
+                                        'POST',
+                                        'https://cloud.hrindomaret.com/api/irk/generateurl',
+                                        [
+                                            'json' => [
+                                                'file_name' => $image,
+                                                'expired' => 30
+                                            ]
                                         ]
-                                    ]
-                                );
+                                    );
 
-                                $body = $cloud->getBody();
+                                    $body = $cloud->getBody();
 
-                                $temp = json_decode($body);
+                                    $temp = json_decode($body);
 
-                                $value->picture_cloud = $temp->status == 1 ? Crypt::encryptString($temp->url) : 'Corrupt';
+                                    $picture_cloud[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : '';
 
-                            } else {
+                                } else {
 
-                                $value->picture_cloud = 'File not found';
+                                    $picture_cloud = [];
+
+                                }
 
                             }
 
                             $value->employee = Crypt::encryptString($value->employee);
-                            $value->picture = Crypt::encryptString($value->picture);
-
+                            $value->picture_cloud = $picture_cloud;
                             $newdata[] = $value;
                         }
 
@@ -175,6 +177,9 @@ class MotivasiGateway extends Controller
 
             if ($decode_signature->result == 'Match') {
                 if (count($request->file()) > 0) {
+                    foreach ($request->file('gambar') as $key => $value) {
+                        $filegambar[] = ['filegambar' => base64_encode(file_get_contents($value))];
+                    }
                     $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/motivasi/post', [
                         'multipart' => [
                             [
@@ -183,7 +188,7 @@ class MotivasiGateway extends Controller
                             ],
                             [
                                 'name' => 'file',
-                                'contents' => json_encode(base64_encode(file_get_contents($request->gambar)))
+                                'contents' => json_encode($filegambar)
                             ]
                         ]
                     ]);
@@ -191,27 +196,36 @@ class MotivasiGateway extends Controller
                     $result = json_decode($response->getBody()->getContents());
 
                     if (!empty($result->data)) {
-                        $cloud = $this->helper->Client('other')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
-                            'multipart' => [
-                                [
-                                    'name' => 'file',
-                                    'contents' => file_get_contents($request->gambar),
-                                    'headers' => ['Content_type' => $request->gambar->getClientMimeType()],
-                                    'filename' => $request->gambar->getClientOriginalName()
-                                ],
-                                [
-                                    'name' => 'file_name',
-                                    'contents' => $result->data
+                        foreach ($result->data as $key => $value) {
+                            $cloud[] = json_decode($this->helper->Client('other')->request('POST', 'https://cloud.hrindomaret.com/api/irk/upload', [
+                                'multipart' => [
+                                    [
+                                        'name' => 'file',
+                                        'contents' => base64_encode(file_get_contents($request->gambar[$key])),
+                                        'headers' => ['Content_type' => $request->gambar[$key]->getClientMimeType()],
+                                        'filename' => $request->gambar[$key]->getClientOriginalName()
+                                    ],
+                                    [
+                                        'name' => 'file_name',
+                                        'contents' => $value
+                                    ]
                                 ]
-                            ]
-                        ]);
+                            ])->getBody()->getContents());
 
-                        $resultcloud = json_decode($cloud->getBody()->getContents());
+                            $statuscloud[] = $cloud[$key]->status;
+                        }
 
-                        $this->resultresp = $resultcloud->message;
-                        $this->dataresp = $resultcloud->data;
-                        $this->messageresp = 'Success on Run';
-                        $this->statusresp = 1;
+                        if (in_array(0, $statuscloud)) {
+                            $this->resultresp = 'File unsuccessfull uploaded';
+                            $this->dataresp = null;
+                            $this->messageresp = 'Failed on Run';
+                            $this->statusresp = 0;
+                        } else {
+                            $this->resultresp = 'File successfully uploaded';
+                            $this->dataresp = null;
+                            $this->messageresp = 'Success on Run';
+                            $this->statusresp = 1;
+                        }
 
                         $running = $this->helper->RunningResp(
                             $this->resultresp,
