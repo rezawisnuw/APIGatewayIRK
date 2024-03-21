@@ -676,8 +676,8 @@ class UtilityGateway extends Controller
 
                     $body = $response->getBody();
                     $temp = json_decode($body);
-                    return $temp;
                     $result = $temp->data;
+
                 } else if ($request_url == 'import') {
                     $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/filemanager/post', [
                         'json' => [

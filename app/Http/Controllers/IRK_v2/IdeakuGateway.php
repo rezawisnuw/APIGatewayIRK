@@ -203,7 +203,7 @@ class IdeakuGateway extends Controller
                                 'multipart' => [
                                     [
                                         'name' => 'file',
-                                        'contents' => base64_encode(file_get_contents($request->gambar[$key])),
+                                        'contents' => file_get_contents($request->gambar[$key]),
                                         'headers' => ['Content_type' => $request->gambar[$key]->getClientMimeType()],
                                         'filename' => $request->gambar[$key]->getClientOriginalName()
                                     ],
