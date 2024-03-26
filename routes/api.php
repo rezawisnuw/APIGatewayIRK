@@ -507,6 +507,9 @@ Route::group([
 		Route::post('unitcabang', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->UnitCabang(request());
 		});
+		Route::post('direktorat', function ($x) {
+			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->Direktorat(request());
+		});
 		Route::post('jabatan', function ($x) {
 			return app("App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway")->Jabatan(request());
 		});

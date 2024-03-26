@@ -49,7 +49,8 @@ class CredentialsGateway extends Controller
 			if (count($request->json()->all())) {
 				$postbody = $request['data'];
 
-				$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
+				//$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
+				$hardcode['param'] = ['code' => 3, 'userid' => $request['data']['nik'], 'karyawan' => $request['data']['nik']];
 
 				// if (!empty($this->tokenid)) {
 				// 	$verify = $this->model->ValidateTokenAuth($this->tokenid)->DecodeResult;
