@@ -137,24 +137,82 @@ class IRKHelp
 
     public function Identifier($datareq)
     {
-        try {
-            $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
-            $split_token = explode('.', $raw_token);
-            $decrypt_token = base64_decode($split_token[1]);
-            $escapestring_token = json_decode($decrypt_token);
 
-            if (isset($datareq->all()['userid']) && isset($datareq->all()['nik'])) {
-                if ($datareq->all()['userid'] == $datareq->all()['nik']) {
-                    if ($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik) {
+        try {
+
+            if (isset($datareq['userid']) || isset($datareq['nik'])) { //get datareq for worker when hit directly first without using cookie ex: Mobile Login Flow
+                if (isset($datareq['userid']) && isset($datareq['nik'])) {
+                    if ($datareq['userid'] == $datareq['nik']) {
                         $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     } else {
-                        $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
+                        if (isset($datareq['userid'])) {
+                            $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        } else {
+                            $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }
+
+                    }
+                } else {
+                    if (isset($datareq['userid'])) {
+                        $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
                         $encode = json_encode($response);
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
+                    } else {
+                        $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
+                        $encode = json_encode($response);
+                        $encrypt = Crypt::encryptString($encode);
+                        return $encrypt;
+                    }
+                }
+            } else { //get datareq->all() for worker when hit directly first, with using cookie ex: Website Login Flow
+                $raw_token = $this->Environment(env('APP_ENV'))['tokendraw'];
+                $split_token = explode('.', $raw_token);
+                $decrypt_token = base64_decode($split_token[1]);
+                $escapestring_token = json_decode($decrypt_token);
+
+                if (isset($datareq->all()['userid']) && isset($datareq->all()['nik'])) {
+                    if ($datareq->all()['userid'] == $datareq->all()['nik']) {
+                        if ($escapestring_token == $datareq->userid && $escapestring_token == $datareq->nik) {
+                            $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        } else {
+                            $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }
+                    } else {
+                        if (isset($datareq->all()['userid'])) {
+                            if ($escapestring_token == $datareq->userid) {
+                                $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
+                                $encode = json_encode($response);
+                                $encrypt = Crypt::encryptString($encode);
+                                return $encrypt;
+                            } else {
+                                $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
+                                $encode = json_encode($response);
+                                $encrypt = Crypt::encryptString($encode);
+                                return $encrypt;
+                            }
+                        } else {
+                            $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
+                            $encode = json_encode($response);
+                            $encrypt = Crypt::encryptString($encode);
+                            return $encrypt;
+                        }
+
                     }
                 } else {
                     if (isset($datareq->all()['userid'])) {
@@ -175,28 +233,9 @@ class IRKHelp
                         $encrypt = Crypt::encryptString($encode);
                         return $encrypt;
                     }
-
-                }
-            } else {
-                if (isset($datareq->all()['userid'])) {
-                    if ($escapestring_token == $datareq->userid) {
-                        $response = $this->RunningResp('Match', null, 'Success on Run', 1, '');
-                        $encode = json_encode($response);
-                        $encrypt = Crypt::encryptString($encode);
-                        return $encrypt;
-                    } else {
-                        $response = $this->RunningResp('Your data is not identified', null, 'Failed on Run', 0, '');
-                        $encode = json_encode($response);
-                        $encrypt = Crypt::encryptString($encode);
-                        return $encrypt;
-                    }
-                } else {
-                    $response = $this->RunningResp('Data is not relevant', null, 'Failed on Run', 0, '');
-                    $encode = json_encode($response);
-                    $encrypt = Crypt::encryptString($encode);
-                    return $encrypt;
                 }
             }
+
         } catch (\Throwable $e) {
             return $this->ErrorResp($e->getMessage(), 'Error in Catch', $e->getCode());
         }

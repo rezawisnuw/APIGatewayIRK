@@ -12,7 +12,7 @@ use App\Helper\IRKHelp;
 
 class UtilityGateway extends Controller
 {
-    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $base, $path, $config;
+    private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $signature, $helper, $base, $path, $config, $tokendraw;
 
     public function __construct(Request $request)
     {
@@ -112,10 +112,14 @@ class UtilityGateway extends Controller
 
     public function StrukturKaryawan(Request $request, $hardcode = null)
     {
-
         $datareq['userid'] = empty($hardcode) ? $request['data']['userid'] : $hardcode['param']['userid'];
         $newRequest = new Request($datareq);
-        $signature = $this->helper->Identifier($newRequest);
+        $split_token = explode('.', $this->tokendraw);
+        if (count($split_token) > 1) {
+            $signature = $this->helper->Identifier($newRequest);
+        } else {
+            $signature = $this->helper->Identifier($datareq);
+        }
         $decrypt_signature = Crypt::decryptString($signature);
         $decode_signature = json_decode($decrypt_signature);
 
@@ -347,16 +351,20 @@ class UtilityGateway extends Controller
 
             try {
 
-                $response = $this->helper->Client('other')->post(
-                    'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
-                    [
-                        RequestOptions::JSON =>
-                            ['param' => $hardcode['param']]
-                    ]
-                );
-                $body = $response->getBody();
-                $temp = json_decode($body);
-                $result = $hardcode['param']['code'] == 1 ? json_decode($temp->WorkerResult) : $this->StrukturKaryawan($request, $hardcode)->getData()->result->GetStrukturKaryawanResult[0];
+                if ($hardcode['param']['code'] == 3) {
+                    $result = $this->StrukturKaryawan($request, $hardcode)->getData()->result->GetStrukturKaryawanResult[0];
+                } else {
+                    $response = $this->helper->Client('other')->post(
+                        'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
+                        [
+                            RequestOptions::JSON =>
+                                ['param' => $hardcode['param']]
+                        ]
+                    );
+                    $body = $response->getBody();
+                    $temp = json_decode($body);
+                    $result = json_decode($temp->WorkerResult);
+                }
 
                 if (isset($request['userid'])) { //for middlewware irk authentication
                     $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
