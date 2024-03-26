@@ -112,21 +112,16 @@ class UtilityGateway extends Controller
 
     public function StrukturKaryawan(Request $request, $hardcode = null)
     {
-        $datareq['userid'] = empty($hardcode) ? $request['data']['userid'] : $hardcode['param']['userid'];
+        $datareq['userid'] = $request['data']['userid'];
         $newRequest = new Request($datareq);
-        $split_token = explode('.', $this->tokendraw);
-        if (count($split_token) > 1) {
-            $signature = $this->helper->Identifier($newRequest);
-        } else {
-            $signature = $this->helper->Identifier($datareq);
-        }
+        $signature = $this->helper->Identifier($newRequest);
         $decrypt_signature = Crypt::decryptString($signature);
         $decode_signature = json_decode($decrypt_signature);
 
         try {
             if ($decode_signature->result == 'Match') {
 
-                $param = empty($hardcode) ? $request['data'] : $hardcode['param'];
+                $param = $request['data'];
 
                 $param['list_sp'] = array(
                     [
@@ -352,7 +347,19 @@ class UtilityGateway extends Controller
             try {
 
                 if ($hardcode['param']['code'] == 3) {
-                    $result = $this->StrukturKaryawan($request, $hardcode)->getData()->result->GetStrukturKaryawanResult[0];
+
+                    $param = $hardcode['param'];
+
+                    $body['list_sp'] = array(
+                        [
+                            'conn' => 'HRD_OPR',
+                            'payload' => ['karyawan' => $param['karyawan']],
+                            'sp_name' => 'SP_GetStrukturKaryawan',
+                            'process_name' => 'GetStrukturKaryawanResult'
+                        ]
+                    );
+                    $temp = $this->helper->SPExecutor($body);
+                    $result = $temp->result->GetStrukturKaryawanResult[0];
                 } else {
                     $response = $this->helper->Client('other')->post(
                         'http://' . $this->config . '/RESTSecurity/RESTSecurity.svc/IDM/Worker',
@@ -715,82 +722,67 @@ class UtilityGateway extends Controller
             } else if ($request['data']['code'] == '3') {
                 if (isset($request['data']['karyawan'])) {
                     try {
-                        $result = $this->StrukturKaryawan($request, '')->getData()->result->GetStrukturKaryawanResult[0];
 
-                        if (!empty($hardcode)) { //for middlewware irk authentication
+                        if ($request['data']['userid'] == $request['data']['karyawan']) {
+                            $result = $this->StrukturKaryawan($request, '')->getData()->result->GetStrukturKaryawanResult[0];
 
-                            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
-                                'json' => [
-                                    'data' => ['code' => 1, 'userid' => $hardcode['param']['userid']]
-                                ]
-                            ]);
-
-                            $body = $response->getBody();
-
-                            $temp = json_decode($body);
-
-                            $result->isUserIRK = $temp->data[0]->is_active;
-
-                            $this->resultresp = 'Data has been process';
-                            $this->dataresp = $result;
-                            $this->messageresp = 'Success on Run';
-                            $this->statusresp = 1;
-
-                            $running = $this->helper->RunningResp(
-                                $this->resultresp,
-                                $this->dataresp,
-                                $this->messageresp,
-                                $this->statusresp,
-                                $this->ttldataresp
-                            );
-
-                            return response()->json($running);
-
-                        } else {
-                            $hardcode_presensi['param'] = ['nik' => $result->nik, 'tanggal' => Carbon::now()->toDateString()];
-                            $shift = $this->PresensiWFH($request, '')->getData()->result->GetShiftWFHResult[0];
-
-                            $newdata = array();
-                            $newdata['code'] = 1;
-                            $newdata['nik'] = $result->nik;
-                            $newdata['nama'] = $result->nama;
-                            $newdata['nohp'] = $result->nomor_telepon;
-                            $newdata['alias'] = '';
-                            $newdata['email'] = $result->email;
-                            $newdata['kelamin'] = $result->jenis_kelamin;
-                            $newdata['status'] = '';
-                            $newdata['idjabatan'] = $result->kode_jabatan;
-                            $newdata['jabatan'] = $result->jabatan;
-                            $newdata['idunit'] = $result->id_pt;
-                            $newdata['unit'] = $result->nama_pt;
-                            $newdata['idcabang'] = $result->id_cabang;
-                            $newdata['cabang'] = $result->nama_cabang;
-                            $newdata['iddepartemen'] = $result->id_bagian;
-                            $newdata['departemen'] = $result->bagian;
-                            $newdata['iddirektorat'] = $result->grandparent_organization_number;
-                            $newdata['direktorat'] = $result->grandparent_organization;
-                            $newdata['iddivisi'] = $result->parent_organization_number;
-                            $newdata['divisi'] = $result->parent_organization;
-                            $newdata['platform'] = 'Website';
-
-                            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/post', [
-                                'json' => [
-                                    'data' => $newdata
-                                ]
-                            ]);
-
-                            $body = $response->getBody();
-
-                            $temp = json_decode($body);
-
-                            if ($temp->status == 'Processing') {
-                                //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
-
-                                $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
-
-                                $newdata['userid'] = $newdata['nik'];
+                            if (!empty($hardcode)) { //for middlewware irk authentication
 
                                 $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                                    'json' => [
+                                        'data' => ['code' => 1, 'userid' => $hardcode['param']['userid']]
+                                    ]
+                                ]);
+
+                                $body = $response->getBody();
+
+                                $temp = json_decode($body);
+
+                                $result->isUserIRK = $temp->data[0]->is_active;
+
+                                $this->resultresp = 'Data has been process';
+                                $this->dataresp = $result;
+                                $this->messageresp = 'Success on Run';
+                                $this->statusresp = 1;
+
+                                $running = $this->helper->RunningResp(
+                                    $this->resultresp,
+                                    $this->dataresp,
+                                    $this->messageresp,
+                                    $this->statusresp,
+                                    $this->ttldataresp
+                                );
+
+                                return response()->json($running);
+
+                            } else {
+                                $hardcode_presensi['param'] = ['nik' => $result->nik, 'tanggal' => Carbon::now()->toDateString()];
+                                $shift = $this->PresensiWFH($request, '')->getData()->result->GetShiftWFHResult[0];
+
+                                $newdata = array();
+                                $newdata['code'] = 1;
+                                $newdata['nik'] = $result->nik;
+                                $newdata['nama'] = $result->nama;
+                                $newdata['nohp'] = $result->nomor_telepon;
+                                $newdata['alias'] = '';
+                                $newdata['email'] = $result->email;
+                                $newdata['kelamin'] = $result->jenis_kelamin;
+                                $newdata['status'] = '';
+                                $newdata['idjabatan'] = $result->kode_jabatan;
+                                $newdata['jabatan'] = $result->jabatan;
+                                $newdata['idunit'] = $result->id_pt;
+                                $newdata['unit'] = $result->nama_pt;
+                                $newdata['idcabang'] = $result->id_cabang;
+                                $newdata['cabang'] = $result->nama_cabang;
+                                $newdata['iddepartemen'] = $result->id_bagian;
+                                $newdata['departemen'] = $result->bagian;
+                                $newdata['iddirektorat'] = $result->grandparent_organization_number;
+                                $newdata['direktorat'] = $result->grandparent_organization;
+                                $newdata['iddivisi'] = $result->parent_organization_number;
+                                $newdata['divisi'] = $result->parent_organization;
+                                $newdata['platform'] = 'Website';
+
+                                $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/post', [
                                     'json' => [
                                         'data' => $newdata
                                     ]
@@ -800,12 +792,91 @@ class UtilityGateway extends Controller
 
                                 $temp = json_decode($body);
 
-                                $newdata['status'] = $temp->data[0]->is_active;
+                                if ($temp->status == 'Processing') {
+                                    //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 
+                                    $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
+
+                                    $newdata['userid'] = $newdata['nik'];
+
+                                    $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/profile/get', [
+                                        'json' => [
+                                            'data' => $newdata
+                                        ]
+                                    ]);
+
+                                    $body = $response->getBody();
+
+                                    $temp = json_decode($body);
+
+                                    $newdata['status'] = $temp->data[0]->is_active;
+
+                                } else {
+
+                                    $this->resultresp = $temp->message;
+                                    $this->dataresp = $temp->data;
+                                    $this->messageresp = 'Failed on Run';
+                                    $this->statusresp = 0;
+
+                                    $running = $this->helper->RunningResp(
+                                        $this->resultresp,
+                                        $this->dataresp,
+                                        $this->messageresp,
+                                        $this->statusresp,
+                                        $this->ttldataresp
+                                    );
+
+                                    return response()->json($running);
+                                }
+
+                                $newjson = new \stdClass();
+
+                                $newjson->nik = Crypt::encryptString($newdata['nik']);
+                                $newjson->nama = $newdata['nama'];
+                                $newjson->email = Crypt::encryptString($newdata['email']);
+                                $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
+                                $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
+                                $newjson->alias = $newdata['alias'];
+                                $newjson->user_irk = $newdata['status'] == 'Active' ? true : false;
+                                $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
+
+                                $this->resultresp = 'Data has been process';
+                                $this->dataresp = $newjson;
+                                $this->messageresp = 'Success on Run';
+                                $this->statusresp = 1;
+
+                                $running = $this->helper->RunningResp(
+                                    $this->resultresp,
+                                    $this->dataresp,
+                                    $this->messageresp,
+                                    $this->statusresp,
+                                    $this->ttldataresp
+                                );
+
+                                return response()->json($running);
+
+                            }
+                        } else {
+                            $result = $this->StrukturKaryawan($request, '')->getData()->result->GetStrukturKaryawanResult;
+
+                            if (count($result) > 0) {
+                                $this->resultresp = 'Data has been process';
+                                $this->dataresp = $result;
+                                $this->messageresp = 'Success on Run';
+                                $this->statusresp = 1;
+
+                                $running = $this->helper->RunningResp(
+                                    $this->resultresp,
+                                    $this->dataresp,
+                                    $this->messageresp,
+                                    $this->statusresp,
+                                    $this->ttldataresp
+                                );
+
+                                return response()->json($running);
                             } else {
-
-                                $this->resultresp = $temp->message;
-                                $this->dataresp = $temp->data;
+                                $this->resultresp = 'Data is cannot be process';
+                                $this->dataresp = $result;
                                 $this->messageresp = 'Failed on Run';
                                 $this->statusresp = 0;
 
@@ -819,32 +890,6 @@ class UtilityGateway extends Controller
 
                                 return response()->json($running);
                             }
-
-                            $newjson = new \stdClass();
-
-                            $newjson->nik = Crypt::encryptString($newdata['nik']);
-                            $newjson->nama = $newdata['nama'];
-                            $newjson->email = Crypt::encryptString($newdata['email']);
-                            $newjson->nohp_isaku = Crypt::encryptString($newdata['nohp']);
-                            $newjson->jenis_kelamin = $newdata['nik'] == '000001' ? 'PRIA' : ($newdata['nik'] == '000002' ? 'WANITA' : $newdata['kelamin']);
-                            $newjson->alias = $newdata['alias'];
-                            $newjson->user_irk = $newdata['status'] == 'Active' ? true : false;
-                            $newjson->isPresensiAvailable = empty($shift) ? false : ($shift->jenisshift == 'WH' ? true : false);
-
-                            $this->resultresp = 'Data has been process';
-                            $this->dataresp = $newjson;
-                            $this->messageresp = 'Success on Run';
-                            $this->statusresp = 1;
-
-                            $running = $this->helper->RunningResp(
-                                $this->resultresp,
-                                $this->dataresp,
-                                $this->messageresp,
-                                $this->statusresp,
-                                $this->ttldataresp
-                            );
-
-                            return response()->json($running);
 
                         }
 
