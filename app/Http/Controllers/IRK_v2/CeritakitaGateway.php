@@ -98,7 +98,7 @@ class CeritakitaGateway extends Controller
 
                                     $temp = json_decode($body);
 
-                                    $picture_cloud[] = $temp->status == 1 ? $temp->url : '';
+                                    $picture_cloud[] = $temp->status == 1 ? Crypt::encryptString($temp->url) : '';
 
                                 } else {
 
