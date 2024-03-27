@@ -79,8 +79,9 @@ class IdeakuGateway extends Controller
                         foreach ($result->data as $value) {
                             $string_array = trim($value->picture, '{}');
                             $array_elements = explode(',', $string_array);
-                            $images = array_map('trim', $array_elements);
-                            foreach ($images as $key => $image) {
+                            $arrayofimage = array_map('trim', $array_elements);
+                            $picture_cloud = [];
+                            foreach ($arrayofimage as $image) {
                                 if (!empty($image) && str_contains($image, $this->path . '/Ceritakita/Ideaku/') && in_array(explode('.', $image)[1], $format)) {
                                     $cloud = $this->helper->Client('other')->request(
                                         'POST',
@@ -97,7 +98,7 @@ class IdeakuGateway extends Controller
 
                                     $temp = json_decode($body);
 
-                                    $picture_cloud[$key] = $temp->status == 1 ? Crypt::encryptString($temp->url) : '';
+                                    $picture_cloud[] = $temp->status == 1 ? Crypt::encryptString($temp->url) : '';
 
                                 } else {
 
