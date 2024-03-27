@@ -52,7 +52,7 @@ class IRKAuth
             // $model = new $modelClass($request, $slug);
             // $verifyUser = $model->ValidateTokenAuth($token['tokenid']);
 
-            if ($x == 2) {
+            if ($x > 1) {
                 $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";
                 $utility = new $utilClass($request);
 
