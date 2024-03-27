@@ -52,49 +52,53 @@ class IRKAuth
             // $model = new $modelClass($request, $slug);
             // $verifyUser = $model->ValidateTokenAuth($token['tokenid']);
 
-            $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";
-            $utility = new $utilClass($request);
+            if ($x == 2) {
+                $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";
+                $utility = new $utilClass($request);
 
-            if (isset($request['userid'])) {
-                // $hardcode['param'] = ['code' => 1, 'nik' => $request['userid']];
-                $hardcode['param'] = ['code' => 3, 'userid' => $request['userid'], 'karyawan' => $request['userid']];
-                $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->data->isUserIRK;
-            }
+                if (isset($request['userid'])) {
+                    // $hardcode['param'] = ['code' => 1, 'nik' => $request['userid']];
+                    $hardcode['param'] = ['code' => 3, 'userid' => $request['userid'], 'karyawan' => $request['userid']];
+                    $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->data->isUserIRK;
+                }
 
-            if (isset($request['data'])) {
-                // $hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
-                $hardcode['param'] = ['code' => 3, 'userid' => $request['data']['nik'], 'karyawan' => $request['data']['nik']];
-                $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->getData()->data->isUserIRK;
-            }
+                if (isset($request['data'])) {
+                    // $hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
+                    $hardcode['param'] = ['code' => 3, 'userid' => $request['data']['nik'], 'karyawan' => $request['data']['nik']];
+                    $verifyUser_IRK = $utility->WorkerESS($request, $hardcode)->getData()->data->isUserIRK;
+                }
 
-            $uri_path = $_SERVER['REQUEST_URI'];
-            $uri_parts = explode('/', $uri_path);
-            $request_url = end($uri_parts);
+                $uri_path = $_SERVER['REQUEST_URI'];
+                $uri_parts = explode('/', $uri_path);
+                $request_url = end($uri_parts);
 
-            if ($request_url == 'get') {
-                return $next($request);
-            } else {
-                if ($verifyUser_IRK == 'Active') {
+                if ($request_url == 'get') {
                     return $next($request);
                 } else {
-                    $dataresp = 'User ' . $verifyUser_IRK;
+                    if ($verifyUser_IRK == 'Active') {
+                        return $next($request);
+                    } else {
+                        $dataresp = 'User ' . $verifyUser_IRK;
+                    }
                 }
+
+                $this->resultresp = 'Token & Signature Invalid';
+                $this->dataresp = $dataresp;
+                $this->messageresp = 'Failed on Run';
+                $this->statusresp = 0;
+
+                $running = $helper->RunningResp(
+                    $this->resultresp,
+                    $this->dataresp,
+                    $this->messageresp,
+                    $this->statusresp,
+                    $this->ttldataresp
+                );
+
+                return response()->json($running);
+            } else {
+                return $next($request);
             }
-
-            $this->resultresp = 'Token & Signature Invalid';
-            $this->dataresp = $dataresp;
-            $this->messageresp = 'Failed on Run';
-            $this->statusresp = 0;
-
-            $running = $helper->RunningResp(
-                $this->resultresp,
-                $this->dataresp,
-                $this->messageresp,
-                $this->statusresp,
-                $this->ttldataresp
-            );
-
-            return response()->json($running);
 
         } catch (\Throwable $th) {
             $this->resultresp = $th->getMessage();
