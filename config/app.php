@@ -21,6 +21,9 @@ return [
     'URL_PGSQLGCP_IRK_V2' => env('CONNECTION_TO_PGSQLGCP_IRK_V2'),
     'URL_PGSQLGCP_IRK_V2_STAG' => env('CONNECTION_TO_PGSQLGCP_IRK_V2_STAG'),
     'URL_PGSQLGCP_IRK_V2_DEV' => env('CONNECTION_TO_PGSQLGCP_IRK_V2_DEV'),
+    'URL_PGSQLGCP_IRK_V3' => env('CONNECTION_TO_PGSQLGCP_IRK_V3'),
+    'URL_PGSQLGCP_IRK_V3_STAG' => env('CONNECTION_TO_PGSQLGCP_IRK_V3_STAG'),
+    'URL_PGSQLGCP_IRK_V3_DEV' => env('CONNECTION_TO_PGSQLGCP_IRK_V3_DEV'),
     'URL_UPLOADFILE_CONFIDENTAL' => env('PATH_UPLOADFILE_CONFIDENTAL'),
     'URL_UPLOADFILE_CONFIDENTAL_DEV' => env('PATH_UPLOADFILE_CONFIDENTAL'),
     'URL_UPLOADFILE_NONCONFIDENTAL' => env('PATH_UPLOADFILE_NONCONFIDENTAL'),
@@ -180,9 +183,9 @@ return [
 
     'providers' => [
 
-            /*
-             * Laravel Framework Service Providers...
-             */
+        /*
+         * Laravel Framework Service Providers...
+         */
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -206,17 +209,17 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
-            /*
-             * Package Service Providers...
-             */
-            //Barryvdh\Debugbar\ServiceProvider::class,
+        /*
+         * Package Service Providers...
+         */
+        //Barryvdh\Debugbar\ServiceProvider::class,
 
-            /*
-             * Application Service Providers...
-             */
+        /*
+         * Application Service Providers...
+         */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-            // App\Providers\BroadcastServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
