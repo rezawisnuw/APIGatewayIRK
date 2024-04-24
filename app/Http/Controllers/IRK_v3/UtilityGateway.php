@@ -543,8 +543,9 @@ class UtilityGateway extends Controller
                             return response()->json($running);
 
                         } else {
+                            $hardcode_presensi['param'] = ['nik' => $result[0]->NIK, 'tanggal' => Carbon::now()->toDateString()];
 
-                            $shift = $this->PresensiWFH($request, '')->getData()->result->GetShiftWFHResult[0];
+                            $shift = $this->PresensiWFH($request, $hardcode_presensi)->getData()->result->GetShiftWFHResult[0];
 
                             $newdata = array();
                             $newdata['code'] = 1;
@@ -757,7 +758,8 @@ class UtilityGateway extends Controller
 
                             } else {
                                 $hardcode_presensi['param'] = ['nik' => $result->nik, 'tanggal' => Carbon::now()->toDateString()];
-                                $shift = $this->PresensiWFH($request, '')->getData()->result->GetShiftWFHResult[0];
+
+                                $shift = $this->PresensiWFH($request, $hardcode_presensi)->getData()->result->GetShiftWFHResult[0];
 
                                 $newdata = array();
                                 $newdata['code'] = 1;
