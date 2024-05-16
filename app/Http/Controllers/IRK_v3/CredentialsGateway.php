@@ -11,7 +11,7 @@ use App\Helper\IRKHelp;
 class CredentialsGateway extends Controller
 {
 
-	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $authorize, $model, $tokendraw, $tokenid, $domain, $env;
+	private $resultresp, $dataresp, $messageresp, $statusresp, $ttldataresp, $statuscoderesp, $base, $path, $helper, $signature, $authorize, $model, $tokenid, $domain, $env;
 
 	public function __construct(Request $request)
 	{
@@ -36,7 +36,6 @@ class CredentialsGateway extends Controller
 		$this->config = $segment['config'];
 
 		$idkey = $helper->Environment($env);
-		$this->tokendraw = $idkey['tokendraw'];
 		$this->tokenid = $idkey['tokenid'];
 		$this->domain = $idkey['domain'];
 
@@ -99,7 +98,7 @@ class CredentialsGateway extends Controller
 
 				// 		return response()->json($running)
 				// 			->withCookie(cookie($this->authorize, 'Bearer' . $this->tokenid, '120', '/', $this->domain, false, false))
-				// 			->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+				// 			->withCookie(cookie(Crypt::encryptString('platforms'), Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
 
 				// 	}
 
@@ -121,9 +120,30 @@ class CredentialsGateway extends Controller
 						$this->ttldataresp
 					);
 
-					return response()->json($running)
+					if($request->cookie()){
+						$nameEncryptionValues = [];
+						foreach ($request->cookie() as $key => $value) {
+							if (strpos($key, 'NameEncryption') !== false) {
+								$nameEncryptionValues[] = $key;
+							}
+						}
+						if(count($nameEncryptionValues) >= 2){
+							array_slice($nameEncryptionValues, -1);
+							return response()->json($running)
+							->withCookie(Cookie::forget($this->authorize))
+							->withCookie(Cookie::forget($nameEncryptionValues[0]))
+							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+							->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						}else{
+							return response()->json($running)
+							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
+							->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						}
+					}else{
+						return response()->json($running)
 						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-						->withCookie(cookie('NameEncryption', 'ValueEncryption', '120', '/', $this->domain, false, false));
+						->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+					}
 
 				}
 

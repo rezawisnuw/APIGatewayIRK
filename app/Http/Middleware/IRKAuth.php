@@ -21,36 +21,9 @@ class IRKAuth
 
         try {
 
-            // $slug = $request->route('slug');
-
             $x = $request->route('x');
 
             $helper = new IRKHelp($request);
-
-            // $env = config('app.env');
-
-            // $token = $helper->Environment($env);
-
-            // if (empty($token['tokenid'])) {
-            //     $this->resultresp = 'Token is Empty';
-            //     $this->dataresp = [];
-            //     $this->messageresp = 'Failed on Run';
-            //     $this->statusresp = 0;
-
-            //     $running = $helper->RunningResp(
-            //         $this->resultresp,
-            //         $this->dataresp,
-            //         $this->messageresp,
-            //         $this->statusresp,
-            //         $this->ttldataresp
-            //     );
-
-            //     return response()->json($running);
-
-            // } else {
-            // $modelClass = "App\\Models\\IRK_v{$x}\\CredentialsModel";
-            // $model = new $modelClass($request, $slug);
-            // $verifyUser = $model->ValidateTokenAuth($token['tokenid']);
 
             if ($x > 1) {
                 $utilClass = "App\\Http\\Controllers\\IRK_v{$x}\\UtilityGateway";

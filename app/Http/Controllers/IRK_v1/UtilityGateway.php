@@ -121,12 +121,6 @@ class UtilityGateway extends Controller
 
                 $param = $request['data'];
 
-                // $param['list_query'] = array([
-                // 	'conn'=>'DBPRESENSI',
-                // 	'query'=>'SELECT TOP 10 * FROM DaftarKaryawanPresensi WITH(NOLOCK);',
-                // 	'process_name'=>'GetJabatanResult'
-                // ]);
-
                 $param['list_sp'] = array([
                     'conn' => 'HRD_OPR',
                     'payload' => ['idjabatan' => empty($param['idjabatan']) ? "" : $param['idjabatan']],
@@ -342,7 +336,6 @@ class UtilityGateway extends Controller
                     $temp = json_decode($body);
 
                     if ($temp->status == 'Processing') {
-                        //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 
                         $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
@@ -451,7 +444,6 @@ class UtilityGateway extends Controller
                             $temp = json_decode($body);
 
                             if ($temp->status == 'Processing') {
-                                //$value->ALIAS = !empty($temp->data) ? empty($temp->data[0]->Alias) ? static::EncodeString(new Request(),'Sidomar'.$value->NIK) : $temp->data[0]->Alias : 'Data Corrupt';
 
                                 $newdata['alias'] = str_contains($temp->data, 'Admin') ? $temp->data : substr($temp->data, 3, 8);
 
