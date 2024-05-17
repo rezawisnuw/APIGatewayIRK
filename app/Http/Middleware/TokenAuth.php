@@ -30,7 +30,7 @@ class TokenAuth
             $env = config('app.env');
 
             $token = $helper->Environment($env);
-            return response()->json($token);
+            
             if (empty($token['tokenid'])) {
                 $this->resultresp = 'Token is Empty';
                 $this->dataresp = [];

@@ -28,17 +28,20 @@ class IRKHelp
 
         if ($slug == 'dev') {
             $setting['authorize'] = 'Authorization-dev';
-            $setting['platform'] = 'NameEncryption';
+            $setting['nameprefix'] = 'NameEncryptionDev';
+            $setting['valueprefix'] = 'ValueEncryptionDev';
             $setting['config'] = config('app.URL_DEV');
             $setting['path'] = 'Dev';
         } else if ($slug == 'stag') {
             $setting['authorize'] = 'Authorization-stag';
-            $setting['platform'] = 'NameEncryption';
+            $setting['nameprefix'] = 'NameEncryptionStag';
+            $setting['valueprefix'] = 'ValueEncryptionStag';
             $setting['config'] = config('app.URL_STAG');
             $setting['path'] = 'Stag';
         } else if ($slug == 'live') {
             $setting['authorize'] = 'Authorization';
-            $setting['platform'] = 'NameEncryption';
+            $setting['nameprefix'] = 'NameEncryption';
+            $setting['valueprefix'] = 'ValueEncryption';
             $setting['config'] = config('app.URL_LIVE');
             $setting['path'] = 'Live';
         } else {
@@ -83,7 +86,14 @@ class IRKHelp
 
         $session['tokendraw'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->Segment($this->request->route('slug'))['authorize'] . '=Bearer' . $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
         $session['tokenid'] = str_contains($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 'Bearer') ? substr($this->request->cookie($this->Segment($this->request->route('slug'))['authorize']), 6) : $this->request->cookie($this->Segment($this->request->route('slug'))['authorize']);
-        $session['platformid'] = str_contains(key(array_slice($this->request->cookie(),1)), $this->Segment($this->request->route('slug'))['platform']) ? Crypt::decryptString(substr($this->request->cookie()[key(array_slice($this->request->cookie(),1))], 15)) : $this->request->cookie($this->Segment($this->request->route('slug'))['platform']);
+
+        foreach ($this->request->cookie() as $key => $value) {
+            if (strpos($key, $this->Segment($this->request->route('slug'))['nameprefix']) !== false) {
+                $session['platformid'] = Crypt::decryptString(substr($this->request->cookie()[$key], strlen($this->Segment($this->request->route('slug'))['valueprefix'])));
+            }else{
+                $session['platformid'] =  $this->request->cookie($this->Segment($this->request->route('slug'))['nameprefix']);
+            }
+        }
 
         return $session;
     }

@@ -34,6 +34,8 @@ class CredentialsGateway extends Controller
 		$segment = $helper->Segment($slug);
 		$this->authorize = $segment['authorize'];
 		$this->config = $segment['config'];
+		$this->nameprefix = $segment['nameprefix'];
+		$this->valueprefix = $segment['valueprefix'];
 
 		$idkey = $helper->Environment($env);
 		$this->tokenid = $idkey['tokenid'];
@@ -122,26 +124,26 @@ class CredentialsGateway extends Controller
 					if($request->cookie()){
 						$nameEncryptionValues = [];
 						foreach ($request->cookie() as $key => $value) {
-							if (strpos($key, 'NameEncryption') !== false) {
+							if (strpos($key, $this->nameprefix) !== false) {
 								$nameEncryptionValues[] = $key;
 							}
 						}
-						if(count($nameEncryptionValues) >= 2){
+						if(count($nameEncryptionValues) >= 1){
 							array_slice($nameEncryptionValues, -1);
 							return response()->json($running)
 							->withCookie(Cookie::forget($this->authorize))
 							->withCookie(Cookie::forget($nameEncryptionValues[0]))
 							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-							->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
 						}else{
 							return response()->json($running)
 							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-							->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
 						}
 					}else{
 						return response()->json($running)
 						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-						->withCookie(cookie('NameEncryption'.Crypt::encryptString('platforms'), 'ValueEncryption'.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
 					}
 
 				}
