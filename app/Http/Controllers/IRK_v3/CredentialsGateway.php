@@ -105,14 +105,81 @@ class CredentialsGateway extends Controller
 				// 	}
 
 				// } else {
-				$result = $this->model->Login($postbody);
 
-				if ($result['wcf']['status'] == '1') {
+				$response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/credential/get', [
+					'json' => [
+						'data' => ['code' => 1, 'body' => $request['data']]
+					]
+				]);
 
-					$this->resultresp = 'Token has Stored in Cookie';
-					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $result['wcf']['message'] : 'Failed on Run';
-					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+				$body = $response->getBody();
+
+				$temp = json_decode($body);
+				
+				if($temp->data == 'Login Berhasil'){
+					$token = $this->model->GetTokenAuth($postbody['nik'])['GetTokenForResult'] ?? 0;
+
+					if (count(explode('.',$token)) == 3) {
+						$this->resultresp = 'Token has Stored in Cookie';
+						$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $temp->data : 'Failed on Run';
+						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+						
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
+						
+						if($request->cookie()){
+							$nameEncryptionValues = [];
+							foreach ($request->cookie() as $key => $value) {
+								if (strpos($key, $this->nameprefix) !== false) {
+									$nameEncryptionValues[] = $key;
+								}
+							}
+							if(count($nameEncryptionValues) >= 1){
+								array_slice($nameEncryptionValues, -1);
+								return response()->json($running)
+								->withCookie(Cookie::forget($this->authorize))
+								->withCookie(Cookie::forget($nameEncryptionValues[0]))
+								->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+								->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+							}else{
+								return response()->json($running)
+								->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+								->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+							}
+						}else{
+							return response()->json($running)
+							->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						}
+	
+					}else{
+						$this->resultresp = 'Token Data is Empty';
+						$this->dataresp = [];
+						$this->messageresp = 'Failed on Run';
+						$this->statusresp = 0;
+
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
+
+						return response()->json($running);
+					}
+
+				}else{
+					$this->resultresp = 'Data is cannot be process';
+					$this->dataresp = $temp;
+					$this->messageresp = 'Failed on Run';
+					$this->statusresp = 0;
 
 					$running = $this->helper->RunningResp(
 						$this->resultresp,
@@ -122,47 +189,8 @@ class CredentialsGateway extends Controller
 						$this->ttldataresp
 					);
 
-					if($request->cookie()){
-						$nameEncryptionValues = [];
-						foreach ($request->cookie() as $key => $value) {
-							if (strpos($key, $this->nameprefix) !== false) {
-								$nameEncryptionValues[] = $key;
-							}
-						}
-						if(count($nameEncryptionValues) >= 1){
-							array_slice($nameEncryptionValues, -1);
-							return response()->json($running)
-							->withCookie(Cookie::forget($this->authorize))
-							->withCookie(Cookie::forget($nameEncryptionValues[0]))
-							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-						}else{
-							return response()->json($running)
-							->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-						}
-					}else{
-						return response()->json($running)
-						->withCookie(cookie($this->authorize, 'Bearer' . $result['token'], '120', '/', $this->domain, false, false))
-						->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-					}
-
+					return response()->json($running);
 				}
-
-				$this->resultresp = $result['wcf']['result'];
-				$this->dataresp = null;
-				$this->messageresp = $result['wcf']['message'];
-				$this->statusresp = 0;
-
-				$running = $this->helper->RunningResp(
-					$this->resultresp,
-					$this->dataresp,
-					$this->messageresp,
-					$this->statusresp,
-					$this->ttldataresp
-				);
-
-				return response()->json($running);
 
 				// }
 
