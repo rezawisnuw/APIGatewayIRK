@@ -5,8 +5,12 @@ namespace App\Http\Controllers\IRK_v3;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Validator;
 use App\Models\IRK_v3\CredentialsModel;
+use App\Models\UserJWT;
 use App\Helper\IRKHelp;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class CredentialsGateway extends Controller
 {
@@ -117,6 +121,26 @@ class CredentialsGateway extends Controller
 				$temp = json_decode($body);
 				
 				if($temp->data == 'Login Berhasil'){
+					$validator = Validator::make($postbody, [
+						'nik' => 'required|string|max:20',
+						'pass' => 'required|string|min:8'
+					]);
+			
+					if ($validator->fails()) {
+						// Return a response with validation errors
+						return response()->json(['errors' => $validator->errors()], 422);
+					}else{
+						$postbody['personnelnumber'] = $postbody['nik'];
+						$postbody['password'] = $postbody['pass'];
+						unset($postbody['nik']);
+						unset($postbody['pass']);
+						$user=UserJWT::getDataLogin($request);
+						$credentials = JWTAuth::attempt($user);
+						return response()->json($credentials);
+						
+					}
+					
+					
 					$token = $this->model->GetTokenAuth($postbody['nik'])['GetTokenForResult'] ?? 0;
 
 					if (count(explode('.',$token)) == 3) {

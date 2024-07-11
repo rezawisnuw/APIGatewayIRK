@@ -68,6 +68,9 @@ class Kernel extends HttpKernel
         'tokenverifystag' => \App\Http\Middleware\TokenVerifyStag::class,
         'tokenverifydev' => \App\Http\Middleware\TokenVerifyDev::class,
         'tokenauth' => \App\Http\Middleware\TokenAuth::class,
-        'irkauth' => \App\Http\Middleware\IRKAuth::class, // <-- add this line
+        'irkauth' => \App\Http\Middleware\IRKAuth::class, 
+        'jwt.verify' => \App\Http\Middleware\JwtMiddleware::class,
+        'jwt.auth' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,// <-- add this line
     ];
 }
