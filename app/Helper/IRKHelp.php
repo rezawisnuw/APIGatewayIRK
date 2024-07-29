@@ -89,8 +89,14 @@ class IRKHelp
 
         foreach ($this->request->cookie() as $key => $value) {
             if (strpos($key, $this->Segment($this->request->route('slug'))['nameprefix']) !== false) {
-                $session['platformid'] = Crypt::decryptString(substr($this->request->cookie()[$key], strlen($this->Segment($this->request->route('slug'))['valueprefix'])));
+
+                try {
+                    $session['platformid'] = Crypt::decryptString(substr($this->request->cookie()[$key], strlen($this->Segment($this->request->route('slug'))['valueprefix'])));;
+                } catch (\Exception $e) {
+                    $session['platformid'] = null; // atau nilai default lainnya
+                }
             }else{
+
                 $session['platformid'] =  $this->request->cookie($this->Segment($this->request->route('slug'))['nameprefix']);
             }
         }

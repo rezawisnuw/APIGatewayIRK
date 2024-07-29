@@ -5,6 +5,7 @@ namespace App\Http\Controllers\IRK_v3;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Validator;
 use App\Models\IRK_v3\CredentialsModel;
 use App\Models\UserJWT;
@@ -51,7 +52,7 @@ class CredentialsGateway extends Controller
 	{
 
 		try {
-			if (count($request->json()->all())) {
+			if (isset($request['data']['nik']) && isset($request['data']['pass'])) {
 				$postbody = $request['data'];
 
 				//$hardcode['param'] = ['code' => 1, 'nik' => $request['data']['nik']];
@@ -109,99 +110,12 @@ class CredentialsGateway extends Controller
 				// 	}
 
 				// } else {
-
-				$response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/credential/get', [
-					'json' => [
-						'data' => ['code' => 1, 'body' => $request['data']]
-					]
-				]);
-
-				$body = $response->getBody();
-
-				$temp = json_decode($body);
 				
-				if($temp->data == 'Login Berhasil'){
-					$validator = Validator::make($postbody, [
-						'nik' => 'required|string|max:20',
-						'pass' => 'required|string|min:8'
-					]);
-			
-					if ($validator->fails()) {
-						// Return a response with validation errors
-						return response()->json(['errors' => $validator->errors()], 422);
-					}else{
-						$postbody['personnelnumber'] = $postbody['nik'];
-						$postbody['password'] = $postbody['pass'];
-						unset($postbody['nik']);
-						unset($postbody['pass']);
-						$user=UserJWT::getDataLogin($request);
-						$credentials = JWTAuth::attempt($user);
-						return response()->json($credentials);
-						
-					}
-					
-					
-					$token = $this->model->GetTokenAuth($postbody['nik'])['GetTokenForResult'] ?? 0;
+				$user = (new UserJWT($request))->getDataLogin($request); 
 
-					if (count(explode('.',$token)) == 3) {
-						$this->resultresp = 'Token has Stored in Cookie';
-						$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
-						$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? $temp->data : 'Failed on Run';
-						$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
-						
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
-						
-						if($request->cookie()){
-							$nameEncryptionValues = [];
-							foreach ($request->cookie() as $key => $value) {
-								if (strpos($key, $this->nameprefix) !== false) {
-									$nameEncryptionValues[] = $key;
-								}
-							}
-							if(count($nameEncryptionValues) >= 1){
-								array_slice($nameEncryptionValues, -1);
-								return response()->json($running)
-								->withCookie(Cookie::forget($this->authorize))
-								->withCookie(Cookie::forget($nameEncryptionValues[0]))
-								->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
-								->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-							}else{
-								return response()->json($running)
-								->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
-								->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-							}
-						}else{
-							return response()->json($running)
-							->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
-							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
-						}
-	
-					}else{
-						$this->resultresp = 'Token Data is Empty';
-						$this->dataresp = [];
-						$this->messageresp = 'Failed on Run';
-						$this->statusresp = 0;
-
-						$running = $this->helper->RunningResp(
-							$this->resultresp,
-							$this->dataresp,
-							$this->messageresp,
-							$this->statusresp,
-							$this->ttldataresp
-						);
-
-						return response()->json($running);
-					}
-
-				}else{
-					$this->resultresp = 'Data is cannot be process';
-					$this->dataresp = $temp;
+				if(!isset($user['nik'])){
+					$this->resultresp = 'Payload Data is invalid';
+					$this->dataresp = $user;
 					$this->messageresp = 'Failed on Run';
 					$this->statusresp = 0;
 
@@ -216,12 +130,100 @@ class CredentialsGateway extends Controller
 					return response()->json($running);
 				}
 
-				// }
+				try {
+					if (!$token =  JWTAuth::fromUser($user)) {
+						$this->resultresp = 'Token Data is invalid';
+						$this->dataresp = [];
+						$this->messageresp = 'Failed on Run';
+						$this->statusresp = 0;
 
-			} else {
+						$running = $this->helper->RunningResp(
+							$this->resultresp,
+							$this->dataresp,
+							$this->messageresp,
+							$this->statusresp,
+							$this->ttldataresp
+						);
 
-				$this->resultresp = 'Request Data is Empty';
-				$this->dataresp = [];
+						return response()->json($running);
+					}
+				} catch (JWTException $e) {
+				
+					$this->resultresp = $e->getMessage();
+					$this->messageresp = 'Error in Catch';
+					$this->statuscoderesp = $e->getCode();
+
+					$error = $this->helper->ErrorResp(
+						$this->resultresp,
+						$this->messageresp,
+						$this->statuscoderesp
+					);
+
+					return response()->json($error);
+				}
+				
+				// $token = $this->model->GetTokenAuth($postbody['nik'])['GetTokenForResult'] ?? 0;
+
+				if (count(explode('.',$token)) == 3) {
+					$this->resultresp = 'Token has Stored in Cookie';
+					$this->dataresp = app(UtilityGateway::class)->WorkerESS($request, $hardcode);
+					$this->messageresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 'Success on Run' : 'Failed on Run';
+					$this->statusresp = isset(app(UtilityGateway::class)->WorkerESS($request, $hardcode)->nik) ? 1 : 0;
+					
+					$running = $this->helper->RunningResp(
+						$this->resultresp,
+						$this->dataresp,
+						$this->messageresp,
+						$this->statusresp,
+						$this->ttldataresp
+					);
+					
+					if($request->cookie()){
+						$nameEncryptionValues = [];
+						foreach ($request->cookie() as $key => $value) {
+							if (strpos($key, $this->nameprefix) !== false) {
+								$nameEncryptionValues[] = $key;
+							}
+						}
+						
+						if(count($nameEncryptionValues) >= 1){
+							array_slice($nameEncryptionValues, -1);
+							return response()->json($running)
+							->withCookie(Cookie::forget($this->authorize))
+							->withCookie(Cookie::forget($nameEncryptionValues[0]))
+							->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						}else{
+							return response()->json($running)
+							->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+							->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+						}
+					}else{
+						return response()->json($running)
+						->withCookie(cookie($this->authorize, 'Bearer' . $token, '120', '/', $this->domain, false, false))
+						->withCookie(cookie($this->nameprefix.Crypt::encryptString('platforms'), $this->valueprefix.Crypt::encryptString('mobile'), '120', '/', $this->domain, false, false));
+					}
+
+				}else{
+					$this->resultresp = 'Token Data is Empty';
+					$this->dataresp = [];
+					$this->messageresp = 'Failed on Run';
+					$this->statusresp = 0;
+
+					$running = $this->helper->RunningResp(
+						$this->resultresp,
+						$this->dataresp,
+						$this->messageresp,
+						$this->statusresp,
+						$this->ttldataresp
+					);
+
+					return response()->json($running);
+				}
+
+			}else{
+				$this->resultresp = 'Request Data is invalid';
+				$this->dataresp = $request;
 				$this->messageresp = 'Failed on Run';
 				$this->statusresp = 0;
 
@@ -234,8 +236,9 @@ class CredentialsGateway extends Controller
 				);
 
 				return response()->json($running);
-
 			}
+
+				// }
 
 		} catch (\Throwable $th) {
 

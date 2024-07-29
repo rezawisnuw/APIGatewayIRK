@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helper\IRKHelp;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -15,54 +16,67 @@ class UserJWT extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
-    protected $connection =  "pgsqlgcp_ess";
+    public function __construct(Request $request)
+	{
+		// Call the parent constructor
+		//parent::__construct();
+
+		$slug = $request->route('slug');
+		$x = $request->route('x');
+		$this->base = 'v' . $x . '/' . $slug;
+
+		$helper = new IRKHelp($request);
+		$this->helper = $helper;
+
+	}
+
+    // protected $connection =  "pgsqlgcp_ess";
     
-    protected $table = "IDM_UserLogLogin";
+    // protected $table = "IDM_UserLogLogin";
 
-    // /**
-    //  * The attributes that are mass assignable.
-    //  *
-    //  * @var array<int, string>
-    //  */
-    // protected $fillable = [
-    //     'personnelnumber',
-    //     //'email',
-    //     'password',
-    // ];
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'nik',
+        //'email',
+        'pass',
+    ];
 
-    // /**
-    //  * The attributes that should be hidden for serialization.
-    //  *
-    //  * @var array<int, string>
-    //  */
-    // protected $hidden = [
-    //     'password',
-    //     'remember_token',
-    // ];
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        //'password',
+        //'remember_token',
+    ];
 
-    // /**
-    //  * Get the attributes that should be cast.
-    //  *
-    //  * @return array<string, string>
-    //  */
-    // protected function casts(): array
-    // {
-    //     return [
-    //         'email_verified_at' => 'datetime',
-    //         'password' => 'hashed',
-    //     ];
-    // }
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            //'password' => 'hashed',
+        ];
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed
      */
-    public function getJWTIdentifier()
+    public function getJWTIdentifier(): string
     {
-        return $this->getKey();
+        return (string) $this->getKey();
     }
-
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
@@ -73,23 +87,33 @@ class UserJWT extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public static function getDataLogin(Request $request)
+    public function getDataLogin(Request $request)
     {
-      
-        $nik = $request['data']['nik'];
-        $pass = $request['data']['pass'];
-        
+       
         try {
             
-            $data = DB::connection(config('app.URL_PGSQLGCP_ESS'))->select("select * from public.loginuser(?,?)", [$nik, $pass]);
+            $response = $this->helper->Client('toverify_gcp')->request('POST', $this->base . '/credential/get', [
+                'json' => [
+                    'data' => ['code' => 1, 'body' => $request['data']]
+                ]
+            ]);
 
-            if(is_array($data)){
-                if($data[0]->status == 'Login Berhasil' && !str_contains($data[0]->status,'menit')){
-                    return [$nik,$pass];
+            $body = $response->getBody();
+
+            $temp = json_decode($body);
+
+            if($temp){
+                if($temp->data == 'Login Berhasil' && !str_contains($temp->data,'menit')){
+                    $user = new UserJWT($request);
+                    $user->nik = $request['data']['nik'];
+                    $user->pass = $request['data']['pass'];
+                    unset($user['base']);
+					unset($user['helper']);
+                    return $user;
                 }
             }
 
-            return $data;
+            return $temp;
 
         } catch (\Throwable $e) {
             return $e->getCode() == 0 ? 'Error Function Laravel = ' . $e->getMessage() : 'Error Database = ' . $e->getMessage();
